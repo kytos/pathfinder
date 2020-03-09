@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 from itertools import combinations
 
-from flask import request
+import networkx as nx
 
 # module under test
 from graph import KytosGraph
@@ -23,6 +23,7 @@ class TestKytosGraph(TestCase):
         self.graph.clear()
         self.graph.update_nodes(switches)
         self.graph.update_links(links)
+        self.graph.set_path_fun(nx.shortest_simple_paths)
 
     def get_path(self, source, destination):
         print(f"Attempting path between {source} and {destination}.")
@@ -52,11 +53,42 @@ class TestKytosGraph(TestCase):
             print(edge)
 
     def test_path1(self):
+        """Tests paths between all users using unconstrained path alogrithm."""
         self.setup()
         combos = combinations(["User1","User2","User3","User4"],2)
         for point_a, point_b in combos:
             result = self.get_path(point_a,point_b)
             self.assertNotEqual(result, [])
+
+    def test_path2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with no constraints set."""
+        self.setup()
+        combos = combinations(["User1","User2","User3","User4"],2)
+        for point_a, point_b in combos:
+            result = self.get_path_constrained(point_a,point_b)
+            self.assertNotEqual(result, [])
+
+    def test_path3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with no constraints set."""
+        self.setup()
+        combos = combinations(["User1","User2","User3","User4"],2)
+        for point_a, point_b in combos:
+            result = self.get_path_constrained(point_a, point_b, False, ownership = "B")
+            for path in result:
+                self.assertNotIn("S4:1", path)
+                self.assertNotIn("S5:2", path)
+                self.assertNotIn("S4:2", path)
+                self.assertNotIn("User1:2", path)
+                self.assertNotIn("S5:4", path)
+                self.assertNotIn("S6:2", path)
+                self.assertNotIn("S6:5", path)
+                self.assertNotIn("S10:1", path)
+                self.assertNotIn("S8:6", path)
+                self.assertNotIn("S10:2", path)
+                self.assertNotIn("S10:3", path)
+                self.assertNotIn("User2:1", path)
             
 
     @staticmethod
@@ -163,7 +195,7 @@ class TestKytosGraph(TestCase):
         links["S6:4<->S9:2"].extend_metadata({"reliability": 5,"bandwidth": 100, "delay":62})
 
         links["S6:5<->S10:1"] = Link(interfaces["S6:5"], interfaces["S10:1"])
-        links["S6:5<->S10:1"].extend_metadata({"bandwidth": 100, "delay":108, "Ownership":"A"})
+        links["S6:5<->S10:1"].extend_metadata({"bandwidth": 100, "delay":108, "ownership":"A"})
 
         links["S7:2<->S8:3"] = Link(interfaces["S7:2"], interfaces["S8:3"])
         links["S7:2<->S8:3"].extend_metadata({"reliability": 5, "bandwidth": 100, "delay": 1})
@@ -175,7 +207,7 @@ class TestKytosGraph(TestCase):
         links["S8:5<->S9:4"].extend_metadata({"reliability": 3,"bandwidth": 100, "delay":110})
 
         links["S8:6<->S10:2"] = Link(interfaces["S8:6"], interfaces["S10:2"])
-        links["S8:6<->S10:2"].extend_metadata({"reliability": 5, "bandwidth": 100, "Ownership":"A"})
+        links["S8:6<->S10:2"].extend_metadata({"reliability": 5, "bandwidth": 100, "ownership":"A"})
 
         links["S8:7<->S11:2"] = Link(interfaces["S8:7"], interfaces["S11:2"])
         links["S8:7<->S11:2"].extend_metadata({"reliability": 3, "bandwidth": 100, "delay": 7})
@@ -184,7 +216,7 @@ class TestKytosGraph(TestCase):
         links["S8:8<->User3:2"].extend_metadata({"reliability": 5, "bandwidth": 100, "delay": 1})
 
         links["S10:3<->User2:1"] = Link(interfaces["S10:3"], interfaces["User2:1"])
-        links["S10:3<->User2:1"].extend_metadata({"reliability": 3, "bandwidth": 100, "delay": 10, "Ownership":"A"})
+        links["S10:3<->User2:1"].extend_metadata({"reliability": 3, "bandwidth": 100, "delay": 10, "ownership":"A"})
 
         links["S11:3<->User2:2"] = Link(interfaces["S11:3"], interfaces["User2:2"])
         links["S11:3<->User2:2"].extend_metadata({"reliability": 3, "bandwidth": 100, "delay": 6})

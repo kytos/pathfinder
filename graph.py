@@ -30,7 +30,11 @@ class KytosGraph:
         self._filter_fun_dict["priority"] = filterGEQ("priority")
         self._filter_fun_dict["utilization"] = filterLEQ("utilization")
         self._filter_fun_dict["delay"] = filterLEQ("delay")
+        self._path_fun = nx.all_shortest_paths
         
+
+    def set_path_fun(self, path_fun):
+        self._path_fun = path_fun
 
     def clear(self):
         """Remove all nodes and links registered."""
@@ -77,20 +81,18 @@ class KytosGraph:
     def shortest_paths(self, source, destination, parameter=None):
         """Calculate the shortest paths and return them."""
         try:
-            paths = list(nx.shortest_simple_paths(self.graph,
-                                                  source,
-                                                  destination, parameter))
+            paths = list(self._path_fun(self.graph,
+                                        source, destination, parameter))
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
 
-    def constrained_shortest_paths(self, source, destination,  **metrics):
+    def constrained_shortest_paths(self, source, destination, **metrics):
         paths = []
         edges = self._filter_edges(**metrics)
         try:
-            paths = list(nx.shortest_simple_paths(self.graph.edge_subgraph(edges),
-                                                  source,
-                                                  destination))
+            paths = list(self._path_fun(self.graph.edge_subgraph(edges),
+                                        source, destination))
         except NetworkXNoPath:
             return []
         except NodeNotFound:

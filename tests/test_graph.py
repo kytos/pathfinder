@@ -2,7 +2,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from flask import request
+import networkx as nx
 
 # module under test
 from graph import KytosGraph
@@ -22,6 +22,7 @@ class TestKytosGraph(TestCase):
         self.graph.clear()
         self.graph.update_nodes(switches)
         self.graph.update_links(links)
+        self.graph.set_path_fun(nx.shortest_simple_paths)
 
     def get_path(self, source, destination):
         print(f"Attempting path between {source} and {destination}.")
