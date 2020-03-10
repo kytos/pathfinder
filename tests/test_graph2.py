@@ -89,7 +89,41 @@ class TestKytosGraph(TestCase):
                 self.assertNotIn("S10:2", path)
                 self.assertNotIn("S10:3", path)
                 self.assertNotIn("User2:1", path)
-            
+
+    def test_path4(self):
+        """Tests paths between User 1 and User 4, such that the shortest path is in the result set"""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path5(self):
+        """Tests paths from User 1 to User 4 and back to User 1, such that the shortest path
+        is in the result set."""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path6(self):
+        """Tests paths from User 3 to User 4, such that a non-shortest path is not in the
+        result set."""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path7(self):
+        """Tests paths from User 1 to User 4, such that a non-shortest path is not in the
+        result set."""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path8(self):
+        """Tests paths from User 1 to User 2, such that a non-shortest path is not in the
+        result set."""
+        #Arrange
+        #Act
+        #Assert
+
     @staticmethod
     def generateTopology():
         """Generates a predetermined topology"""
