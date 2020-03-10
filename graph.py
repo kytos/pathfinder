@@ -28,6 +28,7 @@ class KytosGraph:
         self._filter_fun_dict["ownership"] = filterEEQ("ownership")
         self._filter_fun_dict["bandwidth"] = filterGEQ("bandwidth")
         self._filter_fun_dict["priority"] = filterGEQ("priority")
+        self._filter_fun_dict["reliability"] = filterGEQ("reliability")
         self._filter_fun_dict["utilization"] = filterLEQ("utilization")
         self._filter_fun_dict["delay"] = filterLEQ("delay")
         self._path_fun = nx.all_shortest_paths
