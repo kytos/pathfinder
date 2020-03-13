@@ -90,7 +90,191 @@ class TestKytosGraph(TestCase):
                 self.assertNotIn("S10:3", path)
                 self.assertNotIn("User2:1", path)
 
-    def test_path4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50."""
+        self.setup()
+        combos = combinations(["User1","User2","User3","User4"],2)
+        for point_a, point_b in combos:
+            result = self.get_path_constrained(point_a, point_b, False, delay = 50)
+            for path in result:
+                self.assertNotIn("S1:1", path)
+                self.assertNotIn("S2:1", path)
+                self.assertNotIn("S3:1", path)
+                self.assertNotIn("S5:1", path)
+                self.assertNotIn("S4:2", path)
+                self.assertNotIn("User1:2", path)
+                self.assertNotIn("S5:5", path)
+                self.assertNotIn("S8:2", path)
+                self.assertNotIn("S5:6", path)
+                self.assertNotIn("User1:3", path)
+                self.assertNotIn("S6:3", path)
+                self.assertNotIn("S9:1", path)
+                self.assertNotIn("S6:4", path)
+                self.assertNotIn("S9:2", path)
+                self.assertNotIn("S6:5", path)
+                self.assertNotIn("S10:1", path)
+                self.assertNotIn("S8:5", path)
+                self.assertNotIn("S9:4", path)
+                self.assertNotIn("User1:4", path)
+                self.assertNotIn("User4:3", path)
+            
+    def test_path7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint set to 100,
+        the reliability contraint set to 3, and the ownership constraint set to 'B' """
+        self.setup()
+        combos = combinations(["User1","User2","User3","User4"],2)
+        for point_a, point_b in combos:
+            result = self.get_path_constrained(point_a, point_b, False, delay = 50, bandwidth = 100, reliability = 3, ownership = "B")
+            for path in result:
+                # delay = 50 checks
+                self.assertNotIn("S1:1", path)
+                self.assertNotIn("S2:1", path)
+                self.assertNotIn("S3:1", path)
+                self.assertNotIn("S5:1", path)
+                self.assertNotIn("S4:2", path)
+                self.assertNotIn("User1:2", path)
+                self.assertNotIn("S5:5", path)
+                self.assertNotIn("S8:2", path)
+                self.assertNotIn("S5:6", path)
+                self.assertNotIn("User1:3", path)
+                self.assertNotIn("S6:3", path)
+                self.assertNotIn("S9:1", path)
+                self.assertNotIn("S6:4", path)
+                self.assertNotIn("S9:2", path)
+                self.assertNotIn("S6:5", path)
+                self.assertNotIn("S10:1", path)
+                self.assertNotIn("S8:5", path)
+                self.assertNotIn("S9:4", path)
+                self.assertNotIn("User1:4", path)
+                self.assertNotIn("User4:3", path)
+
+                # bandwidth = 100 checks
+
+                self.assertNotIn("S3:1", path)
+                self.assertNotIn("S5:1", path)
+                self.assertNotIn("User1:4", path)
+                self.assertNotIn("User4:3", path)
+
+                # reliability = 3 checks
+
+                self.assertNotIn("S4:1", path)
+                self.assertNotIn("S5:2", path)
+                self.assertNotIn("S5:3", path)
+                self.assertNotIn("S6:1", path)
+
+                # ownership = "B" checks
+
+                self.assertNotIn("S4:1", path)
+                self.assertNotIn("S5:2", path)
+                self.assertNotIn("S4:2", path)
+                self.assertNotIn("User1:2", path)
+                self.assertNotIn("S5:4", path)
+                self.assertNotIn("S6:2", path)
+                self.assertNotIn("S6:5", path)
+                self.assertNotIn("S10:1", path)
+                self.assertNotIn("S8:6", path)
+                self.assertNotIn("S10:2", path)
+                self.assertNotIn("S10:3", path)
+                self.assertNotIn("User2:1", path)
+
+    def test_path8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint set to 100,
+        the reliability contraint set to 3, and the ownership constraint set to 'B'
+        
+        Tests conducted with flexibility enabled"""
+        self.setup()
+        combos = combinations(["User1","User2","User3","User4"],2)
+        for point_a, point_b in combos:
+            result = self.get_path_constrained(point_a, point_b, True, delay = 50, bandwidth = 100, reliability = 3, ownership = "B")
+            for paths, metrics in result:
+                # delay = 50 checks
+                if "delay" in metrics:
+                    for path in paths:
+                        self.assertNotIn("S1:1", path)
+                        self.assertNotIn("S2:1", path)
+                        self.assertNotIn("S3:1", path)
+                        self.assertNotIn("S5:1", path)
+                        self.assertNotIn("S4:2", path)
+                        self.assertNotIn("User1:2", path)
+                        self.assertNotIn("S5:5", path)
+                        self.assertNotIn("S8:2", path)
+                        self.assertNotIn("S5:6", path)
+                        self.assertNotIn("User1:3", path)
+                        self.assertNotIn("S6:3", path)
+                        self.assertNotIn("S9:1", path)
+                        self.assertNotIn("S6:4", path)
+                        self.assertNotIn("S9:2", path)
+                        self.assertNotIn("S6:5", path)
+                        self.assertNotIn("S10:1", path)
+                        self.assertNotIn("S8:5", path)
+                        self.assertNotIn("S9:4", path)
+                        self.assertNotIn("User1:4", path)
+                        self.assertNotIn("User4:3", path)
+
+                # bandwidth = 100 checks
+                if "bandwidth" in metrics:
+                    for path in paths:
+                        self.assertNotIn("S3:1", path)
+                        self.assertNotIn("S5:1", path)
+                        self.assertNotIn("User1:4", path)
+                        self.assertNotIn("User4:3", path)
+
+                # reliability = 3 checks
+                if "reliability" in metrics:
+                    for path in paths:
+                        self.assertNotIn("S4:1", path)
+                        self.assertNotIn("S5:2", path)
+                        self.assertNotIn("S5:3", path)
+                        self.assertNotIn("S6:1", path)
+
+                # ownership = "B" checks
+                if "ownership" in metrics:
+                    for path in paths:
+                        self.assertNotIn("S4:1", path)
+                        self.assertNotIn("S5:2", path)
+                        self.assertNotIn("S4:2", path)
+                        self.assertNotIn("User1:2", path)
+                        self.assertNotIn("S5:4", path)
+                        self.assertNotIn("S6:2", path)
+                        self.assertNotIn("S6:5", path)
+                        self.assertNotIn("S10:1", path)
+                        self.assertNotIn("S8:6", path)
+                        self.assertNotIn("S10:2", path)
+                        self.assertNotIn("S10:3", path)
+                        self.assertNotIn("User2:1", path)
+
+
+    def test_path9(self):
+        """Tests paths from User 1 to User 4 and back to User 1, such that the shortest path
+        is in the result set"""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path10(self):
+        """Tests paths from User 3 to User 4, such that a non-shortest path is not in the
+        result set"""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path11(self):
+        """Tests paths from User 1 to User 4, such that a non-shortest path is not in the
+        result set"""
+        #Arrange
+        #Act
+        #Assert
+ 
+    def test_path12(self):
+        """Tests paths from User 1 to User 2, such that a non-shortest path is not in the
+        result set"""
+        #Arrange
+        #Act
+        #Assert"""
+
+    def test_path13(self):
         """Tests paths between User 1 and User 4, such that the shortest path is in the result set"""
         #Arrange
         self.setup()
@@ -100,35 +284,6 @@ class TestKytosGraph(TestCase):
         print(str(result))
         #Assert
         self.assertEqual(1, 1)
-
- 
-    """def test_path5(self):
-        Tests paths from User 1 to User 4 and back to User 1, such that the shortest path
-        is in the result set
-        #Arrange
-        #Act
-        #Assert
- 
-    def test_path6(self):
-        Tests paths from User 3 to User 4, such that a non-shortest path is not in the
-        result set
-        #Arrange
-        #Act
-        #Assert
- 
-    def test_path7(self):
-        Tests paths from User 1 to User 4, such that a non-shortest path is not in the
-        result set
-        #Arrange
-        #Act
-        #Assert
- 
-    def test_path8(self):
-        Tests paths from User 1 to User 2, such that a non-shortest path is not in the
-        result set
-        #Arrange
-        #Act
-        #Assert"""
 
     @staticmethod
     def generateTopology():
