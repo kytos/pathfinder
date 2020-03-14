@@ -88,19 +88,37 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_shortest_paths(self, source, destination, **metrics):
+    def constrained_flexible_paths(self, source, destination, flexible = 0,  **metrics):
+        combos = []
+        length = len(metrics)
+        flexible = max(0,flexible)
+        flexible = min(length,flexible)
+        results = []
+        for i in range(0,flexible+1):
+            y = combinations(metrics.items(),length-i)
+            found = False
+            for x in y:
+                tempDict = {}
+                for k,v in x:
+                    tempDict[k] = v
+                res0 = self._constrained_shortest_paths(source,destination,**tempDict)
+                if res0["paths"] != []:
+                    results.append(res0)
+        return results
+
+    def _constrained_shortest_paths(self, source, destination, **metrics):
         paths = []
         edges = self._filter_edges(**metrics)
         try:
             paths = list(self._path_fun(self.graph.edge_subgraph(edges),
                                         source, destination))
         except NetworkXNoPath:
-            return []
+            pass
         except NodeNotFound:
             if source == destination:
                 if source in self.graph.nodes:
-                    return [[source]]
-        return paths
+                    paths = [[source]]
+        return {"paths":paths, "metrics":metrics}
 
     def _filter_edges(self, **metrics):
         edges = self.graph.edges(data=True)
@@ -112,18 +130,4 @@ class KytosGraph:
         edges = ((u,v) for u,v,d in edges)
         return edges
 
-    def constrained_flexible(self, source, destination, **metrics): # This is very much the brute force method, bu
-        combos = []
-        length = len(metrics)
-        results = []
-        for i in range(0,length+1):
-            y = combinations(metrics.items(),length-i)
-            found = False
-            for x in y:
-                tempDict = {}
-                for k,v in x:
-                    tempDict[k] = v
-                res0 = self.constrained_shortest_paths(source,destination,**tempDict)
-                if res0 != []:
-                    results.append((res0,tempDict))
-        return results
+    

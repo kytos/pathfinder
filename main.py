@@ -89,6 +89,22 @@ class Main(KytosNApp):
         paths = self._filter_paths(paths, desired, undesired)
         return jsonify({'paths': paths})
 
+    @rest('v3/', methods=['POST'])
+    def shortest_constrained_path(self):
+        """Get the set of shortest paths between the source and destination."""
+        data = request.get_json()
+
+        source = data.get('source')
+        destination = data.get('destination')
+        flexible = data.get('flexible', False)
+        metrics = data.get('metrics',{})
+
+        paths = self.graph.shortest_paths(source, destination,
+                                              parameter)
+
+        paths = self._filter_paths(paths, desired, undesired)
+        return jsonify({'paths': paths})
+
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
         """Update the graph when the network topology was updated.
