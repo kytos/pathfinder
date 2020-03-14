@@ -1,4 +1,18 @@
-def TestKytosGraph3(TestCase)
+"""Module to test the KytosGraph in graph.py."""
+from unittest import TestCase
+from unittest.mock import Mock
+
+import networkx as nx
+
+# module under test
+from graph import KytosGraph
+
+# Core modules to import
+from kytos.core.switch import Switch
+from kytos.core.interface import Interface
+from kytos.core.link import Link
+
+class TestKytosGraph3(TestCase):
     def setup(self):
         """Setup for most tests"""
         switches, links = self.generateTopology()
@@ -42,6 +56,7 @@ def TestKytosGraph3(TestCase)
         #Arrange
         #Act
         #Assert
+        self.assertEqual(1,1)
  
     def test_path10(self):
         """Tests paths from User 3 to User 4, such that a non-shortest path is not in the
@@ -49,6 +64,7 @@ def TestKytosGraph3(TestCase)
         #Arrange
         #Act
         #Assert
+        self.assertEqual(1,1)
  
     def test_path11(self):
         """Tests paths from User 1 to User 4, such that a non-shortest path is not in the
@@ -56,13 +72,15 @@ def TestKytosGraph3(TestCase)
         #Arrange
         #Act
         #Assert
+        self.assertEqual(1,1)
  
     def test_path12(self):
         """Tests paths from User 1 to User 2, such that a non-shortest path is not in the
         result set"""
         #Arrange
         #Act
-        #Assert"""
+        #Assert
+        self.assertEqual(1,1)
 
     def test_path13(self):
         """Tests paths between User 1 and User 4, such that the shortest path is in the result set"""
@@ -73,7 +91,8 @@ def TestKytosGraph3(TestCase)
         result = self.get_path(users[0], users[1])
         print(str(result))
         #Assert
-        self.assertEqual(1, 1)
+        self.assertEqual(1,1)
+        
         
     @staticmethod
     def createSwitch(name,switches):
@@ -81,22 +100,16 @@ def TestKytosGraph3(TestCase)
         print("Creating Switch: ", name)
 
     @staticmethod
-    def createLink(name = None, interface_a, interface_b, interfaces, links):
+    def createLink(interface_a, interface_b, interfaces, links):
         compounded = "{}|{}".format(interface_a, interface_b)
-        final_name = ""
-
-        if (name is None):
-            final_name = compounded
-        else:
-            final_name = name
-
+        final_name = compounded
         links[final_name] = Link(interfaces[interface_a], interfaces[interface_b])
         print("Creating Link: ", final_name)
 
     @staticmethod
-    def addMetadataToLink(link, metrics):
-        links[link].extend_metadata(metrics)
-
+    def addMetadataToLink(interface_a, interface_b, metrics, links):
+        compounded = "{}|{}".format(interface_a, interface_b)
+        links[compounded].extend_metadata(metrics)
 
     @staticmethod
     def addInterfacesToSwitch(count,switch,interfaces):
@@ -106,6 +119,7 @@ def TestKytosGraph3(TestCase)
             iFace = Interface(str1,x,switch)
             interfaces[str1] = iFace
             switch.update_interface(iFace)
+
 
     @staticmethod
     def generateTopology():
@@ -131,10 +145,26 @@ def TestKytosGraph3(TestCase)
         TestKytosGraph3.createLink("User1:1", "S2:1", interfaces, links)
         TestKytosGraph3.createLink("User1:2", "S5:1", interfaces, links)
         TestKytosGraph3.createLink("User1:3", "S4:1", interfaces, links)
-        TestKytosGraph3.createLink("S2:1", "S3:1", interfaces, links)
-        TestKytosGraph3.createLink("S3:2", "S4:2", interfaces, links)
+        TestKytosGraph3.createLink("S2:2", "User2:1", interfaces, links)
+        TestKytosGraph3.createLink("User2:2", "S4:2", interfaces, links)
         TestKytosGraph3.createLink("S5:2", "S4:3", interfaces, links)
-        TestKytosGraph3.createLink("S3:3", "S4:3", interfaces, links)
+        TestKytosGraph3.createLink("User2:3", "S4:3", interfaces, links)
+
+        TestKytosGraph3.addMetadataToLink("User1:1", "S2:1", {"reliability": 3, "ownership": "B",
+                                        "delay": 30, "bandwidth": 10}, links)
+        TestKytosGraph3.addMetadataToLink("User1:2", "S5:1", {"reliability": 1, "ownership": "A",
+                                        "delay": 5, "bandwidth": 50}, links)
+        TestKytosGraph3.addMetadataToLink("User1:3", "S4:1", {"reliability": 3, "ownership": "A",
+                                        "delay": 60, "bandwidth": 10}, links)
+        TestKytosGraph3.addMetadataToLink("S2:2", "User2:1", {"reliability": 3, "ownership": "B",
+                                        "delay": 30, "bandwidth": 10}, links)  
+        TestKytosGraph3.addMetadataToLink("User2:2", "S4:2", {"reliability": 3, "ownership": "B",
+                                        "delay": 30, "bandwidth": 10}, links)      
+        TestKytosGraph3.addMetadataToLink("S5:2", "S4:3", {"reliability": 1, "ownership": "A",
+                                        "delay": 10, "bandwidth": 50}, links)          
+        TestKytosGraph3.addMetadataToLink("User2:3", "S4:3", {"reliability": 3, "ownership": "A",
+                                        "delay": 29, "bandwidth": 10}, links)                                                                                                                                                
+        return (switches, links)
 
 
 
