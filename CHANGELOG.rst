@@ -58,6 +58,38 @@ Fixed
 - Fixed some linter issues.
 
 
+Added
+=====
+
+Changed
+=======
+
+Deprecated
+==========
+
+Removed
+=======
+
+Fixed
+=====
+
+Security
+========
+
+
+[2.2.2] - 2020-03-11
+********************
+Added
+=====
+- Log error message when networkx package isn't installed.
+- Updated __init__.py file in tests folder to solve bug when running tests.
+
+Fixed
+=====
+- Fixed Scrutinizer coverage error.
+- Fixed some linter issues.
+
+
 [2.2.1] - 2019-03-15
 ********************
 Changed

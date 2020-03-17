@@ -22,7 +22,7 @@ if 'bdist_wheel' in sys.argv:
 BASE_ENV = Path(os.environ.get('VIRTUAL_ENV', '/'))
 
 NAPP_NAME = 'pathfinder'
-NAPP_VERSION = '2.2.3'
+NAPP_VERSION = '3.0.0'
 
 # Kytos var folder
 VAR_PATH = BASE_ENV / 'var' / 'lib' / 'kytos'
@@ -234,7 +234,7 @@ class DevelopMode(develop):
             shutil.rmtree(str(ENABLED_PATH), ignore_errors=True)
         else:
             self._create_folder_symlinks()
-            # self._create_file_symlinks()
+            self._create_file_symlinks()
             KytosInstall.enable_core_napps()
 
     @staticmethod
