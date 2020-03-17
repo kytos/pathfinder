@@ -51,16 +51,18 @@ class TestKytosGraph3(TestCase):
 
 
     def test_path9(self):
-        """Tests paths from User 1 to User 4 and back to User 1, such that the shortest path
-        is in the result set"""
+        """Tests to see if an illegal path is not in the set of paths that use only edges owned by A."""
         #Arrange
+        self.test_setup()
+        illegal_path = ['User1', 'User1:1', 'S2:1', 'S2', 'S2:2', 'User2:1', 'User2']
         #Act
+        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{"ownership":"A"})
         #Assert
-        self.assertEqual(1,1)
+        self.assertNotIn(illegal_path, result)
  
     def test_path10(self):
-        """Tests paths from User 3 to User 4, such that a non-shortest path is not in the
-        result set"""
+        """Tests to see if an illegal path is not in teh set of paths that use only edges with good
+        or excellent reliability"""
         #Arrange
         #Act
         #Assert
