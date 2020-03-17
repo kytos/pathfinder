@@ -61,10 +61,12 @@ class TestKytosGraph3(TestCase):
         self.assertNotIn(illegal_path, result)
  
     def test_path10(self):
-        """Tests to see if an illegal path is not in teh set of paths that use only edges with good
+        """Tests to see if an illegal path is not in the set of paths that use only edges with good
         or excellent reliability"""
         #Arrange
+        self.test_setup()
         #Act
+        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{"reliability":"3"})
         #Assert
         self.assertEqual(1,1)
  
