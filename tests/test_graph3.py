@@ -61,14 +61,24 @@ class TestKytosGraph3(TestCase):
         self.assertNotIn(illegal_path, result)
  
     def test_path10(self):
-        """Tests to see if an illegal path is not in the set of paths that use only edges with good
-        or excellent reliability"""
+        """Tests to see if the edges used in the paths of the result set do not have poor reliability"""
         #Arrange
         self.test_setup()
+        reliabilities = []
+        poor_reliability = 1
+        key = "reliability"
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{"reliability":"3"})
+        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{"reliability":3})
+
+        for path in result[0]["paths"]:
+            for i in range(1, len(path)):
+                endpoint_a = path[i-1]
+                endpoint_b = path[i]
+                meta_data = self.graph.get_metadata_from_link(endpoint_a, endpoint_b)
+                if meta_data and key in meta_data.keys():
+                    reliabilities.append(meta_data[key])
         #Assert
-        self.assertEqual(1,1)
+        self.assertNotIn(poor_reliability, reliabilities)
  
     def test_path11(self):
         """Tests paths from User 1 to User 4, such that a non-shortest path is not in the
