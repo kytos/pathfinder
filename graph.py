@@ -73,9 +73,9 @@ class KytosGraph:
                     self.graph[endpoint_a][endpoint_b][key] = value
 
     def get_metadata_from_link(self, endpoint_a, endpoint_b):
-        """returns the metadata of a link, or an empty dictionary if the link was not found."""
+        """Return the metadata of a link."""
         return self.graph.edges[endpoint_a, endpoint_b]
-
+            
     @staticmethod
     def _remove_switch_hops(circuit):
         """Remove switch hops from a circuit hops list."""
