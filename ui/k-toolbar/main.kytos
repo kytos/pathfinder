@@ -14,6 +14,56 @@
         </k-button>
 
       </k-accordion-item>
+      <k-accordion-item title="Best Constrained Path">
+        <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+          :value.sync="source"></k-dropdown>
+        <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+          :value.sync ="destination"></k-dropdown>
+
+        <k-checkbox icon="circle-o" title="Bandwidth:"
+        :model.sync = "checkedList" :value = "'bandwidth'"></k-checkbox>
+
+        <k-slider icon="circle-o"
+        :action="function (val) {metrics.bandwidth = parseInt(val)}"></k-slider>
+
+        <k-checkbox icon="circle-o" title="Reliability:"
+        :model.sync = "checkedList" :value = "'reliability'"></k-checkbox>
+
+        <k-slider icon="circle-o"
+        :action="function (val) {metrics.reliability = parseInt(val)}"></k-slider>
+
+        <k-checkbox icon="circle-o" title="Delay:"
+        :model.sync = "checkedList" :value = "'delay'"></k-checkbox>
+
+        <k-slider icon="circle-o"
+        :action="function (val) {metrics.delay = parseInt(val)}"></k-slider>
+
+        <k-checkbox icon="circle-o" title="Utilization:"
+        :model.sync = "checkedList" :value = "'utilization'"></k-checkbox>
+
+        <k-slider icon="circle-o"
+        :action="function (val) {metrics.utilization = parseInt(val)}"></k-slider>
+
+        <k-checkbox icon="circle-o" title="Priority:"
+        :model.sync = "checkedList" :value = "'priority'"></k-checkbox>
+
+        <k-slider icon="circle-o"
+        :action="function (val) {metrics.priority = parseInt(val)}"></k-slider>
+
+        <k-checkbox icon="circle-o" title="Ownership:"
+        :model.sync = "checkedList" :value = "'ownership'"></k-checkbox>
+
+        <k-input icon="circle-o"
+        :value.sync="metrics.ownership"></k-input>
+
+        <k-slider icon="circle-o" :max = 6
+        :action="function (val) {flexible = parseInt(val)}"></k-slider>
+
+        <k-button icon="search" title="Search" :on_click="get_constrained_paths">
+        </k-button>
+
+      </k-accordion-item>
+
     <k-accordion>
   </k-toolbar-item>
 </template>
@@ -38,6 +88,39 @@ module.exports = {
         success: function(data) {
             if (data['paths'][0] !== undefined){
                 self.paths = data['paths'][0].hops;
+            } else {
+                self.paths = []
+            }
+          self.show();
+        }
+      });
+
+    },
+    get_constrained_paths (){
+      var self = this
+      var metrics = {}
+      var checked
+      for(checked of self.checkedList)
+      {
+        metrics[checked] = self.metrics[checked]
+      }
+
+      $.ajax({
+        async: true,
+        dataType: "json",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({"source": self.source,
+               "destination": self.destination,
+               "metrics": metrics,
+               "flexible": self.flexible,
+               "checks": self.checkedList
+               }),
+
+        url: this.$kytos_server_api + "kytos/pathfinder/v3",
+        success: function(data) {
+            if (data[0] !== undefined){
+                self.paths = data[0]['paths'][0];
             } else {
                 self.paths = []
             }
@@ -106,7 +189,17 @@ module.exports = {
       source: "",
       destination: "",
       desired_links: [],
-      undesired_links: []
+      undesired_links: [],
+      checkedList: [],
+      metrics:{
+        bandwidth: 1,
+        reliability: 2,
+        delay: 3,
+        utilization: 4,
+        priority: 5,
+        ownership: "yo"
+      },
+      flexible: 6
     }
   }
 }
