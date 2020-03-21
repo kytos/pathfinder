@@ -113,8 +113,7 @@ module.exports = {
         data: JSON.stringify({"source": self.source,
                "destination": self.destination,
                "metrics": metrics,
-               "flexible": self.flexible,
-               "checks": self.checkedList
+               "flexible": self.flexible
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v3",
