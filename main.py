@@ -96,14 +96,13 @@ class Main(KytosNApp):
 
         source = data.get('source')
         destination = data.get('destination')
-        flexible = data.get('flexible', False)
+        flexible = data.get('flexible', 0)
         metrics = data.get('metrics',{})
 
-        paths = self.graph.shortest_paths(source, destination,
-                                              parameter)
-
-        paths = self._filter_paths(paths, desired, undesired)
-        return jsonify({'paths': paths})
+        paths = self.graph.constrained_flexible_paths(source, destination,
+                                              flexible, **metrics)
+                                            
+        return jsonify(paths)
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
