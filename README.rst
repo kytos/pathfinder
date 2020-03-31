@@ -30,6 +30,12 @@ repository. To install this NApp, run:
 
    $ kytos napps install kytos/pathfinder
 
+############
+Requirements
+############
+
+- kytos/topology
+
 ######
 Events
 ######
