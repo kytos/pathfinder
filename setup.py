@@ -177,7 +177,7 @@ class DevelopMode(develop):
             shutil.rmtree(str(ENABLED_PATH), ignore_errors=True)
         else:
             self._create_folder_symlinks()
-            self._create_file_symlinks()
+            # self._create_file_symlinks()
             KytosInstall.enable_core_napps()
 
     @staticmethod
@@ -197,12 +197,12 @@ class DevelopMode(develop):
         dst = ENABLED_PATH / Path('kytos', NAPP_NAME)
         symlink_if_different(dst, src)
 
-    @staticmethod
-    def _create_file_symlinks():
-        """Symlink to required files."""
-        src = ENABLED_PATH / '__init__.py'
-        dst = CURRENT_DIR / 'napps' / '__init__.py'
-        symlink_if_different(src, dst)
+    # @staticmethod
+    # def _create_file_symlinks():
+    #     """Symlink to required files."""
+    #     src = ENABLED_PATH / '__init__.py'
+    #     dst = CURRENT_DIR / 'napps' / '__init__.py'
+    #     symlink_if_different(src, dst)
 
 
 def symlink_if_different(path, target):
