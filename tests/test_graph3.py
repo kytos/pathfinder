@@ -140,7 +140,6 @@ class TestGraph3(TestKytosGraph):
         compounded = "{}|{}".format(interface_a, interface_b)
         final_name = compounded
         links[final_name] = Link(interfaces[interface_a], interfaces[interface_b])
-        print("Creating Link: ", final_name)
 
     @staticmethod
     def addMetadataToLink(interface_a, interface_b, metrics, links):
