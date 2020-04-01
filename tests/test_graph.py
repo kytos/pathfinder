@@ -24,28 +24,28 @@ class TestKytosGraph(TestCase):
         self.graph.set_path_fun(nx.shortest_simple_paths)
 
     def get_path(self, source, destination):
-        print(f"Attempting path between {source} and {destination}.")
+        # print(f"Attempting path between {source} and {destination}.")
         results = self.graph.shortest_paths(source,destination)
-        print(f"Results: {results}")
+        # print(f"Results: {results}")
         return results
 
     def get_path_constrained(self, source, destination, flexible = 0, **metrics):
-        print(f"Attempting path between {source} and {destination}.")
-        print(f"Filtering with the following metrics: {metrics}")
-        print(f"Flexible is set to {flexible}")
+        # print(f"Attempting path between {source} and {destination}.")
+        # print(f"Filtering with the following metrics: {metrics}")
+        # print(f"Flexible is set to {flexible}")
         results = self.graph.constrained_flexible_paths(source,destination,flexible,**metrics)
-        print(f"Results: {results}")
+        # print(f"Results: {results}")
         return results
 
     def test_setup(self):
         """Provides information on default test setup"""
         self.setup()
-        print("Nodes in graph")
-        for node in self.graph.graph.nodes:
-            print(node)
-        print("Edges in graph")
-        for edge in self.graph.graph.edges(data=True):
-            print(edge)
+        # print("Nodes in graph")
+        # for node in self.graph.graph.nodes:
+        #     print(node)
+        # print("Edges in graph")
+        # for edge in self.graph.graph.edges(data=True):
+        #     print(edge)
 
     @staticmethod
     def generateTopology():
@@ -58,13 +58,13 @@ class TestKytosGraph(TestCase):
     @staticmethod
     def createSwitch(name,switches):
         switches[name] = Switch(name)
-        print("Creating Switch: ", name)
+        # print("Creating Switch: ", name)
 
     @staticmethod
     def addInterfaces(count,switch,interfaces):
         for x in range(1,count + 1):
             str1 = "{}:{}".format(switch.dpid,x)
-            print("Creating Interface: ", str1)
+            # print("Creating Interface: ", str1)
             iFace = Interface(str1,x,switch)
             interfaces[str1] = iFace
             switch.update_interface(iFace)
