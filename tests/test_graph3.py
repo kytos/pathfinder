@@ -14,7 +14,8 @@ from kytos.core.switch import Switch
 from kytos.core.interface import Interface
 from kytos.core.link import Link
 
-class TestKytosGraph3(TestKytosGraph):
+class TestGraph3(TestKytosGraph):
+
     def test_path9(self):
         """Tests to see if an illegal path is not in the set of paths that use only edges owned by A."""
         #Arrange
@@ -167,42 +168,42 @@ class TestKytosGraph3(TestKytosGraph):
         interfaces = {}
         links = {}
 
-        TestKytosGraph3.createSwitch("User1", switches)
-        TestKytosGraph3.addInterfacesToSwitch(3, switches["User1"], interfaces)
+        TestGraph3.createSwitch("User1", switches)
+        TestGraph3.addInterfacesToSwitch(3, switches["User1"], interfaces)
 
-        TestKytosGraph3.createSwitch("S2", switches)
-        TestKytosGraph3.addInterfacesToSwitch(2, switches["S2"], interfaces)
+        TestGraph3.createSwitch("S2", switches)
+        TestGraph3.addInterfacesToSwitch(2, switches["S2"], interfaces)
 
-        TestKytosGraph3.createSwitch("User2", switches)
-        TestKytosGraph3.addInterfacesToSwitch(3, switches["User2"], interfaces)
+        TestGraph3.createSwitch("User2", switches)
+        TestGraph3.addInterfacesToSwitch(3, switches["User2"], interfaces)
 
-        TestKytosGraph3.createSwitch("S4", switches)
-        TestKytosGraph3.addInterfacesToSwitch(4, switches["S4"], interfaces)
+        TestGraph3.createSwitch("S4", switches)
+        TestGraph3.addInterfacesToSwitch(4, switches["S4"], interfaces)
 
-        TestKytosGraph3.createSwitch("S5", switches)
-        TestKytosGraph3.addInterfacesToSwitch(2, switches["S5"], interfaces)
+        TestGraph3.createSwitch("S5", switches)
+        TestGraph3.addInterfacesToSwitch(2, switches["S5"], interfaces)
 
-        TestKytosGraph3.createLink("User1:1", "S2:1", interfaces, links)
-        TestKytosGraph3.createLink("User1:2", "S5:1", interfaces, links)
-        TestKytosGraph3.createLink("User1:3", "S4:1", interfaces, links)
-        TestKytosGraph3.createLink("S2:2", "User2:1", interfaces, links)
-        TestKytosGraph3.createLink("User2:2", "S4:2", interfaces, links)
-        TestKytosGraph3.createLink("S5:2", "S4:3", interfaces, links)
-        TestKytosGraph3.createLink("User2:3", "S4:3", interfaces, links)
+        TestGraph3.createLink("User1:1", "S2:1", interfaces, links)
+        TestGraph3.createLink("User1:2", "S5:1", interfaces, links)
+        TestGraph3.createLink("User1:3", "S4:1", interfaces, links)
+        TestGraph3.createLink("S2:2", "User2:1", interfaces, links)
+        TestGraph3.createLink("User2:2", "S4:2", interfaces, links)
+        TestGraph3.createLink("S5:2", "S4:3", interfaces, links)
+        TestGraph3.createLink("User2:3", "S4:3", interfaces, links)
 
-        TestKytosGraph3.addMetadataToLink("User1:1", "S2:1", {"reliability": 3, "ownership": "B",
+        TestGraph3.addMetadataToLink("User1:1", "S2:1", {"reliability": 3, "ownership": "B",
                                         "delay": 30, "bandwidth": 20}, links)
-        TestKytosGraph3.addMetadataToLink("User1:2", "S5:1", {"reliability": 1, "ownership": "A",
+        TestGraph3.addMetadataToLink("User1:2", "S5:1", {"reliability": 1, "ownership": "A",
                                         "delay": 5, "bandwidth": 50}, links)
-        TestKytosGraph3.addMetadataToLink("User1:3", "S4:1", {"reliability": 3, "ownership": "A",
+        TestGraph3.addMetadataToLink("User1:3", "S4:1", {"reliability": 3, "ownership": "A",
                                         "delay": 60, "bandwidth": 10}, links)
-        TestKytosGraph3.addMetadataToLink("S2:2", "User2:1", {"reliability": 3, "ownership": "B",
+        TestGraph3.addMetadataToLink("S2:2", "User2:1", {"reliability": 3, "ownership": "B",
                                         "delay": 30, "bandwidth": 20}, links)  
-        TestKytosGraph3.addMetadataToLink("User2:2", "S4:2", {"reliability": 3, "ownership": "B",
+        TestGraph3.addMetadataToLink("User2:2", "S4:2", {"reliability": 3, "ownership": "B",
                                         "delay": 30, "bandwidth": 10}, links)      
-        TestKytosGraph3.addMetadataToLink("S5:2", "S4:3", {"reliability": 1, "ownership": "A",
+        TestGraph3.addMetadataToLink("S5:2", "S4:3", {"reliability": 1, "ownership": "A",
                                         "delay": 10, "bandwidth": 50}, links)          
-        TestKytosGraph3.addMetadataToLink("User2:3", "S4:3", {"reliability": 3, "ownership": "A",
+        TestGraph3.addMetadataToLink("User2:3", "S4:3", {"reliability": 3, "ownership": "A",
                                         "delay": 29, "bandwidth": 10}, links)                                                                                                                                                
         return (switches, links)
 
