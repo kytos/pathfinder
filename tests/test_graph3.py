@@ -7,49 +7,14 @@ import networkx as nx
 # module under test
 from graph import KytosGraph
 
+from tests.test_graph import TestKytosGraph
+
 # Core modules to import
 from kytos.core.switch import Switch
 from kytos.core.interface import Interface
 from kytos.core.link import Link
 
-class TestKytosGraph3(TestCase):
-    def setup(self):
-        """Setup for most tests"""
-        switches, links = self.generateTopology()
-        self.graph = KytosGraph()
-        self.graph.clear()
-        self.graph.update_nodes(switches)
-        self.graph.update_links(links)
-        self.graph.set_path_fun(nx.shortest_simple_paths)
-
-    def test_setup(self):
-        """Provides information on default test setup"""
-        self.setup()
-        print("Nodes in graph")
-        for node in self.graph.graph.nodes:
-            print(node)
-        print("Edges in graph")
-        for edge in self.graph.graph.edges(data=True):
-            print(edge)
-
-    def get_path(self, source, destination):
-        print(f"Attempting path between {source} and {destination}.")
-        result = self.graph.shortest_paths(source,destination)
-        print(f"Path result: {result}")
-        return result
-
-    def get_path_constrained(self, source, destination, flexible = False, **metrics):
-        print(f"Attempting path between {source} and {destination}.")
-        print(f"Filtering with the following metrics: {metrics}")
-        print(f"Flexible is set to {flexible}")
-        if flexible:
-            result = self.graph.constrained_flexible(source,destination,**metrics)
-        else:
-            result = self.graph.constrained_shortest_paths(source,destination, **metrics)
-        print(f"Path result: {result}")
-        return result
-
-
+class TestKytosGraph3(TestKytosGraph):
     def test_path9(self):
         """Tests to see if an illegal path is not in the set of paths that use only edges owned by A."""
         #Arrange
