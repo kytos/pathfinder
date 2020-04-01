@@ -153,20 +153,20 @@ class TestGraph3(TestKytosGraph):
         interfaces = {}
         links = {}
 
-        TestGraph3.createSwitch("User1", switches)
-        TestGraph3.addInterfacesToSwitch(3, switches["User1"], interfaces)
+        TestKytosGraph.createSwitch("User1", switches)
+        TestKytosGraph.addInterfaces(3, switches["User1"], interfaces)
 
-        TestGraph3.createSwitch("S2", switches)
-        TestGraph3.addInterfacesToSwitch(2, switches["S2"], interfaces)
+        TestKytosGraph.createSwitch("S2", switches)
+        TestKytosGraph.addInterfaces(2, switches["S2"], interfaces)
 
-        TestGraph3.createSwitch("User2", switches)
-        TestGraph3.addInterfacesToSwitch(3, switches["User2"], interfaces)
+        TestKytosGraph.createSwitch("User2", switches)
+        TestKytosGraph.addInterfaces(3, switches["User2"], interfaces)
 
-        TestGraph3.createSwitch("S4", switches)
-        TestGraph3.addInterfacesToSwitch(4, switches["S4"], interfaces)
+        TestKytosGraph.createSwitch("S4", switches)
+        TestKytosGraph.addInterfaces(4, switches["S4"], interfaces)
 
-        TestGraph3.createSwitch("S5", switches)
-        TestGraph3.addInterfacesToSwitch(2, switches["S5"], interfaces)
+        TestKytosGraph.createSwitch("S5", switches)
+        TestKytosGraph.addInterfaces(2, switches["S5"], interfaces)
 
         TestGraph3.createLink("User1:1", "S2:1", interfaces, links)
         TestGraph3.createLink("User1:2", "S5:1", interfaces, links)
