@@ -134,11 +134,6 @@ class TestGraph3(TestKytosGraph):
         has_bad_metrics = has_bad_bandwidth or has_bad_delay
         #Assert
         self.assertEqual(has_bad_metrics, False)
-        
-    @staticmethod
-    def createSwitch(name,switches):
-        switches[name] = Switch(name)
-        print("Creating Switch: ", name)
 
     @staticmethod
     def createLink(interface_a, interface_b, interfaces, links):
@@ -151,16 +146,6 @@ class TestGraph3(TestKytosGraph):
     def addMetadataToLink(interface_a, interface_b, metrics, links):
         compounded = "{}|{}".format(interface_a, interface_b)
         links[compounded].extend_metadata(metrics)
-
-    @staticmethod
-    def addInterfacesToSwitch(count,switch,interfaces):
-        for x in range(1,count + 1):
-            str1 = "{}:{}".format(switch.dpid,x)
-            print("Creating Interface: ", str1)
-            iFace = Interface(str1,x,switch)
-            interfaces[str1] = iFace
-            switch.update_interface(iFace)
-
 
     @staticmethod
     def generateTopology():
