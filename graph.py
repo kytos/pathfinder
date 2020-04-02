@@ -11,6 +11,20 @@ except ImportError:
 
 from itertools import combinations
 
+class Filter:
+    def __init__(self, filter_type, filter_function):
+        self._filter_type = filter_type
+        self._filter_fun = filter_function
+
+    def run(self,value, items):
+        if isinstance(value, self._filter_type):
+            fun0 = self._filter_fun(value)
+            return filter(fun0, items)
+        else:
+            raise TypeError(f"Expected type: {self._filter_type}")
+
+
+
 class KytosGraph:
     """Class responsible for the graph generation."""
 
@@ -25,12 +39,12 @@ class KytosGraph:
             return lambda x: (lambda y: y[2].get(metric,x) == x)
 
 
-        self._filter_fun_dict["ownership"] = filterEEQ("ownership")
-        self._filter_fun_dict["bandwidth"] = filterGEQ("bandwidth")
-        self._filter_fun_dict["priority"] = filterGEQ("priority")
-        self._filter_fun_dict["reliability"] = filterGEQ("reliability")
-        self._filter_fun_dict["utilization"] = filterLEQ("utilization")
-        self._filter_fun_dict["delay"] = filterLEQ("delay")
+        self._filter_fun_dict["ownership"] = Filter(str,filterEEQ("ownership"))
+        self._filter_fun_dict["bandwidth"] = Filter((int,float),filterGEQ("bandwidth"))
+        self._filter_fun_dict["priority"] = Filter((int,float),filterGEQ("priority"))
+        self._filter_fun_dict["reliability"] = Filter((int,float),filterGEQ("reliability"))
+        self._filter_fun_dict["utilization"] = Filter((int,float),filterLEQ("utilization"))
+        self._filter_fun_dict["delay"] = Filter((int,float),filterLEQ("delay"))
         self._path_fun = nx.all_shortest_paths
         
 
@@ -112,7 +126,9 @@ class KytosGraph:
 
     def _constrained_shortest_paths(self, source, destination, **metrics):
         paths = []
-        edges = self._filter_edges(**metrics)
+        edges = self.graph.edges(data=True)
+        edges = self._filter_edges(edges,**metrics)
+        edges = ((u,v) for u,v,d in edges)
         try:
             paths = list(self._path_fun(self.graph.edge_subgraph(edges),
                                         source, destination))
@@ -124,14 +140,12 @@ class KytosGraph:
                     paths = [[source]]
         return {"paths":paths, "metrics":metrics}
 
-    def _filter_edges(self, **metrics):
-        edges = self.graph.edges(data=True)
+    def _filter_edges(self, edges, **metrics):
         for metric, value in metrics.items():
-            fun0 = self._filter_fun_dict.get(metric, None)
-            if fun0 != None:
-                fun1 = fun0(value)
-                edges = filter(fun1,edges)
-        edges = ((u,v) for u,v,d in edges)
+            fil = self._filter_fun_dict.get(metric, None)
+            if fil != None:
+                try:
+                    edges = fil.run(value,edges)
+                except TypeError as err:
+                    raise TypeError(f"Error in {metric} filter: {err}")
         return edges
-
-    
