@@ -37,6 +37,9 @@ class TestKytosGraph(TestCase):
         # print(f"Results: {results}")
         return results
 
+    def get_path_constrained2(self, source, destination, metrics, flexible_metrics):
+        return self.graph.constrained_flexible_paths2(source, destination, metrics, flexible_metrics)
+
     def test_setup(self):
         """Provides information on default test setup"""
         self.setup()
