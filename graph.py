@@ -114,7 +114,6 @@ class KytosGraph:
         results = []
         for i in range(0,flexible+1):
             y = combinations(metrics.items(),length-i)
-            found = False
             for x in y:
                 tempDict = {}
                 for k,v in x:
@@ -139,6 +138,37 @@ class KytosGraph:
                 if source in self.graph.nodes:
                     paths = [[source]]
         return {"paths":paths, "metrics":metrics}
+
+    def constrained_flexible_paths2(self, source, destination, metrics, flexible_metrics):
+        default_edge_list = self.graph.edges(data=True)
+        default_edge_list = self._filter_edges(default_edge_list,**metrics)
+        length = len(flexible_metrics)
+        results = []
+        for i in range(0,length+1):
+            y = combinations(flexible_metrics.items(),length-i)
+            for x in y:
+                tempDict = {}
+                for k,v in x:
+                    tempDict[k] = v
+                edges = self._filter_edges(default_edge_list,**tempDict)
+                edges = ((u,v) for u,v,d in edges)
+                res0 = self._constrained_shortest_paths2(source,destination,edges)
+                if res0 != []:
+                    results.append({"paths":res0, "metrics":{**metrics, **tempDict}})
+        return results
+
+    def _constrained_shortest_paths2(self, source, destination, edges):
+        paths = []
+        try:
+            paths = list(self._path_fun(self.graph.edge_subgraph(edges),
+                                        source, destination))
+        except NetworkXNoPath:
+            pass
+        except NodeNotFound:
+            if source == destination:
+                if source in self.graph.nodes:
+                    paths = [[source]]
+        return paths
 
     def _filter_edges(self, edges, **metrics):
         for metric, value in metrics.items():
