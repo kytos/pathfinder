@@ -98,11 +98,30 @@ class Main(KytosNApp):
         destination = data.get('destination')
         flexible = data.get('flexible', 0)
         metrics = data.get('metrics',{})
-
-        paths = self.graph.constrained_flexible_paths(source, destination,
+        try:
+            paths = self.graph.constrained_flexible_paths(source, destination,
                                               flexible, **metrics)
-                                            
-        return jsonify(paths)
+            return jsonify(paths)
+        except TypeError as err:
+            return jsonify({"error":err})
+
+
+    @rest('v4/', methods=['POST'])
+    def shortest_constrained_path2(self):
+        """Get the set of shortest paths between the source and destination."""
+        data = request.get_json()
+
+        source = data.get('source')
+        destination = data.get('destination')
+        metrics = data.get('metrics',{})
+        flexible_metrics = data.get('flexibleMetrics', {})
+        try:
+            paths = self.graph.constrained_flexible_paths(source, destination,
+                                            metrics, flexible_metrics)
+            return jsonify(paths)
+        except TypeError as err:
+            return jsonify({"error":err})
+        
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
