@@ -107,49 +107,19 @@ class KytosGraph:
         return paths
 
     def constrained_flexible_paths(self, source, destination, flexible = 0,  **metrics):
-        combos = []
-        length = len(metrics)
+        return self.constrained_flexible_paths2(source, destination, {}, metrics, flexible)
+
+    def constrained_flexible_paths2(self, source, destination, metrics, flexible_metrics, flexible = None):
+        default_edge_list = self.graph.edges(data=True)
+        default_edge_list = self._filter_edges(default_edge_list,**metrics)
+        length = len(flexible_metrics)
+        if flexible is None:
+            flexible = length
         flexible = max(0,flexible)
         flexible = min(length,flexible)
         results = []
         stop = False
         for i in range(0,flexible+1):
-            if stop:
-                break
-            y = combinations(metrics.items(),length-i)
-            for x in y:
-                tempDict = {}
-                for k,v in x:
-                    tempDict[k] = v
-                res0 = self._constrained_shortest_paths(source,destination,**tempDict)
-                if res0["paths"] != []:
-                    results.append(res0)
-                    stop = True
-        return results
-
-    def _constrained_shortest_paths(self, source, destination, **metrics):
-        paths = []
-        edges = self.graph.edges(data=True)
-        edges = self._filter_edges(edges,**metrics)
-        edges = ((u,v) for u,v,d in edges)
-        try:
-            paths = list(self._path_fun(self.graph.edge_subgraph(edges),
-                                        source, destination))
-        except NetworkXNoPath:
-            pass
-        except NodeNotFound:
-            if source == destination:
-                if source in self.graph.nodes:
-                    paths = [[source]]
-        return {"paths":paths, "metrics":metrics}
-
-    def constrained_flexible_paths2(self, source, destination, metrics, flexible_metrics):
-        default_edge_list = self.graph.edges(data=True)
-        default_edge_list = self._filter_edges(default_edge_list,**metrics)
-        length = len(flexible_metrics)
-        results = []
-        stop = False
-        for i in range(0,length+1):
             if stop:
                 break
             y = combinations(flexible_metrics.items(),length-i)
@@ -159,13 +129,13 @@ class KytosGraph:
                     tempDict[k] = v
                 edges = self._filter_edges(default_edge_list,**tempDict)
                 edges = ((u,v) for u,v,d in edges)
-                res0 = self._constrained_shortest_paths2(source,destination,edges)
+                res0 = self._constrained_shortest_paths(source,destination,edges)
                 if res0 != []:
                     results.append({"paths":res0, "metrics":{**metrics, **tempDict}})
                     stop = True
         return results
 
-    def _constrained_shortest_paths2(self, source, destination, edges):
+    def _constrained_shortest_paths(self, source, destination, edges):
         paths = []
         try:
             paths = list(self._path_fun(self.graph.edge_subgraph(edges),
