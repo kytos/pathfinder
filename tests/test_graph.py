@@ -33,12 +33,12 @@ class TestKytosGraph(TestCase):
         # print(f"Attempting path between {source} and {destination}.")
         # print(f"Filtering with the following metrics: {metrics}")
         # print(f"Flexible is set to {flexible}")
-        results = self.graph.constrained_flexible_paths(source,destination,flexible,**metrics)
+        results = self.graph.constrained_flexible_paths(source, destination,{},metrics,flexible)
         # print(f"Results: {results}")
         return results
 
     def get_path_constrained2(self, source, destination, metrics, flexible_metrics):
-        return self.graph.constrained_flexible_paths2(source, destination, metrics, flexible_metrics)
+        return self.graph.constrained_flexible_paths(source, destination, metrics, flexible_metrics)
 
     def test_setup(self):
         """Provides information on default test setup"""
