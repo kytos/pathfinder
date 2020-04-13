@@ -106,10 +106,7 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(self, source, destination, flexible = 0,  **metrics):
-        return self.constrained_flexible_paths2(source, destination, {}, metrics, flexible)
-
-    def constrained_flexible_paths2(self, source, destination, metrics, flexible_metrics, flexible = None):
+    def constrained_flexible_paths(self, source, destination, metrics, flexible_metrics, flexible = None):
         default_edge_list = self.graph.edges(data=True)
         default_edge_list = self._filter_edges(default_edge_list,**metrics)
         length = len(flexible_metrics)

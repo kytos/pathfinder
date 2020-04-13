@@ -22,7 +22,7 @@ class TestGraph3(TestKytosGraph):
         self.test_setup()
         illegal_path = ['User1', 'User1:1', 'S2:1', 'S2', 'S2:2', 'User2:1', 'User2']
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{"ownership":"A"})
+        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {"ownership":"A"}, 0)
         #Assert
         self.assertNotIn(illegal_path, result)
  
@@ -34,7 +34,7 @@ class TestGraph3(TestKytosGraph):
         poor_reliability = 1
         key = "reliability"
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{key: 3})
+        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: 3}, 0)
 
         if result:
             for path in result[0]["paths"]:
@@ -55,7 +55,7 @@ class TestGraph3(TestKytosGraph):
         delay_cap = 29
         key = "delay"
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{key: delay_cap})
+        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: delay_cap}, 0)
 
         if result:
             for path in result[0]["paths"]:
@@ -82,7 +82,7 @@ class TestGraph3(TestKytosGraph):
         bandwidth_floor = 20
         key = "bandwidth"
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{key: bandwidth_floor})
+        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: bandwidth_floor}, 0)
 
         if result:
             for path in result[0]["paths"]:
@@ -113,7 +113,7 @@ class TestGraph3(TestKytosGraph):
         key_b = "delay"
 
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", False, **{key_a: bandwidth_floor, key_b: delay_cap})
+        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key_a: bandwidth_floor, key_b: delay_cap}, 0)
 
         if result:
             for path in result[0]["paths"]:

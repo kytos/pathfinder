@@ -99,8 +99,7 @@ class Main(KytosNApp):
         flexible = data.get('flexible', 0)
         metrics = data.get('metrics',{})
         try:
-            paths = self.graph.constrained_flexible_paths(source, destination,
-                                              flexible, **metrics)
+            paths = self.graph.constrained_flexible_paths(source, destination,{},metrics,flexible)
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error":err})
