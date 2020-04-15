@@ -23,12 +23,12 @@ paths:
                   type: string
                   description:
                   required: true
-                  example: '00:00:00:00:00:00:01:1'
+                  example: '00:00:00:00:00:00:00:01:1'
                 destination:
                   type: string
                   description: "The destination identifier. It may be a datapath or an interface."
                   required: true
-                  example: '00:00:00:00:00:00:02:2'
+                  example: '00:00:00:00:00:00:00:02:2'
                 desired_links:
                   type: array
                   required: false
@@ -68,7 +68,7 @@ components:
     Hop:
       type: string
       description: Hop identification. Usally is a `switch.id:interface.id`.
-      example: 00:00:00:00:00:00:01:1
+      example: 00:00:00:00:00:00:00:01:1
 
     Path:
       type: object
@@ -84,9 +84,9 @@ components:
 
 examples:
   Hops:
-    - 00:00:00:00:00:00:01:1
-    - 00:00:00:00:00:00:01
-    - 00:00:00:00:00:00:01:2
-    - 00:00:00:00:00:00:02:1
-    - 00:00:00:00:00:00:02
-    - 00:00:00:00:00:00:02:2
+    - 00:00:00:00:00:00:00:01:1
+    - 00:00:00:00:00:00:00:01
+    - 00:00:00:00:00:00:00:01:2
+    - 00:00:00:00:00:00:00:02:1
+    - 00:00:00:00:00:00:00:02
+    - 00:00:00:00:00:00:00:02:2
