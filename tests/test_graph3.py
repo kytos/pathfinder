@@ -22,7 +22,7 @@ class TestGraph3(TestKytosGraph):
         self.test_setup()
         illegal_path = ['User1', 'User1:1', 'S2:1', 'S2', 'S2:2', 'User2:1', 'User2']
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {"ownership":"A"}, 0)
+        result = self.get_path_constrained("User1", "User2", 0, ownership = 'A')
         #Assert
         self.assertNotIn(illegal_path, result)
  
@@ -33,8 +33,9 @@ class TestGraph3(TestKytosGraph):
         reliabilities = []
         poor_reliability = 1
         key = "reliability"
+
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: 3}, 0)
+        result = self.get_path_constrained("User1", "User2", 0, reliability = 3)
 
         if result:
             for path in result[0]["paths"]:
@@ -44,6 +45,7 @@ class TestGraph3(TestKytosGraph):
                     meta_data = self.graph.get_metadata_from_link(endpoint_a, endpoint_b)
                     if meta_data and key in meta_data.keys():
                         reliabilities.append(meta_data[key])
+
         #Assert
         self.assertNotIn(poor_reliability, reliabilities)
  
@@ -54,8 +56,10 @@ class TestGraph3(TestKytosGraph):
         delays = []
         delay_cap = 29
         key = "delay"
+        has_bad_delay = False
+        
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: delay_cap}, 0)
+        result = self.get_path_constrained("User1", "User2", 0, delay = delay_cap)
 
         if result:
             for path in result[0]["paths"]:
@@ -66,13 +70,10 @@ class TestGraph3(TestKytosGraph):
                     if meta_data and key in meta_data.keys():
                         delays.append(meta_data[key])
 
-        has_bad_delay = False
-
+        #Assert
         for delay in delays:
             has_bad_delay = delay > delay_cap
-
-        #Assert
-        self.assertEqual(has_bad_delay, False)
+            self.assertEqual(has_bad_delay, False)
  
     def test_path12(self):
         """Tests to see if the edges used in the paths from User 1 to User 2 have at least 20 bandwidth."""
@@ -81,8 +82,10 @@ class TestGraph3(TestKytosGraph):
         bandwidths = []
         bandwidth_floor = 20
         key = "bandwidth"
+        has_bad_bandwidth = False
+        
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key: bandwidth_floor}, 0)
+        result = self.get_path_constrained("User1", "User2", 0, bandwidth = bandwidth_floor)
 
         if result:
             for path in result[0]["paths"]:
@@ -93,27 +96,27 @@ class TestGraph3(TestKytosGraph):
                     if meta_data and key in meta_data.keys():
                         bandwidths.append(meta_data[key])
 
-        has_bad_bandwidth = False
-
+        #Assert
         for bandwidth in bandwidths:
             has_bad_bandwidth = bandwidth < bandwidth_floor
-
-        #Assert
-        self.assertEqual(has_bad_bandwidth, False)
+            self.assertEqual(has_bad_bandwidth, False)
 
     def test_path13(self):
         """Tests to see if the edges used in the paths from User 1 to User 2 have at least 20 bandwidth
         and under 30 delay."""
         #Arrange
         self.test_setup()
-        metrics = []
+        bandwidths = []
+        delays = []
         bandwidth_floor = 20
         key_a = "bandwidth"
         delay_cap = 29
         key_b = "delay"
+        has_bad_bandwidth = False
+        has_bad_delay = False
 
         #Act
-        result = self.graph.constrained_flexible_paths("User1", "User2", {}, {key_a: bandwidth_floor, key_b: delay_cap}, 0)
+        result = self.get_path_constrained("User1", "User2", 0, bandwidth = bandwidth_floor, delay = delay_cap)
 
         if result:
             for path in result[0]["paths"]:
@@ -121,19 +124,19 @@ class TestGraph3(TestKytosGraph):
                     endpoint_a = path[i-1]
                     endpoint_b = path[i]
                     meta_data = self.graph.get_metadata_from_link(endpoint_a, endpoint_b)
-                    if meta_data and key in meta_data.keys():
-                        metrics.append(meta_data[key])
-
-        has_bad_bandwidth = False
-        has_bad_delay = False
-
-        for metric in metrics:
-            has_bad_bandwidth = metric[key_a] < bandwidth_floor
-            has_bad_delay = metric[key_b] > delay_cap
+                    if meta_data and key_a in meta_data.keys():
+                        bandwidths.append(meta_data[key_a])
+                    elif meta_data and key_b in meta_data.keys():
+                        delays.append(meta_data[key_b])
         
-        has_bad_metrics = has_bad_bandwidth or has_bad_delay
         #Assert
-        self.assertEqual(has_bad_metrics, False)
+        for bandwidth in bandwidths:
+            has_bad_bandwidth = bandwidth < bandwidth_floor
+            self.assertEqual(has_bad_bandwidth, False)
+
+        for delay in delays:
+            has_bad_delay = delay > delay_cap
+            self.assertEqual(has_bad_delay, False)
 
     @staticmethod
     def createLink(interface_a, interface_b, interfaces, links):
@@ -188,8 +191,6 @@ class TestGraph3(TestKytosGraph):
         TestGraph3.addMetadataToLink("S5:2", "S4:3", {"reliability": 1, "ownership": "A",
                                         "delay": 10, "bandwidth": 50}, links)          
         TestGraph3.addMetadataToLink("User2:3", "S4:3", {"reliability": 3, "ownership": "A",
-                                        "delay": 29, "bandwidth": 10}, links)                                                                                                                                                
+                                        "delay": 29, "bandwidth": 20}, links)                                                                                                                                                
+        
         return (switches, links)
-
-
-
