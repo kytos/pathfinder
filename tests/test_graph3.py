@@ -176,7 +176,7 @@ class TestGraph3(TestKytosGraph):
         TestGraph3.createLink("S2:2", "User2:1", interfaces, links)
         TestGraph3.createLink("User2:2", "S4:2", interfaces, links)
         TestGraph3.createLink("S5:2", "S4:3", interfaces, links)
-        TestGraph3.createLink("User2:3", "S4:3", interfaces, links)
+        TestGraph3.createLink("User2:3", "S4:4", interfaces, links)
 
         TestGraph3.addMetadataToLink("User1:1", "S2:1", {"reliability": 3, "ownership": "B",
                                         "delay": 30, "bandwidth": 20}, links)
@@ -190,7 +190,7 @@ class TestGraph3(TestKytosGraph):
                                         "delay": 30, "bandwidth": 10}, links)      
         TestGraph3.addMetadataToLink("S5:2", "S4:3", {"reliability": 1, "ownership": "A",
                                         "delay": 10, "bandwidth": 50}, links)          
-        TestGraph3.addMetadataToLink("User2:3", "S4:3", {"reliability": 3, "ownership": "A",
+        TestGraph3.addMetadataToLink("User2:3", "S4:4", {"reliability": 3, "ownership": "A",
                                         "delay": 29, "bandwidth": 20}, links)                                                                                                                                                
         
         return (switches, links)
