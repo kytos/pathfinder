@@ -24,7 +24,7 @@ class TestGraph3(TestKytosGraph):
         #Act
         result = self.get_path_constrained("User1", "User2", 0, ownership = 'A')
         #Assert
-        self.assertNotIn(illegal_path, result)
+        self.assertNotIn(illegal_path, result[0]["paths"])
  
     def test_path10(self):
         """Tests to see if the edges used in the paths of the result set do not have poor reliability"""
