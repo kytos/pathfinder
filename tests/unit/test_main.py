@@ -18,42 +18,40 @@ class TestMain(TestCase):
         self.napp = Main(get_controller_mock())
 
     @patch('napps.kytos.pathfinder.graph.KytosGraph.update_topology')
-    def test_update_topology(self, mock_update_topology):
-        """Test update topology."""
-        event = KytosEvent(name='kytos.topology.updated')
-        self.napp.update_topology(event)
-        self.assertIsNone(self.napp._topology)
-
+    def test_update_topology_success_case(self, mock_update_topology):
+        """Test update topology method to success case."""
         topology = get_topology_mock()
         event = KytosEvent(name='kytos.topology.updated',
                            content={'topology': topology})
         self.napp.update_topology(event)
+
         self.assertEqual(self.napp._topology, topology)
-        mock_update_topology.assert_called_with(topology)
 
-    @patch('napps.kytos.pathfinder.main.Main._filter_paths')
+    @patch('napps.kytos.pathfinder.graph.KytosGraph.update_topology')
+    def test_update_topology_failure_case(self, mock_update_topology):
+        """Test update topology method to failure case."""
+        event = KytosEvent(name='kytos.topology.updated')
+        self.napp.update_topology(event)
+
+        self.assertIsNone(self.napp._topology)
+
     @patch('napps.kytos.pathfinder.graph.KytosGraph.shortest_paths')
-    def test_shortest_path(self, *args):
+    def test_shortest_path(self, mock_shortest_paths):
         """Test shortest path."""
-        (mock_shortest_paths, mock_filter_paths) = args
-
-        path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:01",
-                "00:00:00:00:00:00:00:01:2"]
-        mock_shortest_paths.return_value = path
-        mock_filter_paths.return_value = {}
+        self.napp._topology = get_topology_mock()
+        path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]
+        mock_shortest_paths.return_value = [path]
 
         api = get_test_client(self.napp.controller, self.napp)
         url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
         data = {"source": "00:00:00:00:00:00:00:01:1",
-                "destination": "00:00:00:00:00:00:00:01:2",
+                "destination": "00:00:00:00:00:00:00:02:1",
                 "desired_links": ["1"],
-                "undesired_links": ["2"],
-                "parameter": "custom_weight"}
+                "undesired_links": None}
         response = api.open(url, method='POST', json=data)
 
-        hops = [{'hops': addr} for addr in path]
-        mock_filter_paths.assert_called_with(hops, data["desired_links"],
-                                             data["undesired_links"])
+        expected_response = {'paths': [{'hops': path}]}
+        self.assertEqual(response.json, expected_response)
         self.assertEqual(response.status_code, 200)
 
     def test_filter_paths(self):
