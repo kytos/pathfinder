@@ -8,9 +8,13 @@ All notable changes to the pathfinder NApp will be documented in this file.
 
 Added
 =====
+- Added support for automated tests and CI with Travis.
+- Added unit tests.
 
 Changed
 =======
+- Improved documentation about napp dependencies.
+- Changed tests structure to separate unit and integration tests.
 
 Deprecated
 ==========
@@ -20,6 +24,8 @@ Removed
 
 Fixed
 =====
+- Fixed package install when creating symlinks.
+- Fixed hops addresses in openapi.yml.
 
 Security
 ========
