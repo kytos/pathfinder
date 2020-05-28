@@ -1,6 +1,6 @@
 """Test Main methods."""
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from kytos.core.events import KytosEvent
 from kytos.lib.helpers import get_controller_mock, get_test_client
@@ -17,8 +17,7 @@ class TestMain(TestCase):
         """Execute steps before each tests."""
         self.napp = Main(get_controller_mock())
 
-    @patch('napps.kytos.pathfinder.graph.KytosGraph.update_topology')
-    def test_update_topology_success_case(self, mock_update_topology):
+    def test_update_topology_success_case(self):
         """Test update topology method to success case."""
         topology = get_topology_mock()
         event = KytosEvent(name='kytos.topology.updated',
@@ -27,8 +26,7 @@ class TestMain(TestCase):
 
         self.assertEqual(self.napp._topology, topology)
 
-    @patch('napps.kytos.pathfinder.graph.KytosGraph.update_topology')
-    def test_update_topology_failure_case(self, mock_update_topology):
+    def test_update_topology_failure_case(self):
         """Test update topology method to failure case."""
         event = KytosEvent(name='kytos.topology.updated')
         self.napp.update_topology(event)
