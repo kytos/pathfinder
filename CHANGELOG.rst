@@ -37,6 +37,7 @@ Changed
 =======
 - Improved documentation about NApp dependencies.
 - Changed tests structure to separate unit and integration tests.
+- Updated Pathfinder UI with a best constrained flexible paths search menu.
 
 Fixed
 =====
