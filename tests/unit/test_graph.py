@@ -1,11 +1,12 @@
 """Test Graph methods."""
 from unittest import TestCase
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
 
 from napps.kytos.pathfinder.graph import KytosGraph
 from tests.helpers import get_topology_mock
 
 
+# pylint: disable=arguments-differ, protected-access
 class TestGraph(TestCase):
     """Tests for the Main class."""
 
