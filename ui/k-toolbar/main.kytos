@@ -191,12 +191,12 @@ module.exports = {
       undesired_links: [],
       checkedList: [],
       metrics:{
-        bandwidth: 1,
-        reliability: 2,
-        delay: 3,
-        utilization: 4,
-        priority: 5,
-        ownership: "yo"
+        bandwidth: 0,
+        reliability: 0,
+        delay: 0,
+        utilization: 0,
+        priority: 0,
+        ownership: ""
       },
       flexible: 6
     }
