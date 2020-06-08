@@ -99,8 +99,8 @@ module.exports = {
     get_constrained_paths (){
       var self = this
       var metrics = {}
-      var checked
-      for(checked of self.checkedList)
+
+      for(var checked of self.checkedList)
       {
         metrics[checked] = self.metrics[checked]
       }
