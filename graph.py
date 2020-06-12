@@ -46,7 +46,7 @@ class KytosGraph:
         self._filter_fun_dict["utilization"] = Filter((int,float),filterLEQ("utilization"))
         self._filter_fun_dict["delay"] = Filter((int,float),filterLEQ("delay"))
         self._path_fun = nx.all_shortest_paths
-        
+
 
     def set_path_fun(self, path_fun):
         self._path_fun = path_fun
