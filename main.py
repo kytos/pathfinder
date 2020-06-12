@@ -120,7 +120,7 @@ class Main(KytosNApp):
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error":err})
-        
+
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
