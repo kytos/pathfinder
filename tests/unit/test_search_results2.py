@@ -8,14 +8,14 @@ import networkx as nx
 # module under test
 from graph import KytosGraph
 
-from tests.test_graph import TestKytosGraph
+from tests.unit.test_search_results import TestSearchResults
 
 # Core modules to import
 from kytos.core.switch import Switch
 from kytos.core.interface import Interface
 from kytos.core.link import Link
 
-class TestGraph2(TestKytosGraph):
+class TestSearchResults2(TestSearchResults):
 
     def test_path1(self):
         """Tests paths between all users using unconstrained path alogrithm."""
@@ -315,7 +315,7 @@ class TestGraph2(TestKytosGraph):
         Tests with ownership using an int type rather than string"""
         self.setup()
         with self.assertRaises(TypeError):
-            self.get_path_constrained2("User1", "User2", {"ownership":1})
+            self.get_path_constrained2("User1", "User2", {"ownership":1}, None)
 
 
     @staticmethod
@@ -325,50 +325,50 @@ class TestGraph2(TestKytosGraph):
         interfaces = {}
         links = {}
 
-        TestKytosGraph.createSwitch("S1", switches)
-        TestKytosGraph.addInterfaces(2, switches["S1"], interfaces)
+        TestSearchResults.createSwitch("S1", switches)
+        TestSearchResults.addInterfaces(2, switches["S1"], interfaces)
 
-        TestKytosGraph.createSwitch("S2", switches)
-        TestKytosGraph.addInterfaces(2, switches["S2"], interfaces)
+        TestSearchResults.createSwitch("S2", switches)
+        TestSearchResults.addInterfaces(2, switches["S2"], interfaces)
 
-        TestKytosGraph.createSwitch("S3", switches)
-        TestKytosGraph.addInterfaces(6, switches["S3"], interfaces)
+        TestSearchResults.createSwitch("S3", switches)
+        TestSearchResults.addInterfaces(6, switches["S3"], interfaces)
 
-        TestKytosGraph.createSwitch("S4", switches)
-        TestKytosGraph.addInterfaces(2, switches["S4"], interfaces)
+        TestSearchResults.createSwitch("S4", switches)
+        TestSearchResults.addInterfaces(2, switches["S4"], interfaces)
 
-        TestKytosGraph.createSwitch("S5", switches)
-        TestKytosGraph.addInterfaces(6, switches["S5"], interfaces)
+        TestSearchResults.createSwitch("S5", switches)
+        TestSearchResults.addInterfaces(6, switches["S5"], interfaces)
 
-        TestKytosGraph.createSwitch("S6", switches)
-        TestKytosGraph.addInterfaces(5, switches["S6"], interfaces)
+        TestSearchResults.createSwitch("S6", switches)
+        TestSearchResults.addInterfaces(5, switches["S6"], interfaces)
 
-        TestKytosGraph.createSwitch("S7", switches)
-        TestKytosGraph.addInterfaces(2, switches["S7"], interfaces)
+        TestSearchResults.createSwitch("S7", switches)
+        TestSearchResults.addInterfaces(2, switches["S7"], interfaces)
 
-        TestKytosGraph.createSwitch("S8", switches)
-        TestKytosGraph.addInterfaces(8, switches["S8"], interfaces)
+        TestSearchResults.createSwitch("S8", switches)
+        TestSearchResults.addInterfaces(8, switches["S8"], interfaces)
 
-        TestKytosGraph.createSwitch("S9", switches)
-        TestKytosGraph.addInterfaces(4, switches["S9"], interfaces)
+        TestSearchResults.createSwitch("S9", switches)
+        TestSearchResults.addInterfaces(4, switches["S9"], interfaces)
 
-        TestKytosGraph.createSwitch("S10", switches)
-        TestKytosGraph.addInterfaces(3, switches["S10"], interfaces)
+        TestSearchResults.createSwitch("S10", switches)
+        TestSearchResults.addInterfaces(3, switches["S10"], interfaces)
 
-        TestKytosGraph.createSwitch("S11", switches)
-        TestKytosGraph.addInterfaces(3, switches["S11"], interfaces)
+        TestSearchResults.createSwitch("S11", switches)
+        TestSearchResults.addInterfaces(3, switches["S11"], interfaces)
 
-        TestKytosGraph.createSwitch("User1", switches)
-        TestKytosGraph.addInterfaces(4, switches["User1"], interfaces)
+        TestSearchResults.createSwitch("User1", switches)
+        TestSearchResults.addInterfaces(4, switches["User1"], interfaces)
 
-        TestKytosGraph.createSwitch("User2", switches)
-        TestKytosGraph.addInterfaces(2, switches["User2"], interfaces)
+        TestSearchResults.createSwitch("User2", switches)
+        TestSearchResults.addInterfaces(2, switches["User2"], interfaces)
 
-        TestKytosGraph.createSwitch("User3", switches)
-        TestKytosGraph.addInterfaces(2, switches["User3"], interfaces)
+        TestSearchResults.createSwitch("User3", switches)
+        TestSearchResults.addInterfaces(2, switches["User3"], interfaces)
 
-        TestKytosGraph.createSwitch("User4", switches)
-        TestKytosGraph.addInterfaces(3, switches["User4"], interfaces)
+        TestSearchResults.createSwitch("User4", switches)
+        TestSearchResults.addInterfaces(3, switches["User4"], interfaces)
 
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
         links["S1:1<->S2:1"].extend_metadata({"reliability": 5, "bandwidth": 100, "delay": 105})
