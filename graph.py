@@ -23,11 +23,8 @@ class Filter:
         else:
             raise TypeError(f"Expected type: {self._filter_type}")
 
-
-
 class KytosGraph:
     """Class responsible for the graph generation."""
-
     def __init__(self):
         self.graph = nx.Graph()
         self._filter_fun_dict = {}
@@ -38,7 +35,6 @@ class KytosGraph:
         def filterEEQ(metric):# Equivalence
             return lambda x: (lambda y: y[2].get(metric,x) == x)
 
-
         self._filter_fun_dict["ownership"] = Filter(str,filterEEQ("ownership"))
         self._filter_fun_dict["bandwidth"] = Filter((int,float),filterGEQ("bandwidth"))
         self._filter_fun_dict["priority"] = Filter((int,float),filterGEQ("priority"))
@@ -46,7 +42,6 @@ class KytosGraph:
         self._filter_fun_dict["utilization"] = Filter((int,float),filterLEQ("utilization"))
         self._filter_fun_dict["delay"] = Filter((int,float),filterLEQ("delay"))
         self._path_fun = nx.all_shortest_paths
-
 
     def set_path_fun(self, path_fun):
         self._path_fun = path_fun
