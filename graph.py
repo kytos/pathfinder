@@ -12,14 +12,14 @@ except ImportError:
 from itertools import combinations
 
 class Filter:
+    '''Class responsible for removing items with disqualifying values'''
     def __init__(self, filter_type, filter_function):
         self._filter_type = filter_type
         self._filter_fun = filter_function
 
     def run(self,value, items):
         if isinstance(value, self._filter_type):
-            fun0 = self._filter_fun(value)
-            return filter(fun0, items)
+            return filter(self._filter_fun(value), items)
         else:
             raise TypeError(f"Expected type: {self._filter_type}")
 
@@ -101,31 +101,31 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(self, source, destination, metrics, flexible_metrics, flexible = None):
-        default_edge_list = self.graph.edges(data=True)
-        default_edge_list = self._filter_edges(default_edge_list,**metrics)
-        default_edge_list = list(default_edge_list)
+    def constrained_flexible_paths(self, source, destination, metrics, flexible_metrics, \
+                                   flexible = None):   
+        '''Calculate the constrained shortest paths with flexibility and return them.'''
+        default_edge_list = list(self._filter_edges(self.graph.edges(data=True),**metrics))
         length = len(flexible_metrics)
         if flexible is None:
             flexible = length
-        flexible = max(0,flexible)
-        flexible = min(length,flexible)
+        flexible = min(length,max(0,flexible))
         results = []
         stop = False
-        for i in range(0,flexible+1):
-            if stop:
-                break
-            y = combinations(flexible_metrics.items(),length-i)
-            for x in y:
+        i = 0
+
+        while (not stop and i in range(0, flexible+1)):
+            combos = combinations(flexible_metrics.items(),length-i)
+            for combo in combos:
                 tempDict = {}
-                for k,v in x:
-                    tempDict[k] = v
+                for metric,value in combo:
+                    tempDict[metric] = value
                 edges = self._filter_edges(default_edge_list,**tempDict)
                 edges = ((u,v) for u,v,d in edges)
-                res0 = self._constrained_shortest_paths(source,destination,edges)
-                if res0 != []:
-                    results.append({"paths":res0, "metrics":{**metrics, **tempDict}})
+                result = self._constrained_shortest_paths(source,destination,edges)
+                if result != []:
+                    results.append({"paths":result, "metrics":{**metrics,**tempDict}})
                     stop = True
+            i = i + 1
         return results
 
     def _constrained_shortest_paths(self, source, destination, edges):
