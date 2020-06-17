@@ -1,5 +1,7 @@
 """Module Graph of kytos/pathfinder Kytos Network Application."""
 
+from itertools import combinations
+
 from kytos.core import log
 
 try:
@@ -9,38 +11,50 @@ except ImportError:
     PACKAGE = 'networkx>=2.2'
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
-from itertools import combinations
 
 class Filter:
     '''Class responsible for removing items with disqualifying values'''
+
     def __init__(self, filter_type, filter_function):
         self._filter_type = filter_type
         self._filter_fun = filter_function
 
-    def run(self,value, items):
+    def run(self, value, items):
+        '''Filter out items. Filter chosen is picked at runtime.'''
         if isinstance(value, self._filter_type):
             return filter(self._filter_fun(value), items)
         else:
             raise TypeError(f"Expected type: {self._filter_type}")
 
+
 class KytosGraph:
     """Class responsible for the graph generation."""
+
     def __init__(self):
         self.graph = nx.Graph()
         self._filter_fun_dict = {}
-        def filterLEQ(metric):# Lower values are better
-            return lambda x: (lambda y: y[2].get(metric,x) <= x)
-        def filterGEQ(metric):# Higher values  are better
-            return lambda x: (lambda y: y[2].get(metric,x) >= x)
-        def filterEEQ(metric):# Equivalence
-            return lambda x: (lambda y: y[2].get(metric,x) == x)
 
-        self._filter_fun_dict["ownership"] = Filter(str,filterEEQ("ownership"))
-        self._filter_fun_dict["bandwidth"] = Filter((int,float),filterGEQ("bandwidth"))
-        self._filter_fun_dict["priority"] = Filter((int,float),filterGEQ("priority"))
-        self._filter_fun_dict["reliability"] = Filter((int,float),filterGEQ("reliability"))
-        self._filter_fun_dict["utilization"] = Filter((int,float),filterLEQ("utilization"))
-        self._filter_fun_dict["delay"] = Filter((int,float),filterLEQ("delay"))
+        def filterLEQ(metric):  # Lower values are better
+            return lambda x: (lambda y: y[2].get(metric, x) <= x)
+
+        def filterGEQ(metric):  # Higher values are better
+            return lambda x: (lambda y: y[2].get(metric, x) >= x)
+
+        def filterEEQ(metric):  # Equivalence
+            return lambda x: (lambda y: y[2].get(metric, x) == x)
+
+        self._filter_fun_dict["ownership"] = Filter(
+            str, filterEEQ("ownership"))
+        self._filter_fun_dict["bandwidth"] = Filter(
+            (int, float), filterGEQ("bandwidth"))
+        self._filter_fun_dict["priority"] = Filter(
+            (int, float), filterGEQ("priority"))
+        self._filter_fun_dict["reliability"] = Filter(
+            (int, float), filterGEQ("reliability"))
+        self._filter_fun_dict["utilization"] = Filter(
+            (int, float), filterLEQ("utilization"))
+        self._filter_fun_dict["delay"] = Filter(
+            (int, float), filterLEQ("delay"))
         self._path_fun = nx.all_shortest_paths
 
     def set_path_fun(self, path_fun):
@@ -101,29 +115,32 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(self, source, destination, metrics, flexible_metrics, \
-                                   flexible = None):   
-        '''Calculate the constrained shortest paths with flexibility and return them.'''
-        default_edge_list = list(self._filter_edges(self.graph.edges(data=True),**metrics))
+    def constrained_flexible_paths(self, source, destination, metrics,
+                                   flexible_metrics, flexible=None):
+        '''Calculate the constrained shortest paths with flexibility.'''
+        default_edge_list = list(self._filter_edges(
+            self.graph.edges(data=True), **metrics))
         length = len(flexible_metrics)
         if flexible is None:
             flexible = length
-        flexible = min(length,max(0,flexible))
+        flexible = min(length, max(0, flexible))
         results = []
         stop = False
         i = 0
 
         while (not stop and i in range(0, flexible+1)):
-            combos = combinations(flexible_metrics.items(),length-i)
+            combos = combinations(flexible_metrics.items(), length-i)
             for combo in combos:
-                tempDict = {}
-                for metric,value in combo:
-                    tempDict[metric] = value
-                edges = self._filter_edges(default_edge_list,**tempDict)
-                edges = ((u,v) for u,v,d in edges)
-                result = self._constrained_shortest_paths(source,destination,edges)
+                temp_dict = {}
+                for metric, value in combo:
+                    temp_dict[metric] = value
+                edges = self._filter_edges(default_edge_list, **temp_dict)
+                edges = ((u, v) for u, v, d in edges)
+                result = self._constrained_shortest_paths(
+                    source, destination, edges)
                 if result != []:
-                    results.append({"paths":result, "metrics":{**metrics,**tempDict}})
+                    results.append(
+                        {"paths": result, "metrics": {**metrics, **temp_dict}})
                     stop = True
             i = i + 1
         return results
@@ -144,9 +161,9 @@ class KytosGraph:
     def _filter_edges(self, edges, **metrics):
         for metric, value in metrics.items():
             fil = self._filter_fun_dict.get(metric, None)
-            if fil != None:
+            if fil is not None:
                 try:
-                    edges = fil.run(value,edges)
+                    edges = fil.run(value, edges)
                 except TypeError as err:
                     raise TypeError(f"Error in {metric} filter: {err}")
         return edges
