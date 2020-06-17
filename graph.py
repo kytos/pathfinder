@@ -23,8 +23,8 @@ class Filter:
         '''Filter out items. Filter chosen is picked at runtime.'''
         if isinstance(value, self._filter_type):
             return filter(self._filter_fun(value), items)
-        else:
-            raise TypeError(f"Expected type: {self._filter_type}")
+
+        raise TypeError(f"Expected type: {self._filter_type}")
 
 
 class KytosGraph:
@@ -34,27 +34,27 @@ class KytosGraph:
         self.graph = nx.Graph()
         self._filter_fun_dict = {}
 
-        def filterLEQ(metric):  # Lower values are better
+        def filter_leq(metric):  # Lower values are better
             return lambda x: (lambda y: y[2].get(metric, x) <= x)
 
-        def filterGEQ(metric):  # Higher values are better
+        def filter_geq(metric):  # Higher values are better
             return lambda x: (lambda y: y[2].get(metric, x) >= x)
 
-        def filterEEQ(metric):  # Equivalence
+        def filter_eeq(metric):  # Equivalence
             return lambda x: (lambda y: y[2].get(metric, x) == x)
 
         self._filter_fun_dict["ownership"] = Filter(
-            str, filterEEQ("ownership"))
+            str, filter_eeq("ownership"))
         self._filter_fun_dict["bandwidth"] = Filter(
-            (int, float), filterGEQ("bandwidth"))
+            (int, float), filter_geq("bandwidth"))
         self._filter_fun_dict["priority"] = Filter(
-            (int, float), filterGEQ("priority"))
+            (int, float), filter_geq("priority"))
         self._filter_fun_dict["reliability"] = Filter(
-            (int, float), filterGEQ("reliability"))
+            (int, float), filter_geq("reliability"))
         self._filter_fun_dict["utilization"] = Filter(
-            (int, float), filterLEQ("utilization"))
+            (int, float), filter_leq("utilization"))
         self._filter_fun_dict["delay"] = Filter(
-            (int, float), filterLEQ("delay"))
+            (int, float), filter_leq("delay"))
         self._path_fun = nx.all_shortest_paths
 
     def set_path_fun(self, path_fun):
