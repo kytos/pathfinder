@@ -1,21 +1,15 @@
 """Module to test the KytosGraph in graph.py."""
 from itertools import combinations
-from unittest import TestCase
-from unittest.mock import Mock
 
-import networkx as nx
-from kytos.core.interface import Interface
-from kytos.core.link import Link
 # Core modules to import
-from kytos.core.switch import Switch
+from kytos.core.link import Link
 
 # module under test
-from graph import KytosGraph
 from tests.unit.test_search_results import TestSearchResults
 
 
 class TestSearchResults2(TestSearchResults):
-    '''Tests for the graph class.'''
+    """Tests for the graph class."""
 
     def test_path1(self):
         """Tests paths between all users using unconstrained path alogrithm."""

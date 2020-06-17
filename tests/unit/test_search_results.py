@@ -1,11 +1,10 @@
 """Module to test the KytosGraph in graph.py."""
 from unittest import TestCase
-from unittest.mock import Mock
 
 import networkx as nx
+# Core modules to import
 from kytos.core.interface import Interface
 from kytos.core.link import Link
-# Core modules to import
 from kytos.core.switch import Switch
 
 # module under test
@@ -13,6 +12,7 @@ from graph import KytosGraph
 
 
 class TestSearchResults(TestCase):
+    """Tests for the graph class."""
 
     def setup(self):
         """Setup for most tests"""
