@@ -49,17 +49,17 @@ class TestGraph(TestCase):
                  for interface in switch.interfaces.values()]
         self.mock_graph.add_edge.assert_has_calls(calls)
 
-    #@patch('napps.kytos.pathfinder.graph.KytosGraph._set_default_metadata')
-    #def test_update_links(self, mock_set_default_metadata):
-    #    """Test update nodes."""
-    #    topology = get_topology_mock()
-    #    self.kytos_graph.update_links(topology.links)
+    # @patch('napps.kytos.pathfinder.graph.KytosGraph._set_default_metadata')
+    # def test_update_links(self, mock_set_default_metadata):
+    #     """Test update nodes."""
+    #     topology = get_topology_mock()
+    #     self.kytos_graph.update_links(topology.links)
 
-    #    keys = []
-    #    all_metadata = [link.metadata for link in topology.links.values()]
-    #    for metadata in all_metadata:
-    #        keys.extend(key for key in metadata.keys())
-    #    mock_set_default_metadata.assert_called_with(keys)
+    #     keys = []
+    #     all_metadata = [link.metadata for link in topology.links.values()]
+    #     for metadata in all_metadata:
+    #         keys.extend(key for key in metadata.keys())
+    #     mock_set_default_metadata.assert_called_with(keys)
 
     def test_remove_switch_hops(self):
         """Test remove switch hops."""
@@ -73,10 +73,11 @@ class TestGraph(TestCase):
                                      "00:00:00:00:00:00:00:01:2"]}
         self.assertEqual(circuit, expected_circuit)
 
-    #@patch('networkx.shortest_simple_paths', return_value=["any"])
-    #def test_shortest_paths(self, mock_shortest_simple_paths):
+    # @patch('networkx.shortest_simple_paths', return_value=["any"])
+    # def test_shortest_paths(self, mock_shortest_simple_paths):
     #    """Test shortest paths."""
-    #    source, dest = "00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:2"
+    #    source, dest = "00:00:00:00:00:00:00:01:1",
+    # "00:00:00:00:00:00:00:02:2"
     #    shortest_paths = self.kytos_graph.shortest_paths(source, dest)
 
     #    mock_shortest_simple_paths.assert_called_with(self.kytos_graph.graph,
