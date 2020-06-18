@@ -31,32 +31,35 @@ class TestSearchResults(TestCase):
     def get_path_constrained(self, source, destination, flexible=0, **metrics):
         '''Return the constrained shortest path'''
         results = self.graph.constrained_flexible_paths(
-            source, destination, {}, metrics, flexible)
+            source, destination, {"metrics": metrics, "flexible_metrics": {}},
+            flexible)
         return results
 
     def get_path_constrained2(self, source, destination, metrics,
                               flexible_metrics):
         '''Return the constrained shortest path'''
         return self.graph.constrained_flexible_paths(source, destination,
-                                                     metrics, flexible_metrics)
+                                                     {"metrics": metrics,
+                                                      "flexible_metrics":
+                                                      flexible_metrics})
 
     def test_setup(self):
         """Provides information on default test setup"""
         self.setup()
 
-    @staticmethod
+    @ staticmethod
     def generate_topology():
         """Generates a predetermined topology"""
         switches = {}
         links = {}
         return (switches, links)
 
-    @staticmethod
+    @ staticmethod
     def create_switch(name, switches):
         '''Add a new switch to the list of switches'''
         switches[name] = Switch(name)
 
-    @staticmethod
+    @ staticmethod
     def add_interfaces(count, switch, interfaces):
         '''Add a new interface to the list of interfaces'''
         for i in range(1, count + 1):
@@ -65,7 +68,7 @@ class TestSearchResults(TestCase):
             interfaces[str1] = interface
             switch.update_interface(interface)
 
-    @staticmethod
+    @ staticmethod
     def create_link(interface_a, interface_b, interfaces, links):
         '''Add a new link between two interfaces into the list of links'''
         compounded = "{}|{}".format(interface_a, interface_b)
@@ -73,7 +76,7 @@ class TestSearchResults(TestCase):
         links[final_name] = Link(
             interfaces[interface_a], interfaces[interface_b])
 
-    @staticmethod
+    @ staticmethod
     def add_metadata_to_link(interface_a, interface_b, metrics, links):
         '''Add metadata to an existing link in the list of links'''
         compounded = "{}|{}".format(interface_a, interface_b)

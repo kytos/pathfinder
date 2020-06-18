@@ -13,14 +13,14 @@ except ImportError:
 
 
 class Filter:
-    '''Class responsible for removing items with disqualifying values'''
+    """Class responsible for removing items with disqualifying values."""
 
     def __init__(self, filter_type, filter_function):
         self._filter_type = filter_type
         self._filter_fun = filter_function
 
     def run(self, value, items):
-        '''Filter out items. Filter chosen is picked at runtime.'''
+        """Filter out items. Filter chosen is picked at runtime."""
         if isinstance(value, self._filter_type):
             return filter(self._filter_fun(value), items)
 
@@ -58,6 +58,7 @@ class KytosGraph:
         self._path_fun = nx.all_shortest_paths
 
     def set_path_fun(self, path_fun):
+        """Sets the shortest path function."""
         self._path_fun = path_fun
 
     def clear(self):
@@ -115,22 +116,32 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(self, source, destination, metrics,
-                                   flexible_metrics, flexible=None):
-        '''Calculate the constrained shortest paths with flexibility.'''
+    def constrained_flexible_paths(self, source, destination, complete_metrics,
+                                   flexible=None):
+        """Calculate the constrained shortest paths with flexibility."""
+        metrics = complete_metrics["metrics"]
+        flexible_metrics = complete_metrics["flexible_metrics"]
+
+        # Grab all edges with meta data and remove the
+        # ones that do not meet metric requirements.
         default_edge_list = list(self._filter_edges(
             self.graph.edges(data=True), **metrics))
+        # Determine the size of the power set subset of flexible metrics.
+        # Note that it is a subset because the empty set is missing and
+        # some combinations may be excluded.
         length = len(flexible_metrics)
         if flexible is None:
             flexible = length
         flexible = min(length, max(0, flexible))
         results = []
-        stop = False
+        result = []
         i = 0
 
-        while (not stop and i in range(0, flexible+1)):
-            combos = combinations(flexible_metrics.items(), length-i)
-            for combo in combos:
+        # Traverse through each combination in the power set subset
+        # and use the combination to find edges that partially
+        # meet flexible metric requirements.
+        while (result == [] and i in range(0, flexible+1)):
+            for combo in combinations(flexible_metrics.items(), length-i):
                 temp_dict = {}
                 for metric, value in combo:
                     temp_dict[metric] = value
@@ -141,7 +152,6 @@ class KytosGraph:
                 if result != []:
                     results.append(
                         {"paths": result, "metrics": {**metrics, **temp_dict}})
-                    stop = True
             i = i + 1
         return results
 
