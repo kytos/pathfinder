@@ -121,7 +121,6 @@ class KytosGraph:
         """Calculate the constrained shortest paths with flexibility."""
         metrics = complete_metrics["metrics"]
         flexible_metrics = complete_metrics["flexible_metrics"]
-
         # Grab all edges with meta data and remove the
         # ones that do not meet metric requirements.
         default_edge_list = list(self._filter_edges(
@@ -136,19 +135,16 @@ class KytosGraph:
         results = []
         result = []
         i = 0
-
         # Traverse through each combination in the power set subset
         # and use the combination to find edges that partially
         # meet flexible metric requirements.
         while (result == [] and i in range(0, flexible+1)):
             for combo in combinations(flexible_metrics.items(), length-i):
-                temp_dict = {}
-                for metric, value in combo:
-                    temp_dict[metric] = value
-                edges = self._filter_edges(default_edge_list, **temp_dict)
-                edges = ((u, v) for u, v, d in edges)
+                temp_dict = dict(combo)
                 result = self._constrained_shortest_paths(
-                    source, destination, edges)
+                    source, destination, ((u, v) for u, v, d in
+                                          self._filter_edges(default_edge_list,
+                                                             **temp_dict)))
                 if result != []:
                     results.append(
                         {"paths": result, "metrics": {**metrics, **temp_dict}})
