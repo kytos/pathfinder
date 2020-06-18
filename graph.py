@@ -58,7 +58,7 @@ class KytosGraph:
         self._path_fun = nx.all_shortest_paths
 
     def set_path_fun(self, path_fun):
-        """Sets the shortest path function."""
+        """Set the shortest path function."""
         self._path_fun = path_fun
 
     def clear(self):
