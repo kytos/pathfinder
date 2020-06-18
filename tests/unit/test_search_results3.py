@@ -52,7 +52,6 @@ class TestSearchResults3(TestSearchResults):
         delays = []
         delay_cap = 29
         key = "delay"
-        has_bad_delay = False
 
         # Act
         result = self.get_path_constrained(
@@ -70,8 +69,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Assert
         for delay in delays:
-            has_bad_delay = delay > delay_cap
-            self.assertEqual(has_bad_delay, False)
+            self.assertEqual(delay > delay_cap, False)
 
     def test_path12(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
@@ -79,13 +77,11 @@ class TestSearchResults3(TestSearchResults):
         # Arrange
         self.test_setup()
         bandwidths = []
-        bandwidth_floor = 20
-        key = "bandwidth"
-        has_bad_bandwidth = False
+        requirements = {"bandwidth": 20}
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", 0, bandwidth=bandwidth_floor)
+            "User1", "User2", 0, **requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -94,13 +90,12 @@ class TestSearchResults3(TestSearchResults):
                     endpoint_b = path[i]
                     meta_data = self.graph.get_metadata_from_link(
                         endpoint_a, endpoint_b)
-                    if meta_data and key in meta_data.keys():
-                        bandwidths.append(meta_data[key])
+                    if meta_data and "bandwidth" in meta_data.keys():
+                        bandwidths.append(meta_data["bandwidth"])
 
         # Assert
         for bandwidth in bandwidths:
-            has_bad_bandwidth = bandwidth < bandwidth_floor
-            self.assertEqual(has_bad_bandwidth, False)
+            self.assertEqual(bandwidth < requirements["bandwidth"], False)
 
     def test_path13(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
@@ -109,16 +104,11 @@ class TestSearchResults3(TestSearchResults):
         self.test_setup()
         bandwidths = []
         delays = []
-        bandwidth_floor = 20
-        key_a = "bandwidth"
-        delay_cap = 29
-        key_b = "delay"
-        has_bad_bandwidth = False
-        has_bad_delay = False
+        requirements = {"bandwidth": 20, "delay": 29}
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", 0, bandwidth=bandwidth_floor, delay=delay_cap)
+            "User1", "User2", 0, **requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -127,19 +117,17 @@ class TestSearchResults3(TestSearchResults):
                     endpoint_b = path[i]
                     meta_data = self.graph.get_metadata_from_link(
                         endpoint_a, endpoint_b)
-                    if meta_data and key_a in meta_data.keys():
-                        bandwidths.append(meta_data[key_a])
-                    elif meta_data and key_b in meta_data.keys():
-                        delays.append(meta_data[key_b])
+                    if meta_data and "bandwidth" in meta_data.keys():
+                        bandwidths.append(meta_data["bandwidth"])
+                    elif meta_data and "delay" in meta_data.keys():
+                        delays.append(meta_data["delay"])
 
         # Assert
         for bandwidth in bandwidths:
-            has_bad_bandwidth = bandwidth < bandwidth_floor
-            self.assertEqual(has_bad_bandwidth, False)
+            self.assertEqual(bandwidth < requirements["bandwidth"], False)
 
         for delay in delays:
-            has_bad_delay = delay > delay_cap
-            self.assertEqual(has_bad_delay, False)
+            self.assertEqual(delay > requirements["delay"], False)
 
     @staticmethod
     def generate_topology():
