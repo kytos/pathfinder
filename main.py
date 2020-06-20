@@ -99,11 +99,11 @@ class Main(KytosNApp):
         flexible = data.get('flexible', 0)
         metrics = data.get('metrics', {})
         try:
+            all_metrics = KytosGraph.pack_metrics(metrics, {})
             paths = self.graph.constrained_flexible_paths(source,
                                                           destination,
-                                                          {"metrics": metrics,
-                                                           "flexible_metrics":
-                                                           {}}, flexible)
+                                                          all_metrics,
+                                                          flexible)
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error": err})
@@ -118,10 +118,9 @@ class Main(KytosNApp):
         metrics = data.get('metrics', {})
         flexible_metrics = data.get('flexibleMetrics', {})
         try:
+            all_metrics = KytosGraph.pack_metrics(metrics, flexible_metrics)
             paths = self.graph.constrained_flexible_paths(source, destination,
-                                                          {"metrics": metrics,
-                                                           "flexible_metrics":
-                                                           flexible_metrics})
+                                                          all_metrics)
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error": err})
