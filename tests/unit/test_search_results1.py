@@ -60,14 +60,16 @@ class TestSearchResults1(TestSearchResults):
     def test_constrained_path5(self):
         """Tests constrained path"""
         self.setup()
-        results = self.get_path_constrained("S1", "S3", 0, bandwidth=50)
+        results = self.get_path_constrained(
+            "S1", "S3", {"bandwidth": 50})
         for result in results:
             self.assertNotIn(['S1', 'S1:2', 'S3:2', 'S3'], result["paths"])
 
     def test_constrained_path6(self):
         """Tests constrained path"""
         self.setup()
-        results = self.get_path_constrained("S1", "S2", 0, ownership="red")
+        results = self.get_path_constrained(
+            "S1", "S2", {"ownership": "red"})
         for result in results:
             self.assertNotIn(['S1', 'S1:2', 'S3:2', 'S3',
                               'S3:1', 'S2:2', 'S2'], result["paths"])
@@ -75,14 +77,16 @@ class TestSearchResults1(TestSearchResults):
     def test_constrained_path7(self):
         """Tests constrained path"""
         self.setup()
-        results = self.get_path_constrained("S1", "S2", 0, ownership="blue")
+        results = self.get_path_constrained(
+            "S1", "S2", {"ownership": "blue"})
         for result in results:
             self.assertNotIn(['S1', 'S1:1', 'S2:1', 'S2'], result["paths"])
 
     def test_constrained_path8(self):
         """Tests constrained path, to self AGAIN"""
         self.setup()
-        results = self.get_path_constrained("S5", "S5", 0, ownership="blue")
+        results = self.get_path_constrained(
+            "S5", "S5", {"ownership": "blue"})
         for result in results:
             self.assertNotEqual([], result["paths"])
             self.assertIn(['S5'], result["paths"])
@@ -90,7 +94,8 @@ class TestSearchResults1(TestSearchResults):
     def test_constrained_path9(self):
         """Tests constrained path"""
         self.setup()
-        results = self.get_path_constrained("S1", "S2", 1, ownership="blue")
+        results = self.get_path_constrained(
+            "S1", "S2", {"ownership": "blue"}, {}, 1)
         for result in results:
             self.assertNotIn(['S1', 'S1:1', 'S2:1', 'S2'], result["paths"])
 

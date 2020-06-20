@@ -24,24 +24,17 @@ class TestSearchResults(TestCase):
         self.graph.set_path_fun(nx.shortest_simple_paths)
 
     def get_path(self, source, destination):
-        '''Return the shortest path'''
+        """Return the shortest path"""
         results = self.graph.shortest_paths(source, destination)
         return results
 
-    def get_path_constrained(self, source, destination, flexible=0, **metrics):
-        '''Return the constrained shortest path'''
-        results = self.graph.constrained_flexible_paths(
-            source, destination, {"metrics": metrics, "flexible_metrics": {}},
-            flexible)
-        return results
-
-    def get_path_constrained2(self, source, destination, metrics,
-                              flexible_metrics):
-        '''Return the constrained shortest path'''
+    def get_path_constrained(self, source, destination, metrics=None,
+                             flexible_metrics=None, flexible=None):
+        """Return the constrained shortest path"""
+        complete_metrics = KytosGraph.pack_metrics(metrics, flexible_metrics)
         return self.graph.constrained_flexible_paths(source, destination,
-                                                     {"metrics": metrics,
-                                                      "flexible_metrics":
-                                                      flexible_metrics})
+                                                     complete_metrics,
+                                                     flexible)
 
     def test_setup(self):
         """Provides information on default test setup"""

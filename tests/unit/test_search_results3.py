@@ -15,7 +15,8 @@ class TestSearchResults3(TestSearchResults):
         illegal_path = ['User1', 'User1:1', 'S2:1',
                         'S2', 'S2:2', 'User2:1', 'User2']
         # Act
-        result = self.get_path_constrained("User1", "User2", 0, ownership='A')
+        result = self.get_path_constrained(
+            "User1", "User2", dict(ownership='A'))
         # Assert
         self.assertNotIn(illegal_path, result[0]["paths"])
 
@@ -25,11 +26,11 @@ class TestSearchResults3(TestSearchResults):
         # Arrange
         self.test_setup()
         reliabilities = []
+        requirements = {"reliability": 3}
         poor_reliability = 1
-        key = "reliability"
 
         # Act
-        result = self.get_path_constrained("User1", "User2", 0, reliability=3)
+        result = self.get_path_constrained("User1", "User2", requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -38,8 +39,8 @@ class TestSearchResults3(TestSearchResults):
                     endpoint_b = path[i]
                     meta_data = self.graph.get_metadata_from_link(
                         endpoint_a, endpoint_b)
-                    if meta_data and key in meta_data.keys():
-                        reliabilities.append(meta_data[key])
+                    if meta_data and "reliability" in meta_data.keys():
+                        reliabilities.append(meta_data["reliability"])
 
         # Assert
         self.assertNotIn(poor_reliability, reliabilities)
@@ -50,12 +51,11 @@ class TestSearchResults3(TestSearchResults):
         # Arrange
         self.test_setup()
         delays = []
-        delay_cap = 29
-        key = "delay"
+        requirements = {"delay": 29}
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", 0, delay=delay_cap)
+            "User1", "User2", requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -64,12 +64,12 @@ class TestSearchResults3(TestSearchResults):
                     endpoint_b = path[i]
                     meta_data = self.graph.get_metadata_from_link(
                         endpoint_a, endpoint_b)
-                    if meta_data and key in meta_data.keys():
-                        delays.append(meta_data[key])
+                    if meta_data and "delay" in meta_data.keys():
+                        delays.append(meta_data["delay"])
 
         # Assert
         for delay in delays:
-            self.assertEqual(delay > delay_cap, False)
+            self.assertEqual(delay > requirements["delay"], False)
 
     def test_path12(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
@@ -81,7 +81,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", 0, **requirements)
+            "User1", "User2", requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -108,7 +108,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", 0, **requirements)
+            "User1", "User2", requirements)
 
         if result:
             for path in result[0]["paths"]:

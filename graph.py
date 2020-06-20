@@ -119,15 +119,12 @@ class KytosGraph:
     def constrained_flexible_paths(self, source, destination, complete_metrics,
                                    flexible=None):
         """Calculate the constrained shortest paths with flexibility."""
-        metrics = complete_metrics["metrics"]
-        flexible_metrics = complete_metrics["flexible_metrics"]
+        metrics, flexible_metrics = KytosGraph.unpack_metrics(complete_metrics)
         # Grab all edges with meta data and remove the
         # ones that do not meet metric requirements.
         default_edge_list = list(self._filter_edges(
             self.graph.edges(data=True), **metrics))
-        # Determine the size of the power set subset of flexible metrics.
-        # Note that it is a subset because the empty set is missing and
-        # some combinations may be excluded.
+        # Determine the size of the power subset of flexible metrics.
         length = len(flexible_metrics)
         if flexible is None:
             flexible = length
@@ -135,7 +132,7 @@ class KytosGraph:
         results = []
         result = []
         i = 0
-        # Traverse through each combination in the power set subset
+        # Traverse through each combination in the power subset
         # and use the combination to find edges that partially
         # meet flexible metric requirements.
         while (result == [] and i in range(0, flexible+1)):
@@ -150,6 +147,21 @@ class KytosGraph:
                         {"paths": result, "metrics": {**metrics, **temp_dict}})
             i = i + 1
         return results
+
+    @staticmethod
+    def pack_metrics(inflexible=None, flexible=None):
+        """Store flexible and inflexible metrics in a dictionary."""
+        if inflexible is None:
+            inflexible = {}
+        if flexible is None:
+            flexible = {}
+        return dict(metrics=inflexible, flexible_metrics=flexible)
+
+    @staticmethod
+    def unpack_metrics(complete_metrics):
+        """Return inflexible and flexible metrics."""
+        return (complete_metrics["metrics"],
+                complete_metrics["flexible_metrics"])
 
     def _constrained_shortest_paths(self, source, destination, edges):
         paths = []
