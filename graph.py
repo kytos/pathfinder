@@ -116,52 +116,36 @@ class KytosGraph:
             return []
         return paths
 
-    def constrained_flexible_paths(self, source, destination, complete_metrics,
-                                   flexible=None):
+    def constrained_flexible_paths(self, source, destination,
+                                   depth=None, **metrics):
         """Calculate the constrained shortest paths with flexibility."""
-        metrics, flexible_metrics = KytosGraph.unpack_metrics(complete_metrics)
-        # Grab all edges with meta data and remove the
-        # ones that do not meet metric requirements.
+        base = metrics.get("base", {})
+        flexible = metrics.get("flexible", {})
+        # Retrive subgraph with edges that meet base requirements.
         default_edge_list = list(self._filter_edges(
-            self.graph.edges(data=True), **metrics))
-        # Determine the size of the power subset of flexible metrics.
-        length = len(flexible_metrics)
-        if flexible is None:
-            flexible = length
-        flexible = min(length, max(0, flexible))
+            self.graph.edges(data=True), **base))
+        length = len(flexible)
+        if depth is None:
+            depth = length
+        depth = min(length, max(0, depth))
         results = []
-        result = []
+        paths = []
         i = 0
-        # Traverse through each combination in the power subset
-        # and use the combination to find edges that partially
-        # meet flexible metric requirements.
-        while (result == [] and i in range(0, flexible+1)):
-            for combo in combinations(flexible_metrics.items(), length-i):
-                temp_dict = dict(combo)
-                result = self._constrained_shortest_paths(
+        # Create "sub-subgraphs" from original subgraph by trimming edges
+        # that fail to meet flexible requirements. Search for a shortest
+        # path in each of these graphs, until at least one is found.
+        while (paths == [] and i in range(0, depth+1)):
+            for combo in combinations(flexible.items(), length-i):
+                additional = dict(combo)
+                paths = self._constrained_shortest_paths(
                     source, destination, ((u, v) for u, v, d in
                                           self._filter_edges(default_edge_list,
-                                                             **temp_dict)))
-                if result != []:
+                                                             **additional)))
+                if paths != []:
                     results.append(
-                        {"paths": result, "metrics": {**metrics, **temp_dict}})
+                        {"paths": paths, "metrics": {**base, **additional}})
             i = i + 1
         return results
-
-    @staticmethod
-    def pack_metrics(inflexible=None, flexible=None):
-        """Store flexible and inflexible metrics in a dictionary."""
-        if inflexible is None:
-            inflexible = {}
-        if flexible is None:
-            flexible = {}
-        return dict(metrics=inflexible, flexible_metrics=flexible)
-
-    @staticmethod
-    def unpack_metrics(complete_metrics):
-        """Return inflexible and flexible metrics."""
-        return (complete_metrics["metrics"],
-                complete_metrics["flexible_metrics"])
 
     def _constrained_shortest_paths(self, source, destination, edges):
         paths = []

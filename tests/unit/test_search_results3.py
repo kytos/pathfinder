@@ -16,7 +16,7 @@ class TestSearchResults3(TestSearchResults):
                         'S2', 'S2:2', 'User2:1', 'User2']
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", dict(ownership='A'))
+            "User1", "User2", base=dict(ownership='A'))
         # Assert
         self.assertNotIn(illegal_path, result[0]["paths"])
 
@@ -30,7 +30,7 @@ class TestSearchResults3(TestSearchResults):
         poor_reliability = 1
 
         # Act
-        result = self.get_path_constrained("User1", "User2", requirements)
+        result = self.get_path_constrained("User1", "User2", base=requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -55,7 +55,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", requirements)
+            "User1", "User2", base=requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -81,7 +81,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", requirements)
+            "User1", "User2", base=requirements)
 
         if result:
             for path in result[0]["paths"]:
@@ -108,7 +108,7 @@ class TestSearchResults3(TestSearchResults):
 
         # Act
         result = self.get_path_constrained(
-            "User1", "User2", requirements)
+            "User1", "User2", base=requirements)
 
         if result:
             for path in result[0]["paths"]:

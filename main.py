@@ -96,36 +96,35 @@ class Main(KytosNApp):
 
         source = data.get('source')
         destination = data.get('destination')
-        flexible = data.get('flexible', 0)
-        metrics = data.get('metrics', {})
+        depth = data.get('depth', 0)
+        base_metrics = data.get('base_metrics', {})
         try:
-            all_metrics = KytosGraph.pack_metrics(metrics, {})
             paths = self.graph.constrained_flexible_paths(source,
                                                           destination,
-                                                          all_metrics,
-                                                          flexible)
+                                                          depth,
+                                                          base=base_metrics)
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error": err})
 
-    @rest('v4/', methods=['POST'])
+    @ rest('v4/', methods=['POST'])
     def shortest_constrained_path2(self):
         """Get the set of shortest paths between the source and destination."""
         data = request.get_json()
 
         source = data.get('source')
         destination = data.get('destination')
-        metrics = data.get('metrics', {})
-        flexible_metrics = data.get('flexibleMetrics', {})
+        base_metrics = data.get('base_metrics', {})
+        fle_metrics = data.get('flexible_metrics', {})
         try:
-            all_metrics = KytosGraph.pack_metrics(metrics, flexible_metrics)
             paths = self.graph.constrained_flexible_paths(source, destination,
-                                                          all_metrics)
+                                                          base=base_metrics,
+                                                          flexible=fle_metrics)
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error": err})
 
-    @listen_to('kytos.topology.updated')
+    @ listen_to('kytos.topology.updated')
     def update_topology(self, event):
         """Update the graph when the network topology was updated.
 

@@ -61,7 +61,7 @@ class TestSearchResults1(TestSearchResults):
         """Tests constrained path"""
         self.setup()
         results = self.get_path_constrained(
-            "S1", "S3", {"bandwidth": 50})
+            "S1", "S3", base={"bandwidth": 50})
         for result in results:
             self.assertNotIn(['S1', 'S1:2', 'S3:2', 'S3'], result["paths"])
 
@@ -69,7 +69,7 @@ class TestSearchResults1(TestSearchResults):
         """Tests constrained path"""
         self.setup()
         results = self.get_path_constrained(
-            "S1", "S2", {"ownership": "red"})
+            "S1", "S2", base={"ownership": "red"})
         for result in results:
             self.assertNotIn(['S1', 'S1:2', 'S3:2', 'S3',
                               'S3:1', 'S2:2', 'S2'], result["paths"])
@@ -78,7 +78,7 @@ class TestSearchResults1(TestSearchResults):
         """Tests constrained path"""
         self.setup()
         results = self.get_path_constrained(
-            "S1", "S2", {"ownership": "blue"})
+            "S1", "S2", base={"ownership": "blue"})
         for result in results:
             self.assertNotIn(['S1', 'S1:1', 'S2:1', 'S2'], result["paths"])
 
@@ -86,7 +86,7 @@ class TestSearchResults1(TestSearchResults):
         """Tests constrained path, to self AGAIN"""
         self.setup()
         results = self.get_path_constrained(
-            "S5", "S5", {"ownership": "blue"})
+            "S5", "S5", base={"ownership": "blue"})
         for result in results:
             self.assertNotEqual([], result["paths"])
             self.assertIn(['S5'], result["paths"])
@@ -95,7 +95,7 @@ class TestSearchResults1(TestSearchResults):
         """Tests constrained path"""
         self.setup()
         results = self.get_path_constrained(
-            "S1", "S2", {"ownership": "blue"}, {}, 1)
+            "S1", "S2", 1, base={"ownership": "blue"})
         for result in results:
             self.assertNotIn(['S1', 'S1:1', 'S2:1', 'S2'], result["paths"])
 
