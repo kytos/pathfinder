@@ -71,7 +71,7 @@
           :value.sync="metrics.ownership"></k-input>
   
           <k-slider :max = 6
-          :action="function (val) {flexible = parseInt(val)}"></k-slider>
+          :action="function (val) {depth = parseInt(val)}"></k-slider>
   
           <k-button icon="search" title="Search" :on_click="get_constrained_paths">
           </k-button>
@@ -124,8 +124,8 @@ module.exports = {
         contentType: "application/json",
         data: JSON.stringify({"source": self.source,
                "destination": self.destination,
-               "metrics": metrics,
-               "flexible": self.flexible
+               "base_metrics": metrics,
+               "depth": self.depth
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v3",
@@ -210,7 +210,7 @@ module.exports = {
         priority: 0,
         ownership: ""
       },
-      flexible: 0
+      depth: 0
     }
   }
 }
