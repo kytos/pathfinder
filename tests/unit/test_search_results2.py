@@ -35,7 +35,7 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(ownership="B"))
+                point_a, point_b, base=dict(ownership="B"))
             for result in results:
                 for path in result["paths"]:
                     self.assertNotIn("S4:1", path)
@@ -58,7 +58,7 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(reliability=3))
+                point_a, point_b, base=dict(reliability=3))
             for result in results:
                 for path in result["paths"]:
                     self.assertNotIn("S4:1", path)
@@ -73,7 +73,7 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(bandwidth=100))
+                point_a, point_b, base=dict(bandwidth=100))
             for result in results:
                 for path in result["paths"]:
                     self.assertNotIn("S3:1", path)
@@ -88,7 +88,7 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(delay=50))
+                point_a, point_b, base=dict(delay=50))
             for result in results:
                 for path in result["paths"]:
                     self.assertNotIn("S1:1", path)
@@ -121,8 +121,9 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(delay=50, bandwidth=100, reliability=3,
-                                       ownership="B"))
+                point_a, point_b, base=dict(delay=50, bandwidth=100,
+                                            reliability=3,
+                                            ownership="B"))
             for result in results:
                 for path in result["paths"]:
                     # delay = 50 checks
@@ -187,8 +188,9 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, dict(delay=50, bandwidth=100, reliability=3,
-                                       ownership="B"), {}, 4)
+                point_a, point_b, 4, base=dict(delay=50, bandwidth=100,
+                                               reliability=3,
+                                               ownership="B"))
             for result in results:
                 # delay = 50 checks
                 if "delay" in result["metrics"]:
@@ -257,10 +259,10 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(point_a, point_b,
-                                                {"ownership": "B"}, {
-                                                    "delay": 50,
-                                                    "bandwidth": 100,
-                                                    "reliability": 3})
+                                                base={"ownership": "B"},
+                                                flexible={"delay": 50,
+                                                          "bandwidth": 100,
+                                                          "reliability": 3})
             for result in results:
                 # delay = 50 checks
                 if "delay" in result["metrics"]:
@@ -325,9 +327,9 @@ class TestSearchResults2(TestSearchResults):
         self.setup()
         with self.assertRaises(TypeError):
             self.get_path_constrained(
-                "User1", "User2", {"ownership": 1})
+                "User1", "User2", base={"ownership": 1})
 
-    @staticmethod
+    @ staticmethod
     def generate_topology():
         """Generates a predetermined topology"""
         switches = {}
@@ -384,7 +386,7 @@ class TestSearchResults2(TestSearchResults):
 
         return (switches, links)
 
-    @staticmethod
+    @ staticmethod
     def _add_metadata_to_links(links):
         links["S1:1<->S2:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 105})
@@ -445,7 +447,7 @@ class TestSearchResults2(TestSearchResults):
         links["User1:4<->User4:3"].extend_metadata(
             {"reliability": 5, "bandwidth": 10, "delay": 105})
 
-    @staticmethod
+    @ staticmethod
     def _fill_links(links, interfaces):
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
 

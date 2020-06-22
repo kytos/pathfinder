@@ -28,13 +28,12 @@ class TestSearchResults(TestCase):
         results = self.graph.shortest_paths(source, destination)
         return results
 
-    def get_path_constrained(self, source, destination, metrics=None,
-                             flexible_metrics=None, flexible=None):
+    def get_path_constrained(self, source, destination, depth=None,
+                             **metrics):
         """Return the constrained shortest path"""
-        complete_metrics = KytosGraph.pack_metrics(metrics, flexible_metrics)
         return self.graph.constrained_flexible_paths(source, destination,
-                                                     complete_metrics,
-                                                     flexible)
+                                                     depth,
+                                                     **metrics)
 
     def test_setup(self):
         """Provides information on default test setup"""
