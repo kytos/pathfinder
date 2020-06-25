@@ -5,7 +5,7 @@ from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
 
 # pylint: disable=import-error
-from napps.kytos.pathfinder.graph import KytosGraph
+from graph import KytosGraph
 
 # pylint: enable=import-error
 
