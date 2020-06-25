@@ -373,3 +373,9 @@ module.exports = {
   }
 }
 </script>
+
+<style type="text/css">
+body{
+    overflow-y:hidden;
+}
+</style>
