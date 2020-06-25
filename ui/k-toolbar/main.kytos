@@ -16,66 +16,77 @@
         </k-accordion-item>
 
         <k-accordion-item title="Best Constrained Path with Flexible Metrics">
+          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+            :value.sync="source"></k-dropdown>
+          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+            :value.sync ="destination"></k-dropdown>
+
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'bandwidth'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['bandwidth']" 
-              :action="function(val) {is_flexible.bandwidth = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.bandwidth"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {metrics.bandwidth = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {v4_metrics.bandwidth = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'reliability'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'reliability'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['reliability']" 
-              :action="function(val) {is_flexible.reliability = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.reliability"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {metrics.reliability = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {v4_metrics.reliability = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'delay'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'delay'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['delay']" 
-              :action="function(val) {is_flexible.delay = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.delay"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {metrics.delay = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {v4_metrics.delay = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'utilization'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'utilization'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['utilization']" 
-              :action="function(val) {is_flexible.utilization = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.utilization"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {metrics.utilization = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {v4_metrics.utilization = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'priority'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'priority'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['priority']" 
-              :action="function(val) {is_flexible.priority = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.priority"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {metrics.priority = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {v4_metrics.priority = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "checked_list" :value = "'ownership'"></k-checkbox>
+              <k-checkbox :model.sync = "v4_checked_list" :value = "'ownership'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['ownership']" 
-              :action="function(val) {is_flexible.ownership = val}"></k-dropdown>
+              :value.sync="v4_is_flexible.ownership"></k-dropdown>
             </div>
-            <k-input :value.sync="metrics.ownership"></k-input>
           </div>
+          <k-input :value.sync="v4_metrics.ownership"></k-input>
+
+          <k-slider :max = 6
+          :action="function (val) {depth = parseInt(val)}"></k-slider>
+  
+          <k-button icon="search" title="Search" :on_click="get_constrained_paths_v4">
+          </k-button>
         </k-accordion-item>
   
         <k-accordion-item title="Best Constrained Path">
@@ -87,56 +98,53 @@
           <div style="width: 100%; overflow: hidden;">
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
-                :action="function (val) {metrics.bandwidth = parseInt(val)}"></k-slider>
+                :action="function (val) {v3_metrics.bandwidth = parseInt(val)}"></k-slider>
               </div>
               <div style="margin-left: 1em;"> 
                 <k-checkbox title="Bandwidth" 
-                :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
+                :model.sync = "v3_checked_list" :value = "'bandwidth'"></k-checkbox>
               </div>
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
-                :action="function (val) {metrics.reliability = parseInt(val)}"></k-slider>
+                :action="function (val) {v3_metrics.reliability = parseInt(val)}"></k-slider>
               </div>
               <div style="margin-left: 1em;"> 
                 <k-checkbox title="Reliability"
-                :model.sync = "checked_list" :value = "'reliability'"></k-checkbox>
+                :model.sync = "v3_checked_list" :value = "'reliability'"></k-checkbox>
               </div>
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
-                :action="function (val) {metrics.delay = parseInt(val)}"></k-slider>
+                :action="function (val) {v3_metrics.delay = parseInt(val)}"></k-slider>
               </div>
               <div style="margin-left: 1em;"> 
                 <k-checkbox title="Delay"
-                :model.sync = "checked_list" :value = "'delay'"></k-checkbox>
+                :model.sync = "v3_checked_list" :value = "'delay'"></k-checkbox>
               </div>
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
-                :action="function (val) {metrics.utilization = parseInt(val)}"></k-slider>
+                :action="function (val) {v3_metrics.utilization = parseInt(val)}"></k-slider>
               </div>
               <div style="margin-left: 1em;"> 
                 <k-checkbox title="Utilization"
-                :model.sync = "checked_list" :value = "'utilization'"></k-checkbox>
+                :model.sync = "v3_checked_list" :value = "'utilization'"></k-checkbox>
               </div>
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
-                :action="function (val) {metrics.priority = parseInt(val)}"></k-slider>
+                :action="function (val) {v3_metrics.priority = parseInt(val)}"></k-slider>
               </div>
               <div style="margin-left: 1em;"> 
                 <k-checkbox title="Priority"
-                :model.sync = "checked_list" :value = "'priority'"></k-checkbox>
+                :model.sync = "v3_checked_list" :value = "'priority'"></k-checkbox>
               </div>
           </div>
   
           <k-checkbox icon="adjust" title="Ownership:"
-          :model.sync = "checked_list" :value = "'ownership'"></k-checkbox>
+          :model.sync = "v3_checked_list" :value = "'ownership'"></k-checkbox>
   
           <k-input 
-          :value.sync="metrics.ownership"></k-input>
+          :value.sync="v3_metrics.ownership"></k-input>
   
-          <k-slider :max = 6
-          :action="function (val) {depth = parseInt(val)}"></k-slider>
-  
-          <k-button icon="search" title="Search" :on_click="get_constrained_paths">
+          <k-button icon="search" title="Search" :on_click="get_constrained_paths_v3">
           </k-button>
         </k-accordion-item>
       <k-accordion>
@@ -172,12 +180,12 @@ module.exports = {
       });
 
     },
-    get_constrained_paths (){
+    get_constrained_paths_v3 (){
       var self = this
-      var base_metrics = {}
-      for(var checked of self.checked_list)
+      var metrics = {}
+      for(var checked of self.v3_checked_list)
       {
-        metrics[checked] = self.metrics[checked]
+        metrics[checked] = self.v3_metrics[checked]
       }
 
       $.ajax({
@@ -187,8 +195,7 @@ module.exports = {
         contentType: "application/json",
         data: JSON.stringify({"source": self.source,
                "destination": self.destination,
-               "base_metrics": base_metrics,
-               "depth": self.depth
+               "base_metrics": metrics
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v3",
@@ -202,21 +209,40 @@ module.exports = {
         }
       });
     },
-    get_constrained_paths_flexible(){
+    get_constrained_paths_v4(){
       var self = this
       var base_metrics = {}
       var flexible_metrics = {}
-      for(var checked of self.checked_list)
-      {
-        if (self.is_flexible[checked]) 
-        {
-          flexible_metrics[checked] = self.metrics[checked]
-        }
-        else
-        {
-          base_metrics[checked] = self.metrics[checked]
+      for(var checked of self.v4_checked_list) {
+        if (self.v4_is_flexible[checked]) {
+          flexible_metrics[checked] = self.v4_metrics[checked]
+        } else {
+          base_metrics[checked] = self.v4_metrics[checked]
         }
       }
+      
+      $.ajax({
+        async: true,
+        dataType: "json",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({"source": self.source,
+               "destination": self.destination,
+               "base_metrics": base_metrics,
+               "flexible_metrics": flexible_metrics,
+               "depth": self.depth
+               }),
+
+        url: this.$kytos_server_api + "kytos/pathfinder/v4",
+        success: function(data) {
+            if (data[0] !== undefined){
+                self.paths = data[0]['paths'][0];
+            } else {
+                self.paths = []
+            }
+          self.show();
+        }
+      });
     },
     get_topology(){
       var self = this
@@ -316,8 +342,8 @@ module.exports = {
       destination: "",
       desired_links: [],
       undesired_links: [],
-      checked_list: [],
-      metrics:{
+      v3_checked_list: [],
+      v3_metrics:{
         bandwidth: 0,
         reliability: 0,
         delay: 0,
@@ -325,7 +351,16 @@ module.exports = {
         priority: 0,
         ownership: ""
       },
-      is_flexible:{
+      v4_checked_list: [],
+      v4_metrics:{
+        bandwidth: 0,
+        reliability: 0,
+        delay: 0,
+        utilization: 0,
+        priority: 0,
+        ownership: ""
+      },
+      v4_is_flexible:{
         bandwidth: false,
         reliability: false,
         delay: false,
