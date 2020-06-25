@@ -96,12 +96,10 @@ class Main(KytosNApp):
 
         source = data.get('source')
         destination = data.get('destination')
-        depth = data.get('depth', 0)
         base_metrics = data.get('base_metrics', {})
         try:
             paths = self.graph.constrained_flexible_paths(source,
                                                           destination,
-                                                          depth,
                                                           base=base_metrics)
             return jsonify(paths)
         except TypeError as err:
@@ -116,8 +114,10 @@ class Main(KytosNApp):
         destination = data.get('destination')
         base_metrics = data.get('base_metrics', {})
         fle_metrics = data.get('flexible_metrics', {})
+        depth = data.get('depth', 0)
         try:
             paths = self.graph.constrained_flexible_paths(source, destination,
+                                                          depth,
                                                           base=base_metrics,
                                                           flexible=fle_metrics)
             return jsonify(paths)
