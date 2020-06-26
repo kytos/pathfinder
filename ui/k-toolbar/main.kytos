@@ -17,10 +17,9 @@
 
         <k-accordion-item title="Best Constrained Path with Flexible Metrics">
           <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="source"></k-dropdown>
+            :value.sync="v4_source"></k-dropdown>
           <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="destination"></k-dropdown>
-
+            :value.sync ="v4_destination"></k-dropdown>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
               <k-checkbox :model.sync = "v4_checked_list" :value = "'bandwidth'"></k-checkbox>
@@ -81,20 +80,17 @@
             </div>
           </div>
           <k-input :value.sync="v4_metrics.ownership"></k-input>
-
           <k-slider :max = 6
           :action="function (val) {depth = parseInt(val)}"></k-slider>
-  
           <k-button icon="search" title="Search" :on_click="get_constrained_paths_v4">
           </k-button>
         </k-accordion-item>
   
         <k-accordion-item title="Best Constrained Path">
           <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="source"></k-dropdown>
+            :value.sync="v3_source"></k-dropdown>
           <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="destination"></k-dropdown>
-  
+            :value.sync ="v3_destination"></k-dropdown>
           <div style="width: 100%; overflow: hidden;">
               <div style="width:50%; float: left;"> 
                 <k-slider icon="adjust"
@@ -137,13 +133,10 @@
                 :model.sync = "v3_checked_list" :value = "'priority'"></k-checkbox>
               </div>
           </div>
-  
           <k-checkbox icon="adjust" title="Ownership:"
           :model.sync = "v3_checked_list" :value = "'ownership'"></k-checkbox>
-  
           <k-input 
           :value.sync="v3_metrics.ownership"></k-input>
-  
           <k-button icon="search" title="Search" :on_click="get_constrained_paths_v3">
           </k-button>
         </k-accordion-item>
@@ -193,8 +186,8 @@ module.exports = {
         dataType: "json",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({"source": self.source,
-               "destination": self.destination,
+        data: JSON.stringify({"source": self.v3_source,
+               "destination": self.v3_destination,
                "base_metrics": metrics
                }),
 
@@ -214,7 +207,7 @@ module.exports = {
       var base_metrics = {}
       var flexible_metrics = {}
       for(var checked of self.v4_checked_list) {
-        if (self.v4_is_flexible[checked] == 'true') {
+        if (self.v4_is_flexible[checked]) {
           flexible_metrics[checked] = self.v4_metrics[checked]
         } else {
           base_metrics[checked] = self.v4_metrics[checked]
@@ -226,12 +219,11 @@ module.exports = {
         dataType: "json",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({"source": self.source,
-               "destination": self.destination,
+        data: JSON.stringify({"source": self.v4_source,
+               "destination": self.v4_destination,
                "base_metrics": base_metrics,
                "flexible_metrics": flexible_metrics,
-               "depth": self.depth,
-               "isFlexible": self.v4_is_flexible
+               "depth": self.depth
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v4",
@@ -283,23 +275,23 @@ module.exports = {
       var priority_options = []
       var ownership_options = []
 
-      bandwidth_options.push({value: 'false', description: 'Bandwidth', selected: 'true'});
-      bandwidth_options.push({value: 'true', description: 'Bandwidth (Flexible)'});
+      bandwidth_options.push({value: false, description: 'Bandwidth', selected: true});
+      bandwidth_options.push({value: true, description: 'Bandwidth (Flexible)'});
       
-      reliability_options.push({value: 'false', description: 'Reliability', selected: 'true'});
-      reliability_options.push({value: 'true', description: 'Reliability (Flexible)'});
+      reliability_options.push({value: false, description: 'Reliability', selected: true});
+      reliability_options.push({value: true, description: 'Reliability (Flexible)'});
 
-      delay_options.push({value: 'false', description: 'Delay', selected: 'true'});
-      delay_options.push({value: 'true', description: 'Delay (Flexible)'});
+      delay_options.push({value: false, description: 'Delay', selected: true});
+      delay_options.push({value: true, description: 'Delay (Flexible)'});
 
-      utilization_options.push({value: 'false', description: 'Utilization', selected: 'true'});
-      utilization_options.push({value: 'true', description: 'Utilization (Flexible)'});
+      utilization_options.push({value: false, description: 'Utilization', selected: true});
+      utilization_options.push({value: true, description: 'Utilization (Flexible)'});
 
-      priority_options.push({value: 'false', description: 'Priority', selected: 'true'});
-      priority_options.push({value: 'true', description: 'Priority (Flexible)'});
+      priority_options.push({value: false, description: 'Priority', selected: true});
+      priority_options.push({value: true, description: 'Priority (Flexible)'});
 
-      ownership_options.push({value: 'false', description: 'Ownership', selected: 'true'});
-      ownership_options.push({value: 'true', description: 'Ownership (Flexible)'});
+      ownership_options.push({value: false, description: 'Ownership', selected: true});
+      ownership_options.push({value: true, description: 'Ownership (Flexible)'});
 
       metric_options["bandwidth"] = bandwidth_options
       metric_options["reliability"] = reliability_options
@@ -343,6 +335,8 @@ module.exports = {
       destination: "",
       desired_links: [],
       undesired_links: [],
+      v3_source: "",
+      v3_destination: "",
       v3_checked_list: [],
       v3_metrics:{
         bandwidth: 0,
@@ -352,6 +346,8 @@ module.exports = {
         priority: 0,
         ownership: ""
       },
+      v4_source: "",
+      v4_destination: "",
       v4_checked_list: [],
       v4_metrics:{
         bandwidth: 0,
