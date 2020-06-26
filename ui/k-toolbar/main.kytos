@@ -214,7 +214,7 @@ module.exports = {
       var base_metrics = {}
       var flexible_metrics = {}
       for(var checked of self.v4_checked_list) {
-        if (self.v4_is_flexible[checked]) {
+        if (self.v4_is_flexible[checked] == 'true') {
           flexible_metrics[checked] = self.v4_metrics[checked]
         } else {
           base_metrics[checked] = self.v4_metrics[checked]
@@ -230,7 +230,8 @@ module.exports = {
                "destination": self.destination,
                "base_metrics": base_metrics,
                "flexible_metrics": flexible_metrics,
-               "depth": self.depth
+               "depth": self.depth,
+               "isFlexible": self.v4_is_flexible
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v4",
