@@ -3,141 +3,86 @@
     <div style="overflow-y: auto; height:550px;">
       <k-accordion>
         <k-accordion-item title="Best Path">
-          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="source"></k-dropdown>
-          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="destination"></k-dropdown>
+         <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+          :value.sync="source"></k-dropdown>
+         <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+          :value.sync ="destination"></k-dropdown>
          <k-select icon="link" title="Desired links:" :options="get_links"
           :value.sync ="desired_links"></k-select>
          <k-select icon="link" title="Undesired links:" :options="get_links"
           :value.sync ="undesired_links"></k-select>
-          <k-button icon="search" title="Search" :on_click="get_paths">
-          </k-button>
+         <k-button icon="search" title="Search" :on_click="get_paths">
+         </k-button>
         </k-accordion-item>
 
-        <k-accordion-item title="Best Constrained Path with Flexible Metrics">
-          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="v4_source"></k-dropdown>
-          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="v4_destination"></k-dropdown>
+        <k-accordion-item title="Best Constrained Path">
+           <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+            :value.sync="source_constrained"></k-dropdown>
+           <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+            :value.sync ="destination_constrained"></k-dropdown>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'bandwidth'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['bandwidth']" 
-              :value.sync="v4_is_flexible.bandwidth"></k-dropdown>
+               :value.sync="is_flexible.bandwidth"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {v4_metrics.bandwidth = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {metrics.bandwidth = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'reliability'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'reliability'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['reliability']" 
-              :value.sync="v4_is_flexible.reliability"></k-dropdown>
+              :value.sync="is_flexible.reliability"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {v4_metrics.reliability = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {metrics.reliability = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'delay'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'delay'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['delay']" 
-              :value.sync="v4_is_flexible.delay"></k-dropdown>
+              :value.sync="is_flexible.delay"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {v4_metrics.delay = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {metrics.delay = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'utilization'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'utilization'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['utilization']" 
-              :value.sync="v4_is_flexible.utilization"></k-dropdown>
+              :value.sync="is_flexible.utilization"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {v4_metrics.utilization = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {metrics.utilization = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'priority'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'priority'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['priority']" 
-              :value.sync="v4_is_flexible.priority"></k-dropdown>
+              :value.sync="is_flexible.priority"></k-dropdown>
             </div>
-            <k-slider icon="adjust" :action="function(val) {v4_metrics.priority = parseInt(val)}"></k-slider>
+            <k-slider icon="adjust" :action="function(val) {metrics.priority = parseInt(val)}"></k-slider>
           </div>
           <div style="width:100%; overflow: hidden;">
             <div style="width:10%; float: left;">
-              <k-checkbox :model.sync = "v4_checked_list" :value = "'ownership'"></k-checkbox>
+              <k-checkbox :model.sync = "checked_list" :value = "'ownership'"></k-checkbox>
             </div>
             <div style="width:90%; float: left;">
               <k-dropdown :options="metric_options['ownership']" 
-              :value.sync="v4_is_flexible.ownership"></k-dropdown>
+              :value.sync="is_flexible.ownership"></k-dropdown>
             </div>
           </div>
-          <k-input :value.sync="v4_metrics.ownership"></k-input>
+          <k-input :value.sync="metrics.ownership"></k-input>
           <k-slider :max = 6
-          :action="function (val) {depth = parseInt(val)}"></k-slider>
-          <k-button icon="search" title="Search" :on_click="get_constrained_paths_v4">
-          </k-button>
-        </k-accordion-item>
-  
-        <k-accordion-item title="Best Constrained Path">
-          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
-            :value.sync="v3_source"></k-dropdown>
-          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
-            :value.sync ="v3_destination"></k-dropdown>
-          <div style="width: 100%; overflow: hidden;">
-              <div style="width:50%; float: left;"> 
-                <k-slider icon="adjust"
-                :action="function (val) {v3_metrics.bandwidth = parseInt(val)}"></k-slider>
-              </div>
-              <div style="margin-left: 1em;"> 
-                <k-checkbox title="Bandwidth" 
-                :model.sync = "v3_checked_list" :value = "'bandwidth'"></k-checkbox>
-              </div>
-              <div style="width:50%; float: left;"> 
-                <k-slider icon="adjust"
-                :action="function (val) {v3_metrics.reliability = parseInt(val)}"></k-slider>
-              </div>
-              <div style="margin-left: 1em;"> 
-                <k-checkbox title="Reliability"
-                :model.sync = "v3_checked_list" :value = "'reliability'"></k-checkbox>
-              </div>
-              <div style="width:50%; float: left;"> 
-                <k-slider icon="adjust"
-                :action="function (val) {v3_metrics.delay = parseInt(val)}"></k-slider>
-              </div>
-              <div style="margin-left: 1em;"> 
-                <k-checkbox title="Delay"
-                :model.sync = "v3_checked_list" :value = "'delay'"></k-checkbox>
-              </div>
-              <div style="width:50%; float: left;"> 
-                <k-slider icon="adjust"
-                :action="function (val) {v3_metrics.utilization = parseInt(val)}"></k-slider>
-              </div>
-              <div style="margin-left: 1em;"> 
-                <k-checkbox title="Utilization"
-                :model.sync = "v3_checked_list" :value = "'utilization'"></k-checkbox>
-              </div>
-              <div style="width:50%; float: left;"> 
-                <k-slider icon="adjust"
-                :action="function (val) {v3_metrics.priority = parseInt(val)}"></k-slider>
-              </div>
-              <div style="margin-left: 1em;"> 
-                <k-checkbox title="Priority"
-                :model.sync = "v3_checked_list" :value = "'priority'"></k-checkbox>
-              </div>
-          </div>
-          <k-checkbox icon="adjust" title="Ownership:"
-          :model.sync = "v3_checked_list" :value = "'ownership'"></k-checkbox>
-          <k-input 
-          :value.sync="v3_metrics.ownership"></k-input>
-          <k-button icon="search" title="Search" :on_click="get_constrained_paths_v3">
+          :action="function (val) {maximum_misses = parseInt(val)}"></k-slider>
+          <k-button icon="search" title="Search" :on_click="get_constrained_paths">
           </k-button>
         </k-accordion-item>
       <k-accordion>
@@ -173,44 +118,15 @@ module.exports = {
       });
 
     },
-    get_constrained_paths_v3 (){
-      var self = this
-      var metrics = {}
-      for(var checked of self.v3_checked_list)
-      {
-        metrics[checked] = self.v3_metrics[checked]
-      }
-
-      $.ajax({
-        async: true,
-        dataType: "json",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({"source": self.v3_source,
-               "destination": self.v3_destination,
-               "base_metrics": metrics
-               }),
-
-        url: this.$kytos_server_api + "kytos/pathfinder/v3",
-        success: function(data) {
-            if (data[0] !== undefined){
-                self.paths = data[0]['paths'][0];
-            } else {
-                self.paths = []
-            }
-          self.show();
-        }
-      });
-    },
-    get_constrained_paths_v4(){
+    get_constrained_paths(){
       var self = this
       var base_metrics = {}
       var flexible_metrics = {}
-      for(var checked of self.v4_checked_list) {
-        if (self.v4_is_flexible[checked]) {
-          flexible_metrics[checked] = self.v4_metrics[checked]
+      for(var checked of self.checked_list) {
+        if (self.is_flexible[checked]) {
+          flexible_metrics[checked] = self.metrics[checked]
         } else {
-          base_metrics[checked] = self.v4_metrics[checked]
+          base_metrics[checked] = self.metrics[checked]
         }
       }
       
@@ -219,14 +135,14 @@ module.exports = {
         dataType: "json",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({"source": self.v4_source,
-               "destination": self.v4_destination,
+        data: JSON.stringify({"source": self.source_constrained,
+               "destination": self.destination_constrained,
                "base_metrics": base_metrics,
                "flexible_metrics": flexible_metrics,
-               "depth": self.depth
+               "maximum_misses": self.maximum_misses
                }),
 
-        url: this.$kytos_server_api + "kytos/pathfinder/v4",
+        url: this.$kytos_server_api + "kytos/pathfinder/v2/best-constrained-paths",
         success: function(data) {
             if (data[0] !== undefined){
                 self.paths = data[0]['paths'][0];
@@ -335,10 +251,10 @@ module.exports = {
       destination: "",
       desired_links: [],
       undesired_links: [],
-      v3_source: "",
-      v3_destination: "",
-      v3_checked_list: [],
-      v3_metrics:{
+      source_constrained: "",
+      destination_constrained: "",
+      checked_list: [],
+      metrics:{
         bandwidth: 0,
         reliability: 0,
         delay: 0,
@@ -346,18 +262,7 @@ module.exports = {
         priority: 0,
         ownership: ""
       },
-      v4_source: "",
-      v4_destination: "",
-      v4_checked_list: [],
-      v4_metrics:{
-        bandwidth: 0,
-        reliability: 0,
-        delay: 0,
-        utilization: 0,
-        priority: 0,
-        ownership: ""
-      },
-      v4_is_flexible:{
+      is_flexible:{
         bandwidth: false,
         reliability: false,
         delay: false,
@@ -365,7 +270,7 @@ module.exports = {
         priority: false,
         ownership: false
       },
-      depth: 0
+      maximum_misses: 0
     }
   }
 }
