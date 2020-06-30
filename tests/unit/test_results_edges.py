@@ -5,10 +5,10 @@ from itertools import combinations
 from kytos.core.link import Link
 
 # module under test
-from tests.unit.test_search_results import TestSearchResults
+from tests.unit.test_results import TestResults
 
 
-class TestSearchResults2(TestSearchResults):
+class TestResultsEdges(TestResults):
     """Tests for the graph class."""
 
     def test_path1(self):
@@ -188,9 +188,9 @@ class TestSearchResults2(TestSearchResults):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         for point_a, point_b in combos:
             results = self.get_path_constrained(
-                point_a, point_b, 4, base=dict(delay=50, bandwidth=100,
-                                               reliability=3,
-                                               ownership="B"))
+                point_a, point_b, flexible=dict(delay=50, bandwidth=100,
+                                                reliability=3,
+                                                ownership="B"))
             for result in results:
                 # delay = 50 checks
                 if "delay" in result["metrics"]:
@@ -336,53 +336,53 @@ class TestSearchResults2(TestSearchResults):
         interfaces = {}
         links = {}
 
-        TestSearchResults.create_switch("S1", switches)
-        TestSearchResults.add_interfaces(2, switches["S1"], interfaces)
+        TestResults.create_switch("S1", switches)
+        TestResults.add_interfaces(2, switches["S1"], interfaces)
 
-        TestSearchResults.create_switch("S2", switches)
-        TestSearchResults.add_interfaces(2, switches["S2"], interfaces)
+        TestResults.create_switch("S2", switches)
+        TestResults.add_interfaces(2, switches["S2"], interfaces)
 
-        TestSearchResults.create_switch("S3", switches)
-        TestSearchResults.add_interfaces(6, switches["S3"], interfaces)
+        TestResults.create_switch("S3", switches)
+        TestResults.add_interfaces(6, switches["S3"], interfaces)
 
-        TestSearchResults.create_switch("S4", switches)
-        TestSearchResults.add_interfaces(2, switches["S4"], interfaces)
+        TestResults.create_switch("S4", switches)
+        TestResults.add_interfaces(2, switches["S4"], interfaces)
 
-        TestSearchResults.create_switch("S5", switches)
-        TestSearchResults.add_interfaces(6, switches["S5"], interfaces)
+        TestResults.create_switch("S5", switches)
+        TestResults.add_interfaces(6, switches["S5"], interfaces)
 
-        TestSearchResults.create_switch("S6", switches)
-        TestSearchResults.add_interfaces(5, switches["S6"], interfaces)
+        TestResults.create_switch("S6", switches)
+        TestResults.add_interfaces(5, switches["S6"], interfaces)
 
-        TestSearchResults.create_switch("S7", switches)
-        TestSearchResults.add_interfaces(2, switches["S7"], interfaces)
+        TestResults.create_switch("S7", switches)
+        TestResults.add_interfaces(2, switches["S7"], interfaces)
 
-        TestSearchResults.create_switch("S8", switches)
-        TestSearchResults.add_interfaces(8, switches["S8"], interfaces)
+        TestResults.create_switch("S8", switches)
+        TestResults.add_interfaces(8, switches["S8"], interfaces)
 
-        TestSearchResults.create_switch("S9", switches)
-        TestSearchResults.add_interfaces(4, switches["S9"], interfaces)
+        TestResults.create_switch("S9", switches)
+        TestResults.add_interfaces(4, switches["S9"], interfaces)
 
-        TestSearchResults.create_switch("S10", switches)
-        TestSearchResults.add_interfaces(3, switches["S10"], interfaces)
+        TestResults.create_switch("S10", switches)
+        TestResults.add_interfaces(3, switches["S10"], interfaces)
 
-        TestSearchResults.create_switch("S11", switches)
-        TestSearchResults.add_interfaces(3, switches["S11"], interfaces)
+        TestResults.create_switch("S11", switches)
+        TestResults.add_interfaces(3, switches["S11"], interfaces)
 
-        TestSearchResults.create_switch("User1", switches)
-        TestSearchResults.add_interfaces(4, switches["User1"], interfaces)
+        TestResults.create_switch("User1", switches)
+        TestResults.add_interfaces(4, switches["User1"], interfaces)
 
-        TestSearchResults.create_switch("User2", switches)
-        TestSearchResults.add_interfaces(2, switches["User2"], interfaces)
+        TestResults.create_switch("User2", switches)
+        TestResults.add_interfaces(2, switches["User2"], interfaces)
 
-        TestSearchResults.create_switch("User3", switches)
-        TestSearchResults.add_interfaces(2, switches["User3"], interfaces)
+        TestResults.create_switch("User3", switches)
+        TestResults.add_interfaces(2, switches["User3"], interfaces)
 
-        TestSearchResults.create_switch("User4", switches)
-        TestSearchResults.add_interfaces(3, switches["User4"], interfaces)
+        TestResults.create_switch("User4", switches)
+        TestResults.add_interfaces(3, switches["User4"], interfaces)
 
-        TestSearchResults2._fill_links(links, interfaces)
-        TestSearchResults2._add_metadata_to_links(links)
+        TestResultsEdges._fill_links(links, interfaces)
+        TestResultsEdges._add_metadata_to_links(links)
 
         return (switches, links)
 
