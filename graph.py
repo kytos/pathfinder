@@ -17,12 +17,12 @@ class Filter:
 
     def __init__(self, filter_type, filter_function):
         self._filter_type = filter_type
-        self._filter_fun = filter_function
+        self._filter_function = filter_function
 
     def run(self, value, items):
         """Filter out items. Filter chosen is picked at runtime."""
         if isinstance(value, self._filter_type):
-            return filter(self._filter_fun(value), items)
+            return filter(self._filter_function(value), items)
 
         raise TypeError(f"Expected type: {self._filter_type}")
 
@@ -32,7 +32,7 @@ class KytosGraph:
 
     def __init__(self):
         self.graph = nx.Graph()
-        self._filter_fun_dict = {}
+        self._filter_functions = {}
 
         def filter_leq(metric):  # Lower values are better
             return lambda x: (lambda y: y[2].get(metric, x) <= x)
@@ -43,23 +43,23 @@ class KytosGraph:
         def filter_eeq(metric):  # Equivalence
             return lambda x: (lambda y: y[2].get(metric, x) == x)
 
-        self._filter_fun_dict["ownership"] = Filter(
+        self._filter_functions["ownership"] = Filter(
             str, filter_eeq("ownership"))
-        self._filter_fun_dict["bandwidth"] = Filter(
+        self._filter_functions["bandwidth"] = Filter(
             (int, float), filter_geq("bandwidth"))
-        self._filter_fun_dict["priority"] = Filter(
+        self._filter_functions["priority"] = Filter(
             (int, float), filter_geq("priority"))
-        self._filter_fun_dict["reliability"] = Filter(
+        self._filter_functions["reliability"] = Filter(
             (int, float), filter_geq("reliability"))
-        self._filter_fun_dict["utilization"] = Filter(
+        self._filter_functions["utilization"] = Filter(
             (int, float), filter_leq("utilization"))
-        self._filter_fun_dict["delay"] = Filter(
+        self._filter_functions["delay"] = Filter(
             (int, float), filter_leq("delay"))
-        self._path_fun = nx.all_shortest_paths
+        self._path_function = nx.all_shortest_paths
 
-    def set_path_fun(self, path_fun):
+    def set_path_function(self, path_fun):
         """Set the shortest path function."""
-        self._path_fun = path_fun
+        self._path_function = path_fun
 
     def clear(self):
         """Remove all nodes and links registered."""
@@ -110,8 +110,8 @@ class KytosGraph:
     def shortest_paths(self, source, destination, parameter=None):
         """Calculate the shortest paths and return them."""
         try:
-            paths = list(self._path_fun(self.graph,
-                                        source, destination, parameter))
+            paths = list(self._path_function(self.graph,
+                                             source, destination, parameter))
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
@@ -150,8 +150,8 @@ class KytosGraph:
     def _constrained_shortest_paths(self, source, destination, edges):
         paths = []
         try:
-            paths = list(self._path_fun(self.graph.edge_subgraph(edges),
-                                        source, destination))
+            paths = list(self._path_function(self.graph.edge_subgraph(edges),
+                                             source, destination))
         except NetworkXNoPath:
             pass
         except NodeNotFound:
@@ -162,10 +162,10 @@ class KytosGraph:
 
     def _filter_edges(self, edges, **metrics):
         for metric, value in metrics.items():
-            fil = self._filter_fun_dict.get(metric, None)
-            if fil is not None:
+            filter_ = self._filter_functions.get(metric, None)
+            if filter_ is not None:
                 try:
-                    edges = fil.run(value, edges)
+                    edges = filter_.run(value, edges)
                 except TypeError as err:
                     raise TypeError(f"Error in {metric} filter: {err}")
         return edges
