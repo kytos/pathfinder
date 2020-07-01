@@ -9,7 +9,11 @@ from tests.unit.test_results import TestResults
 
 
 class TestResultsEdges(TestResults):
-    """Tests for the graph class."""
+    """Tests for the graph class.
+
+    Tests to see if reflexive searches and impossible searches
+    show correct results.
+    """
 
     def test_path1(self):
         """Tests paths between all users using unconstrained path alogrithm."""
