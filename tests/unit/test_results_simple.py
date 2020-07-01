@@ -6,7 +6,10 @@ from tests.unit.test_results import TestResults
 
 
 class TestResultsSimple(TestResults):
-    """Tests for the graph class."""
+    """Tests for the graph class.
+
+    Tests if the paths returned have only legal edges.
+    """
 
     def test_path1(self):
         """Tests a simple, possible path"""

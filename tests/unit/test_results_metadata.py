@@ -5,7 +5,10 @@ from tests.unit.test_results import TestResults
 
 
 class TestResultsMetadata(TestResults):
-    """Tests for the graph class."""
+    """Tests for the graph class.
+
+    Tests if the metadata in search result edges have passing values.
+    """
 
     def test_path1(self):
         """Tests to see if the edges used in the paths of the result set
