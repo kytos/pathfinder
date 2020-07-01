@@ -13,14 +13,13 @@ from graph import KytosGraph
 class TestResults(TestCase):
     """Tests for the graph class."""
 
-    def setup(self):
+    def setUp(self):
         """Setup for most tests"""
         switches, links = self.generate_topology()
         self.graph = KytosGraph()
         self.graph.clear()
         self.graph.update_nodes(switches)
         self.graph.update_links(links)
-        self.graph.set_path_function(nx.shortest_simple_paths)
 
     def get_path(self, source, destination):
         """Return the shortest path"""
@@ -33,10 +32,6 @@ class TestResults(TestCase):
         return self.graph.constrained_flexible_paths(source, destination,
                                                      maximum_misses,
                                                      **metrics)
-
-    def test_setup(self):
-        """Provides information on default test setup"""
-        self.setup()
 
     @ staticmethod
     def generate_topology():
