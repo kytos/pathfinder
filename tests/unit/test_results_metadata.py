@@ -75,7 +75,7 @@ class TestResultsMetadata(TestResults):
         for bandwidth in bandwidths:
             self.assertEqual(bandwidth < requirements["bandwidth"], False)
 
-    def test_path3(self):
+    def test_path4(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
         have at least 20 bandwidth and under 30 delay."""
         bandwidths = []
