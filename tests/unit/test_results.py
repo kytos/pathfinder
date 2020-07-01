@@ -1,7 +1,6 @@
 """Module to test the KytosGraph in graph.py."""
 from unittest import TestCase
 
-import networkx as nx
 from kytos.core.interface import Interface
 from kytos.core.link import Link
 from kytos.core.switch import Switch
