@@ -57,10 +57,6 @@ class KytosGraph:
             (int, float), filter_leq("delay"))
         self._path_function = nx.all_shortest_paths
 
-    def set_path_function(self, path_function):
-        """Set the shortest path function."""
-        self._path_function = path_function
-
     def clear(self):
         """Remove all nodes and links registered."""
         self.graph.clear()

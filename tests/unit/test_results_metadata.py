@@ -10,8 +10,6 @@ class TestResultsMetadata(TestResults):
     def test_path1(self):
         """Tests to see if the edges used in the paths of the result set
         do not have poor reliability"""
-
-        self.test_setup()
         reliabilities = []
         requirements = {"reliability": 3}
         poor_reliability = 1
@@ -33,8 +31,6 @@ class TestResultsMetadata(TestResults):
     def test_path2(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
         have less than 30 delay."""
-
-        self.test_setup()
         delays = []
         requirements = {"delay": 29}
 
@@ -57,8 +53,6 @@ class TestResultsMetadata(TestResults):
     def test_path3(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
         have at least 20 bandwidth."""
-
-        self.test_setup()
         bandwidths = []
         requirements = {"bandwidth": 20}
 
@@ -81,8 +75,6 @@ class TestResultsMetadata(TestResults):
     def test_path3(self):
         """Tests to see if the edges used in the paths from User 1 to User 2
         have at least 20 bandwidth and under 30 delay."""
-
-        self.test_setup()
         bandwidths = []
         delays = []
         requirements = {"bandwidth": 20, "delay": 29}
