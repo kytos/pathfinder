@@ -89,7 +89,7 @@ class Main(KytosNApp):
         paths = self._filter_paths(paths, desired, undesired)
         return jsonify({'paths': paths})
 
-    @rest('v3/', methods=['POST'])
+    @rest('v2/best-constrained-paths', methods=['POST'])
     def shortest_constrained_path(self):
         """Get the set of shortest paths between the source and destination."""
         data = request.get_json()
@@ -98,10 +98,10 @@ class Main(KytosNApp):
         destination = data.get('destination')
         base_metrics = data.get('base_metrics', {})
         fle_metrics = data.get('flexible_metrics', {})
-        depth = data.get('depth', None)
+        maximum_misses = data.get('maximum_misses')
         try:
             paths = self.graph.constrained_flexible_paths(source, destination,
-                                                          depth,
+                                                          maximum_misses,
                                                           base=base_metrics,
                                                           flexible=fle_metrics)
             return jsonify(paths)
