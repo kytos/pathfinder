@@ -57,9 +57,9 @@ class KytosGraph:
             (int, float), filter_leq("delay"))
         self._path_function = nx.all_shortest_paths
 
-    def set_path_function(self, path_fun):
+    def set_path_function(self, path_function):
         """Set the shortest path function."""
-        self._path_function = path_fun
+        self._path_function = path_function
 
     def clear(self):
         """Remove all nodes and links registered."""
@@ -117,24 +117,24 @@ class KytosGraph:
         return paths
 
     def constrained_flexible_paths(self, source, destination,
-                                   depth=None, **metrics):
+                                   maximum_misses=None, **metrics):
         """Calculate the constrained shortest paths with flexibility."""
         base = metrics.get("base", {})
         flexible = metrics.get("flexible", {})
-        # Retrive subgraph with edges that meet base requirements.
+        # Retrieve subgraph with edges that meet base requirements.
         default_edge_list = list(self._filter_edges(
             self.graph.edges(data=True), **base))
         length = len(flexible)
-        if depth is None:
-            depth = length
-        depth = min(length, max(0, depth))
+        if maximum_misses is None:
+            maximum_misses = length
+        maximum_misses = min(length, max(0, maximum_misses))
         results = []
         paths = []
         i = 0
         # Create "sub-subgraphs" from original subgraph by trimming edges
-        # that fail to meet flexible requirements. Search for a shortest
+        # that miss flexible requirement combinations. Search for a shortest
         # path in each of these graphs, until at least one is found.
-        while (paths == [] and i in range(0, depth+1)):
+        while (paths == [] and i in range(0, maximum_misses+1)):
             for combo in combinations(flexible.items(), length-i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
