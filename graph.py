@@ -163,5 +163,5 @@ class KytosGraph:
                 try:
                     edges = filter_.run(value, edges)
                 except TypeError as err:
-                    raise TypeError(f"Error in {metric} filter: {err}")
+                    raise TypeError(f"Error in {metric} value: {err}")
         return edges
