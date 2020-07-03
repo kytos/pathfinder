@@ -96,6 +96,7 @@ class KytosGraph:
 
     def _set_default_metadata(self, keys):
         """Set metadata to all links.
+
         Set the value to zero for inexistent metadata in a link to make those
         irrelevant in pathfinding.
         """
