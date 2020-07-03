@@ -87,10 +87,22 @@ class KytosGraph:
             if link.is_active():
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
                 for key, value in link.metadata.items():
-                    keys.append(key)
+                    keys.extend(key)
                     endpoint_a = link.endpoint_a.id
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
+
+        self._set_default_metadata(keys)
+
+    def _set_default_metadata(self, keys):
+        """Set metadata to all links.
+        Set the value to zero for inexistent metadata in a link to make those
+        irrelevant in pathfinding.
+        """
+        for key in keys:
+            for endpoint_a, endpoint_b in self.graph.edges:
+                if key not in self.graph[endpoint_a][endpoint_b]:
+                    self.graph[endpoint_a][endpoint_b][key] = 0
 
     def get_metadata_from_link(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
@@ -106,8 +118,9 @@ class KytosGraph:
     def shortest_paths(self, source, destination, parameter=None):
         """Calculate the shortest paths and return them."""
         try:
-            paths = list(self._path_function(self.graph,
-                                             source, destination, parameter))
+            paths = list(nx.shortest_simple_paths(self.graph,
+                                                  source, destination,
+                                                  parameter))
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
@@ -117,7 +130,6 @@ class KytosGraph:
         """Calculate the constrained shortest paths with flexibility."""
         base = metrics.get("base", {})
         flexible = metrics.get("flexible", {})
-        # Retrieve subgraph with edges that meet base requirements.
         default_edge_list = list(self._filter_edges(
             self.graph.edges(data=True), **base))
         length = len(flexible)
@@ -127,9 +139,6 @@ class KytosGraph:
         results = []
         paths = []
         i = 0
-        # Create "sub-subgraphs" from original subgraph by trimming edges
-        # that miss flexible requirement combinations. Search for a shortest
-        # path in each of these graphs, until at least one is found.
         while (paths == [] and i in range(0, maximum_misses+1)):
             for combo in combinations(flexible.items(), length-i):
                 additional = dict(combo)
