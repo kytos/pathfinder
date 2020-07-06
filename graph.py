@@ -87,7 +87,7 @@ class KytosGraph:
             if link.is_active():
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
                 for key, value in link.metadata.items():
-                    keys.extend(key)
+                    keys.append(key)
                     endpoint_a = link.endpoint_a.id
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
