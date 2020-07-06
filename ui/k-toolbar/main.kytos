@@ -1,6 +1,6 @@
 <template>
   <k-toolbar-item icon="compass" tooltip="Napp Pathfinder">
-    <div style="overflow-y: auto; height:550px;">
+    <div class="scroll">
       <k-accordion>
         <k-accordion-item title="Best Path">
          <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
@@ -20,61 +20,61 @@
             :value.sync="source_constrained"></k-dropdown>
            <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
             :value.sync ="destination_constrained"></k-dropdown>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['bandwidth']" 
                :value.sync="is_flexible.bandwidth"></k-dropdown>
             </div>
             <k-slider icon="adjust" :action="function(val) {metrics.bandwidth = parseInt(val)}"></k-slider>
           </div>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'reliability'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['reliability']" 
               :value.sync="is_flexible.reliability"></k-dropdown>
             </div>
             <k-slider icon="adjust" :action="function(val) {metrics.reliability = parseInt(val)}"></k-slider>
           </div>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'delay'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['delay']" 
               :value.sync="is_flexible.delay"></k-dropdown>
             </div>
             <k-slider icon="adjust" :action="function(val) {metrics.delay = parseInt(val)}"></k-slider>
           </div>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'utilization'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['utilization']" 
               :value.sync="is_flexible.utilization"></k-dropdown>
             </div>
             <k-slider icon="adjust" :action="function(val) {metrics.utilization = parseInt(val)}"></k-slider>
           </div>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'priority'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['priority']" 
               :value.sync="is_flexible.priority"></k-dropdown>
             </div>
             <k-slider icon="adjust" :action="function(val) {metrics.priority = parseInt(val)}"></k-slider>
           </div>
-          <div style="width:100%; overflow: hidden;">
-            <div style="width:10%; float: left;">
+          <div class="metric">
+            <div class="checkbox">
               <k-checkbox :model.sync = "checked_list" :value = "'ownership'"></k-checkbox>
             </div>
-            <div style="width:90%; float: left;">
+            <div class="dropdown">
               <k-dropdown :options="metric_options['ownership']" 
               :value.sync="is_flexible.ownership"></k-dropdown>
             </div>
@@ -277,7 +277,9 @@ module.exports = {
 </script>
 
 <style type="text/css">
-body{
-    overflow-y:hidden;
-}
+  body {overflow-y:hidden;}
+  .scroll {overflow-y: auto; height:calc(100vh - 60px);}
+  .metric {width:100%; overflow: hidden;}
+  .checkbox {width:10%; float: left;}
+  .dropdown {width:90%; float: left;}
 </style>
