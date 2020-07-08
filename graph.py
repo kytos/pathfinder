@@ -9,12 +9,28 @@ except ImportError:
     PACKAGE = 'networkx>=2.2'
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
+from itertools import combinations
 
 class KytosGraph:
     """Class responsible for the graph generation."""
 
     def __init__(self):
         self.graph = nx.Graph()
+        self._filter_fun_dict = {}
+        def filterLEQ(metric):# Lower values are better
+            return lambda x: (lambda y: y[2].get(metric,x) <= x)
+        def filterGEQ(metric):# Higher values  are better
+            return lambda x: (lambda y: y[2].get(metric,x) >= x)
+        def filterEEQ(metric):# Equivalence
+            return lambda x: (lambda y: y[2].get(metric,x) == x)
+
+
+        self._filter_fun_dict["ownership"] = filterEEQ("ownership")
+        self._filter_fun_dict["bandwidth"] = filterGEQ("bandwidth")
+        self._filter_fun_dict["priority"] = filterGEQ("priority")
+        self._filter_fun_dict["utilization"] = filterLEQ("utilization")
+        self._filter_fun_dict["delay"] = filterLEQ("delay")
+        
 
     def clear(self):
         """Remove all nodes and links registered."""
@@ -51,19 +67,6 @@ class KytosGraph:
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
 
-        self._set_default_metadata(keys)
-
-    def _set_default_metadata(self, keys):
-        """Set metadata to all links.
-
-        Set the value to zero for inexistent metadata in a link to make those
-        irrelevant in pathfinding.
-        """
-        for key in keys:
-            for endpoint_a, endpoint_b in self.graph.edges:
-                if key not in self.graph[endpoint_a][endpoint_b]:
-                    self.graph[endpoint_a][endpoint_b][key] = 0
-
     @staticmethod
     def _remove_switch_hops(circuit):
         """Remove switch hops from a circuit hops list."""
@@ -80,3 +83,44 @@ class KytosGraph:
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
+
+    def constrained_shortest_paths(self, source, destination,  **metrics):
+        paths = []
+        edges = self._filter_edges(**metrics)
+        try:
+            paths = list(nx.shortest_simple_paths(self.graph.edge_subgraph(edges),
+                                                  source,
+                                                  destination))
+        except NetworkXNoPath:
+            return []
+        except NodeNotFound:
+            if source == destination:
+                if source in self.graph.nodes:
+                    return [[source]]
+        return paths
+
+    def _filter_edges(self, **metrics):
+        edges = self.graph.edges(data=True)
+        for metric, value in metrics.items():
+            fun0 = self._filter_fun_dict.get(metric, None)
+            if fun0 != None:
+                fun1 = fun0(value)
+                edges = filter(fun1,edges)
+        edges = ((u,v) for u,v,d in edges)
+        return edges
+
+    def constrained_flexible(self, source, destination, **metrics): # This is very much the brute force method, bu
+        combos = []
+        length = len(metrics)
+        results = []
+        for i in range(0,length+1):
+            y = combinations(metrics.items(),length-i)
+            found = False
+            for x in y:
+                tempDict = {}
+                for k,v in x:
+                    tempDict[k] = v
+                res0 = self.constrained_shortest_paths(source,destination,**tempDict)
+                if res0 != []:
+                    results.append((res0,tempDict))
+        return results
