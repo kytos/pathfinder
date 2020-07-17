@@ -32,7 +32,7 @@ class TestResults(TestCase):
                                                      maximum_misses,
                                                      **metrics)
 
-    @ staticmethod
+    @staticmethod
     def generate_topology():
         """Generates a predetermined topology"""
         switches = {}
