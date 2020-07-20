@@ -106,7 +106,7 @@ class Main(KytosNApp):
                                                           flexible=fle_metrics)
             return jsonify(paths)
         except TypeError as err:
-            return jsonify({"error": str(err)})
+            return jsonify({"error": str(err)}), 400
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
