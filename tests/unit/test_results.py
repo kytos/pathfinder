@@ -39,12 +39,12 @@ class TestResults(TestCase):
         links = {}
         return (switches, links)
 
-    @ staticmethod
+    @staticmethod
     def create_switch(name, switches):
         '''Add a new switch to the list of switches'''
         switches[name] = Switch(name)
 
-    @ staticmethod
+    @staticmethod
     def add_interfaces(count, switch, interfaces):
         '''Add a new interface to the list of interfaces'''
         for i in range(1, count + 1):
@@ -53,7 +53,7 @@ class TestResults(TestCase):
             interfaces[str1] = interface
             switch.update_interface(interface)
 
-    @ staticmethod
+    @staticmethod
     def create_link(interface_a, interface_b, interfaces, links):
         '''Add a new link between two interfaces into the list of links'''
         compounded = "{}|{}".format(interface_a, interface_b)
@@ -61,7 +61,7 @@ class TestResults(TestCase):
         links[final_name] = Link(
             interfaces[interface_a], interfaces[interface_b])
 
-    @ staticmethod
+    @staticmethod
     def add_metadata_to_link(interface_a, interface_b, metrics, links):
         '''Add metadata to an existing link in the list of links'''
         compounded = "{}|{}".format(interface_a, interface_b)
