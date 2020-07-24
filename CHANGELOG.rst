@@ -5,17 +5,11 @@ All notable changes to the pathfinder NApp will be documented in this file.
 
 [UNRELEASED] - Under development
 ********************************
-
 Added
 =====
-- Added support for automated tests and CI with Travis.
-- Added tags decorator to run tests by type and size.
-- Added unit tests, increasing coverage to 90%.
 
 Changed
 =======
-- Improved documentation about napp dependencies.
-- Changed tests structure to separate unit and integration tests.
 
 Deprecated
 ==========
@@ -25,11 +19,30 @@ Removed
 
 Fixed
 =====
-- Fixed package install when creating symlinks.
-- Fixed hops addresses in openapi.yml.
 
 Security
 ========
+
+
+[2.2.3] - 2020-07-24
+********************
+
+Added
+=====
+- Added support for automated tests and CI with Travis.
+- Added tags decorator to run tests by type and size.
+- Added unit tests, increasing coverage to 90%.
+
+Changed
+=======
+- Improved documentation about NApp dependencies.
+- Changed tests structure to separate unit and integration tests.
+
+Fixed
+=====
+- Fixed package install when creating symlinks.
+- Fixed hops addresses in openapi.yml.
+- Updated ``run.in`` to include ``networkx`` dependency
 
 
 [2.2.2] - 2020-03-11
