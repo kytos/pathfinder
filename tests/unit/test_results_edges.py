@@ -323,7 +323,7 @@ class TestResultsEdges(TestResults):
             self.get_path_constrained(
                 "User1", "User2", base={"ownership": 1})
 
-    @ staticmethod
+    @staticmethod
     def generate_topology():
         """Generates a predetermined topology"""
         switches = {}
@@ -380,7 +380,7 @@ class TestResultsEdges(TestResults):
 
         return (switches, links)
 
-    @ staticmethod
+    @staticmethod
     def _add_metadata_to_links(links):
         links["S1:1<->S2:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 105})
@@ -441,7 +441,7 @@ class TestResultsEdges(TestResults):
         links["User1:4<->User4:3"].extend_metadata(
             {"reliability": 5, "bandwidth": 10, "delay": 105})
 
-    @ staticmethod
+    @staticmethod
     def _fill_links(links, interfaces):
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
 
