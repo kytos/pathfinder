@@ -3,7 +3,7 @@
   "username": "kytos",
   "name": "pathfinder",
   "description": "Keeps track of topology changes, and calculates the best path between two points.",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "napp_dependencies": ["kytos/topology"],
   "license": "MIT",
   "tags": ["pathfinder", "rest", "work-in-progress"],
