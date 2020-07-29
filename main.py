@@ -98,10 +98,10 @@ class Main(KytosNApp):
         destination = data.get('destination')
         base_metrics = data.get('base_metrics', {})
         fle_metrics = data.get('flexible_metrics', {})
-        maximum_misses = data.get('maximum_misses')
+        minimum_hits = data.get('minimum_flexible_hits')
         try:
             paths = self.graph.constrained_flexible_paths(source, destination,
-                                                          maximum_misses,
+                                                          minimum_hits,
                                                           base=base_metrics,
                                                           flexible=fle_metrics)
             return jsonify(paths)
