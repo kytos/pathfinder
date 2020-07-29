@@ -25,11 +25,11 @@ class TestResults(TestCase):
         results = self.graph.shortest_paths(source, destination)
         return results
 
-    def get_path_constrained(self, source, destination, maximum_misses=None,
+    def get_path_constrained(self, source, destination, minimum_hits=None,
                              **metrics):
         """Return the constrained shortest path"""
         return self.graph.constrained_flexible_paths(source, destination,
-                                                     maximum_misses,
+                                                     minimum_hits,
                                                      **metrics)
 
     @staticmethod

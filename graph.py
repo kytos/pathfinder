@@ -127,20 +127,20 @@ class KytosGraph:
         return paths
 
     def constrained_flexible_paths(self, source, destination,
-                                   maximum_misses=None, **metrics):
+                                   minimum_hits=None, **metrics):
         """Calculate the constrained shortest paths with flexibility."""
         base = metrics.get("base", {})
         flexible = metrics.get("flexible", {})
         default_edge_list = list(self._filter_edges(
             self.graph.edges(data=True), **base))
         length = len(flexible)
-        if maximum_misses is None:
-            maximum_misses = length
-        maximum_misses = min(length, max(0, maximum_misses))
+        if minimum_hits is None:
+            minimum_hits = length
+        minimum_hits = min(length, max(0, minimum_hits))
         results = []
         paths = []
         i = 0
-        while (paths == [] and i in range(0, maximum_misses+1)):
+        while (paths == [] and i in range(0, minimum_hits+1)):
             for combo in combinations(flexible.items(), length-i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
