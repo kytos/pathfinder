@@ -13,9 +13,6 @@ Added
 
 Changed
 =======
-- Improved documentation about napp dependencies.
-- Changed tests structure to separate unit and integration tests.
-- Updated Pathfinder UI with a best constrained flexible paths search menu.
 
 Deprecated
 ==========
