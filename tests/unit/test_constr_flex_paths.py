@@ -9,7 +9,7 @@ from kytos.core.switch import Switch
 from graph import KytosGraph
 
 
-class TestResults(TestCase):
+class TestConstrainedFlexiblePaths(TestCase):
     """Tests for the graph class."""
 
     def setUp(self):
