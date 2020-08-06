@@ -5,7 +5,7 @@ from itertools import combinations
 from kytos.core.link import Link
 
 # module under test
-from tests.unit.test_results import TestResults
+from tests.integration.test_results import TestResults
 
 
 class TestResultsEdges(TestResults):

@@ -52,6 +52,33 @@ class TestMain(TestCase):
         self.assertEqual(response.json, expected_response)
         self.assertEqual(response.status_code, 200)
 
+    @patch('napps.kytos.pathfinder.graph.KytosGraph.' +
+           'constrained_flexible_paths', autospec=True)
+    def test_shortest_constrained_path(self, mock_constrained_flexible_paths):
+        """Test constrained flexible paths."""
+        source = "00:00:00:00:00:00:00:01:1"
+        destination = "00:00:00:00:00:00:00:02:1"
+        path = [source, destination]
+        base_metrics = {"ownership": "bob"}
+        fle_metrics = {"delay": 30}
+        metrics = {**base_metrics, **fle_metrics}
+        mock_constrained_flexible_paths.return_value = [
+            {"paths": [path], "metrics": metrics}]
+
+        api = get_test_client(self.napp.controller, self.napp)
+        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" +\
+            "best-constrained-paths"
+        data = {"source": "00:00:00:00:00:00:00:01:1",
+                "destination": "00:00:00:00:00:00:00:02:1",
+                "base_metrics": {"ownership": "bob"},
+                "flexible_metrics": {"delay": 30},
+                "minimum_flexible_hits": 1}
+        response = api.open(url, method='POST', json=data)
+        expected_response = [{"metrics": metrics, "paths": [path]}]
+
+        self.assertEqual(response.json, expected_response)
+        self.assertEqual(response.status_code, 200)
+
     def test_filter_paths(self):
         """Test filter paths."""
         self.napp._topology = get_topology_mock()

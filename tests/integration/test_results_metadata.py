@@ -1,7 +1,7 @@
 """Module to test the KytosGraph in graph.py."""
 
 # module under test
-from tests.unit.test_results import TestResults
+from tests.integration.test_results import TestResults
 
 
 class TestResultsMetadata(TestResults):
@@ -24,7 +24,7 @@ class TestResultsMetadata(TestResults):
                 for i in range(1, len(path)):
                     endpoint_a = path[i - 1]
                     endpoint_b = path[i]
-                    meta_data = self.graph.get_metadata_from_link(
+                    meta_data = self.graph.get_link_metadata(
                         endpoint_a, endpoint_b)
                     if meta_data and "reliability" in meta_data.keys():
                         reliabilities.append(meta_data["reliability"])
@@ -45,7 +45,7 @@ class TestResultsMetadata(TestResults):
                 for i in range(1, len(path)):
                     endpoint_a = path[i - 1]
                     endpoint_b = path[i]
-                    meta_data = self.graph.get_metadata_from_link(
+                    meta_data = self.graph.get_link_metadata(
                         endpoint_a, endpoint_b)
                     if meta_data and "delay" in meta_data.keys():
                         delays.append(meta_data["delay"])
@@ -67,7 +67,7 @@ class TestResultsMetadata(TestResults):
                 for i in range(1, len(path)):
                     endpoint_a = path[i - 1]
                     endpoint_b = path[i]
-                    meta_data = self.graph.get_metadata_from_link(
+                    meta_data = self.graph.get_link_metadata(
                         endpoint_a, endpoint_b)
                     if meta_data and "bandwidth" in meta_data.keys():
                         bandwidths.append(meta_data["bandwidth"])
@@ -90,7 +90,7 @@ class TestResultsMetadata(TestResults):
                 for i in range(1, len(path)):
                     endpoint_a = path[i - 1]
                     endpoint_b = path[i]
-                    meta_data = self.graph.get_metadata_from_link(
+                    meta_data = self.graph.get_link_metadata(
                         endpoint_a, endpoint_b)
                     if meta_data and "bandwidth" in meta_data.keys():
                         bandwidths.append(meta_data["bandwidth"])

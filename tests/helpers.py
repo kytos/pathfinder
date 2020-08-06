@@ -98,7 +98,7 @@ def get_topology_with_metadata_mock():
         {"reliability": 3, "bandwidth": 100, "delay": 6},
         {"reliability": 5, "bandwidth": 10, "delay": 105}]
 
-    for switch in switches_to_interface_counts.keys():
+    for switch in switches_to_interface_counts:
         switches[switch] = get_switch_mock(switch)
 
     for key, value in switches_to_interface_counts.items():
@@ -107,8 +107,10 @@ def get_topology_with_metadata_mock():
             switches[key].interfaces[interface.id] = interface
             interfaces[interface.id] = interface
 
-    for interfaces in links_to_interfaces:
-        links[str(i)] = get_link_mock(interfaces[0], interfaces[1])
+    for interfaces_str in links_to_interfaces:
+        interface_a = interfaces[interfaces_str[0]]
+        interface_b = interfaces[interfaces_str[1]]
+        links[str(i)] = get_link_mock(interface_a, interface_b)
         links[str(i)].metadata = links_to_metadata[i]
         i += 1
 
@@ -119,17 +121,23 @@ def get_topology_with_metadata_mock():
 
 
 def _get_interfaces(count, switch):
-    '''Add a new interface to the list of interfaces'''
+    """Add a new interface to the list of interfaces"""
     for i in range(1, count + 1):
         yield get_interface_mock("", i, switch)
 
 
-test = get_topology_with_metadata_mock()
+def get_filter_links_fake(links, metadata=True, **metrics):
+    """Get test links with optional metadata."""
+    # pylint: disable=unused-argument
+    filtered_links = ["a", "b", "c"]
+    filtered_links_without_metadata = filtered_links[0:2]
+    if not metadata:
+        return filtered_links_without_metadata
+    return filtered_links
 
-print(list((i.endpoint_a, i.endpoint_b, i.metadata)
-           for i in test.links.values()))
+# pylint: enable=unused-argument
 
-print("---------------------------------")
 
-print(list((j.dpid, list(k.id for k in j.interfaces.values()))
-           for j in test.switches.values()))
+def get_test_filter_function():
+    """Get minimum filter function."""
+    return lambda x: (lambda y: y >= x)
