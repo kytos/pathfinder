@@ -121,7 +121,7 @@ def get_topology_with_metadata_mock():
 
 
 def _get_interfaces(count, switch):
-    """Add a new interface to the list of interfaces"""
+    """Add a new interface to the list of interfaces."""
     for i in range(1, count + 1):
         yield get_interface_mock("", i, switch)
 
