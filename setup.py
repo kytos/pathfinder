@@ -127,6 +127,8 @@ class Test(TestCommand):
             check_call(cmd, shell=True)
         except CalledProcessError as exc:
             print(exc)
+            print('Unit tests failed. Fix the errors above and try again.')
+            sys.exit(-1)
 
 
 class TestCoverage(Test):
@@ -142,6 +144,8 @@ class TestCoverage(Test):
             check_call(cmd, shell=True)
         except CalledProcessError as exc:
             print(exc)
+            print('Coverage tests failed. Fix the errors above and try again.')
+            sys.exit(-1)
 
 
 class Linter(SimpleCommand):
