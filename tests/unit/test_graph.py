@@ -58,8 +58,7 @@ class TestGraph(TestCase):
         keys = []
         all_metadata = [link.metadata for link in topology.links.values()]
         for metadata in all_metadata:
-            for key in metadata.keys():
-                keys.append(key)
+            keys.extend(key for key in metadata.keys())
         mock_set_default_metadata.assert_called_with(keys)
 
     def test_remove_switch_hops(self):
