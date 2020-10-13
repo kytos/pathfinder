@@ -33,6 +33,8 @@ class KytosGraph:
     def __init__(self):
         self.graph = nx.Graph()
         self._filter_functions = {}
+        self.pathColl = {}
+        self.exactPath = []
 
         def filter_leq(metric):  # Lower values are better
             return lambda x: (lambda y: y[2].get(metric, x) <= x)
@@ -125,6 +127,58 @@ class KytosGraph:
         except (NodeNotFound, NetworkXNoPath):
             return []
         return paths
+
+    def exact_paths(self, source, destination, delay):
+        """Calculate the exact or close-to path based on specified delay and return them."""
+        try:
+            curr_delay = total_delay = delay
+            start = source
+            end = destination
+            path = []
+            self._DFS(curr_delay, total_delay, start, end, path)
+
+            if (self.exactPath != []):
+                return self.exactPath
+            else:
+                # analyze all paths in collection for the closest path to specified delay
+                min = 50
+                selectedKey = 0
+                for key in self.pathColl:
+                    currMin = abs(total_delay - key)
+                    if (currMin < min):
+                        min = currMin
+                        selectedKey = key;
+                print("\nThe closest path is: ")
+                print(self.pathColl.get(selectedKey))
+                print("At delay of " + str(selectedKey))
+                return self.pathColl.get(selectedKey)
+        except (NodeNotFound, NetworkXNoPath):
+            return []
+    
+    def exact_path_DFS(self, cDelay, tDelay, curr, target, path):
+        """ Algorithm to calculate exact path with depth-first search """
+        if (curr == target):
+            if (cDelay == 0):
+                # The target is reached
+                print("Exact path @ " + str(tDelay) + ":")
+                print (path)
+                self.exactPath.append(path)
+                return
+            elif (cDelay <= 0 or cDelay >= 0):
+                # A dead end was reached, add path to path collection for close to delay analyzation later on
+                if (cDelay <= 0):
+                    self.pathColl[tDelay+abs(cDelay)] = path.copy()
+                    return
+                elif (cDelay >= 0):
+                    self.pathColl[tDelay-cDelay] = path.copy();
+                    return
+        elif (cDelay <= 0):
+            return
+        for neighbor in list(self.graph.neighbors(curr)):
+            edge_delay = self.graph.edges[curr, neighbor]['delay']
+            path.append((curr, neighbor)) # Found a potential path with this as the starting edge
+            self._DFS(cDelay - edge_delay, tDelay, neighbor, target, path)
+            path.remove((curr, neighbor)) # Clean up after an end was reached (target or dead end)
 
     def constrained_flexible_paths(self, source, destination,
                                    minimum_hits=None, **metrics):
