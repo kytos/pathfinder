@@ -133,12 +133,12 @@ class KytosGraph:
         '''Obtain paths with total delays equal or close to the user's requirements.'''
         visits = {}
         self._tDelay = total_delay
-        for node in G.get_nodes():
+        for node in self.get_nodes():
             visits[str(node)] = 0
 
-        visits[start] = 1
+        visits[source] = 1
 
-        self._DFS(total_delay, start, end, [], visits)
+        self._DFS(total_delay, source, destination, [], visits)
         return self._exactPathResult
 
     def _DFS(self, delay, curr, target, path, visits):
