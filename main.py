@@ -97,7 +97,7 @@ class Main(KytosNApp):
         source = data.get('source')
         destination = data.get('destination')
         delay = data.get('delay')
-	
+
         graph_data = {}
         nodes = []
         edges = []
@@ -105,9 +105,11 @@ class Main(KytosNApp):
             nodes.append(node)
         for edge in self.graph.get_edges().data():
             edges.append(edge)
+        exactPath = self.graph.exact_path(delay, source, destination)
         
         graph_data["Nodes"] = nodes
         graph_data["Edges"] = edges
+        graph_data["Exact Path Result"] = exactPath
 
         return jsonify(graph_data)
 
