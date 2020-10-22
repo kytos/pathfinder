@@ -101,6 +101,7 @@ class Main(KytosNApp):
         graph_data = {}
         nodes = []
         edges = []
+        exactPath = {}
         for node in self.graph.get_nodes():
             nodes.append(node)
         for edge in self.graph.get_edges().data():
