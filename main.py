@@ -3,7 +3,7 @@
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
-
+import traceback
 # pylint: disable=import-error
 from napps.kytos.pathfinder.graph import KytosGraph
 
@@ -102,14 +102,18 @@ class Main(KytosNApp):
         nodes = []
         edges = []
         exactPath = {}
+        
         for node in self.graph.get_nodes():
             nodes.append(node)
         for edge in self.graph.get_edges().data():
             edges.append(edge)
-        exactPath = self.graph.exact_path(delay, source, destination)
-        
-        graph_data["Nodes"] = nodes
-        graph_data["Edges"] = edges
+        try:
+            exactPath = self.graph.exact_path(delay, source, destination)
+        except Exception as e:
+            return jsonify({ "exception" : str(traceback.format_exc()) })
+            
+        #graph_data["Nodes"] = nodes
+        #graph_data["Edges"] = edges
         graph_data["Exact Path Result"] = exactPath
 
         return jsonify(graph_data)
