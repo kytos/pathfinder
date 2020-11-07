@@ -10,6 +10,11 @@ try:
 except ImportError:
     PACKAGE = 'networkx>=2.2'
     log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
+try:
+    from exactdelaypathfinder.core import ExactDelayPathfinder
+except ImportError:
+    PACKAGE = 'exactdelaypathfinder>=0.1.0'
+    log.error(f"Package {PACKAGE} not found. Please 'pip install {PACKAGE}'")
 
 
 class Filter:
@@ -33,10 +38,6 @@ class KytosGraph:
     def __init__(self):
         self.graph = nx.Graph()
         self._filter_functions = {}
-        self._tDelay = 0
-        self._exactPathResult = []
-        self._visit_limit = 1
-        self._result_capacity = 10
 
         def filter_leq(metric):  # Lower values are better
             return lambda x: (lambda y: y[2].get(metric, x) <= x)
@@ -131,43 +132,15 @@ class KytosGraph:
         return paths
 
     def exact_path(self, total_delay, source, destination):
-        '''Obtain paths with total delays equal or close to the user's requirements.'''
-        visits = {}
-
-        for node in self.get_nodes():
-            visits[str(node)] = 0
-
-        visits[source] = 1
-        
+        '''Obtain paths with total delays equal or close to the user's requirements. 
+           This function utilizes the ExactDelayPathfinder library developed by the AmLight
+           team at FIU.
+        '''
+        EDPF = ExactDelayPathfinder()
         result = []
-
-        self._DFS(total_delay, source, destination, [], visits)
-        
-        for path in self._exactPathResult:
-            result.append({"path":path["path"], "total_delay": total_delay - path["offset"]})
-           
+        result = EDPF.search(self.graph, total_delay, source, destination)
         return result
 
-    def _DFS(self, delay, curr, target, path, visits):
-        '''Depth-first search algorithm to find the exact or closest path based on user-specified propagation delay.'''
-        
-        if (curr == target and path != []):
-            error = abs(delay) # The target was reached
-            if not bool(self._exactPathResult) or error < self._exactPathResult[0]["error"]:
-                # The path in front is the one with the lowest error
-                self._exactPathResult.insert(0, {"path":path.copy(), "error":error, "offset":delay})
-                # Ensure that the list is at most ten (10) elements in length
-                if len(self._exactPathResult) > self._result_capacity:
-                    del self._exactPathResult[-1]
-            return
-        for neighbor in list(self.graph.neighbors(curr)):
-            if (visits[str(neighbor)] < self._visit_limit):
-                visits[str(neighbor)] += 1
-                edge_delay = self.graph.edges[curr, neighbor]['delay']
-                path.append((curr, neighbor)) # Found a potential path with this as the starting edge
-                self._DFS(delay - edge_delay, neighbor, target, path, visits)
-                del path[-1] # Clean up after an end was reached (target or dead end)
-                visits[str(neighbor)] -= 1
                
     def constrained_flexible_paths(self, source, destination,
                                    minimum_hits=None, **metrics):

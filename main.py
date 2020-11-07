@@ -99,22 +99,13 @@ class Main(KytosNApp):
         delay = data.get('delay')
 
         graph_data = {}
-        nodes = []
-        edges = []
-        exactPath = {}
-        
-        for node in self.graph.get_nodes():
-            nodes.append(node)
-        for edge in self.graph.get_edges().data():
-            edges.append(edge)
+        result = []
         try:
-            exactPath = self.graph.exact_path(delay, source, destination)
+            result = self.graph.exact_path(delay, source, destination)
         except Exception as e:
             return jsonify({ "exception" : str(traceback.format_exc()) })
             
-        #graph_data["Nodes"] = nodes
-        #graph_data["Edges"] = edges
-        graph_data["Exact Path Result"] = exactPath
+        graph_data["Exact Path Result"] = result
 
         return jsonify(graph_data)
 
