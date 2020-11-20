@@ -1,0 +1,26 @@
+<template>
+    <k-accordion>
+      <k-accordion-item title="Best Path?">
+          <k-property-panel>
+            <k-property-panel-item v-for="(path, index) in content"
+                                   v-if="content" :name="String(index)" :value="path"
+                                   :key="index">
+            </k-property-panel-item>
+          </k-property-panel>
+        </k-accordion-item>
+    </k-accordion>
+</template>
+
+<script>
+ module.exports = {
+   props: ["content"],
+   data () {
+     return {
+       display: false,
+       paths: [],
+       headers: ["dpid"],
+       rows: [this.content]
+     }
+   }
+ }
+</script>

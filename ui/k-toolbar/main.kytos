@@ -20,7 +20,7 @@
           :value.sync="source"></k-dropdown>
          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
           :value.sync ="destination"></k-dropdown>
-         <k-slider icon="adjust" :action="function(val) {path_delay = parseInt(val)}"></k-slider>
+         <k-slider icon="adjust" :action="function(val) {path_delay = parseInt(val)}" max=1000></k-slider>
          <k-button icon="search" title="Search" :on_click="get_path_exact_delay">
          </k-button>
         </k-accordion-item>
@@ -132,6 +132,7 @@ module.exports = {
     },
     get_path_exact_delay (){
       var self = this
+      
       $.ajax({
         async: true,
         dataType: "json",
@@ -143,6 +144,14 @@ module.exports = {
                }),
 
         url: this.$kytos_server_api + "kytos/pathfinder/v2/path-exact-delay",
+        success: function(data) {
+            if (data['Exact Path Result'][0]['path'] !== undefined){
+                self.paths = data['Exact Path Result'][0]['path'];
+            } else {
+                self.paths = []
+            }
+            self.show_exact_delay_path();
+        }
       });
     },
     get_constrained_paths(){
@@ -204,6 +213,17 @@ module.exports = {
                      }
        this.$kytos.$emit("showInfoPanel", content)
 
+   },
+   show_exact_delay_path() {
+       var content = {
+                      "component": 'kytos-pathfinder-k-info-panel-exact_delay_path',
+                      "content": this.paths,
+                      "icon": "compass",
+                      "title": "Best Path?",
+                      "subtitle": "by AmLight FIU"
+                     }
+       this.$kytos.$emit("showInfoPanel", content)
+
    }
   },
 
@@ -247,9 +267,24 @@ module.exports = {
     },
     get_interfaces(){
       var interfaces = []
+      var switch_alias = ""
+      var interface_alias = ""
       $.each(this.switches, function(key, value){
+        switch_alias = ""
+        if (value.metadata.aliases != undefined && value.metadata.aliases.length != 0){
+          switch_alias = value.metadata.aliases[0]
+        }
         $.each(value.interfaces, function(key, value){
-          interfaces.push({value: key, description: key})
+          interface_alias = key
+          if (value.metadata.alias != undefined && value.metadata.alias != ""){
+            interface_alias = value.metadata.alias
+          }
+          if (switch_alias != "" && interface_alias != key){
+            renamed = switch_alias + ": " + interface_alias
+            interfaces.push({value: key, description: renamed})
+          } else {
+            interfaces.push({value: key, description: key})
+          }
         });
       });
 
@@ -258,7 +293,11 @@ module.exports = {
     get_links(){
       var links = []
       $.each(this.links, function(key, value){
-        links.push({value:value.id, description:value.id});
+        if (value.metadata.aliases != undefined && value.metadata.aliases.length != 0){
+          links.push({value:value.id, description:value.metadata.aliases[0]})
+        } else {
+          links.push({value:value.id, description:value.id});
+        }
       });
 
       return links;

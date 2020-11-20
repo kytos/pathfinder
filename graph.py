@@ -136,9 +136,9 @@ class KytosGraph:
            This function utilizes the ExactDelayPathfinder library developed by the AmLight
            team at FIU.
         '''
-        EDPF = ExactDelayPathfinder()
+        pathfinder = ExactDelayPathfinder()
         result = []
-        result = EDPF.search(self.graph, total_delay, source, destination)
+        result = pathfinder.search(self.graph, total_delay, source, destination)
         return result
 
                
