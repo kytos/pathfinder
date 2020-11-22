@@ -81,7 +81,7 @@ class TestCommand(Command):
     def initialize_options(self):
         """Set default size and type args."""
         self.size = 'all'
-        self.type = 'unit'
+        self.type = 'integration'
 
     def finalize_options(self):
         """Post-process."""
