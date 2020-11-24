@@ -145,8 +145,8 @@ module.exports = {
 
         url: this.$kytos_server_api + "kytos/pathfinder/v2/path-exact-delay",
         success: function(data) {
-            if (data['Exact Path Result'][0]['path'] !== undefined){
-                self.paths = data['Exact Path Result'][0]['path'];
+            if (data['Exact Path Result'] !== undefined){
+                self.paths = data['Exact Path Result'];
             } else {
                 self.paths = []
             }
@@ -278,7 +278,10 @@ module.exports = {
           interface_alias = key
           if (value.metadata.alias != undefined && value.metadata.alias != ""){
             interface_alias = value.metadata.alias
+          } else if (value.port_number != undefined){
+            interface_alias = value.port_number
           }
+
           if (switch_alias != "" && interface_alias != key){
             renamed = switch_alias + ": " + interface_alias
             interfaces.push({value: key, description: renamed})
