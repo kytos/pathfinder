@@ -353,4 +353,5 @@ module.exports = {
   .checkbox {width:10%; float: left;}
   .dropdown {width:90%; float: left;}
   .text {font-size: 75%; float: left; margin-top: 1vh;}
+  .title {font-size: 105%; font-weight: bold; float: left; margin-top: 1vh;}
 </style>

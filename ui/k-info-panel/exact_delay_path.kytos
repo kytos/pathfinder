@@ -1,13 +1,17 @@
 <template>
     <k-accordion>
       <k-accordion-item title="Best Path?">
+        <div v-for="n in content.length">
           <k-property-panel>
-            <k-property-panel-item v-for="(path, index) in content"
-                                   v-if="content" :name="String(index)" :value="path"
-                                   :key="index">
+            <div class="title">
+              Total Delay: {{get_total_delay(n-1)}}
+            </div>
+            <k-property-panel-item v-for="(key, value) in get_path(n-1)" 
+                                  :name="value" :value="key" :key="value">
             </k-property-panel-item>
           </k-property-panel>
-        </k-accordion-item>
+        </div>
+      </k-accordion-item>
     </k-accordion>
 </template>
 
@@ -21,6 +25,27 @@
        headers: ["dpid"],
        rows: [this.content]
      }
+   },
+   methods: {
+    get_path(index){
+      var self = this
+      var items = self.content[parseInt(index)]['path']
+
+      var result = {}
+      var i = 0
+
+      for (var item of items){
+        result[String(i)] = item
+        i += 1
+      }
+
+      return result;
+    },
+    get_total_delay(index){
+      var self = this
+      var items = self.content[parseInt(index)]['total_delay']
+      return items;
+    }
    }
  }
 </script>
