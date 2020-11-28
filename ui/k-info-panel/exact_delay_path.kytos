@@ -1,15 +1,17 @@
 <template>
     <k-accordion>
       <k-accordion-item title="Best Path?">
-        <div v-for="n in content.length">
-          <k-property-panel>
-            <div class="title">
-              Total Delay: {{get_total_delay(n-1)}}
-            </div>
-            <k-property-panel-item v-for="(key, value) in get_path(n-1)" 
-                                  :name="value" :value="key" :key="value">
-            </k-property-panel-item>
-          </k-property-panel>
+        <div v-if="content">
+          <div v-for="n in content.length">
+            <k-property-panel>
+              <div class="title">
+                Total Delay: {{get_total_delay(n-1)}}
+              </div>
+              <k-property-panel-item v-for="(key, value) in get_path(n-1)" 
+                                    :name="value" :value="key" :key="value">
+              </k-property-panel-item>
+            </k-property-panel>
+          </div>
         </div>
       </k-accordion-item>
     </k-accordion>
