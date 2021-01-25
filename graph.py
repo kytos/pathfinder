@@ -171,7 +171,7 @@ class KytosGraph:
                     source, destination,
                     self._filter_links(first_pass_links,
                                        metadata=False, **additional))
-                if paths != []:
+                if paths:
                     results.append(
                         {"paths": paths, "metrics": {**base, **additional}})
             i = i + 1
