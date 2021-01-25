@@ -12,8 +12,8 @@ from graph import KytosGraph
 class TestResults(TestCase):
     """Tests for the graph class."""
 
-    def setUp(self):
-        """Setup for most tests"""
+    def initializer(self):
+        """Test setup for a specific topology"""
         switches, links = self.generate_topology()
         self.graph = KytosGraph()
         self.graph.clear()
