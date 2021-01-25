@@ -50,20 +50,28 @@ class KytosGraph:
 
         self._filter_functions["ownership"] = Filter(
             str, filter_eeq("ownership"))
+
         self._filter_functions["bandwidth"] = Filter(
             (int, float), filter_geq("bandwidth"))
+
         self._filter_functions["priority"] = Filter(
             (int, float), filter_geq("priority"))
+
         self._filter_functions["reliability"] = Filter(
             (int, float), filter_geq("reliability"))
+
         self._filter_functions["utilization"] = Filter(
             (int, float), filter_leq("utilization"))
+
         self._filter_functions["delay"] = Filter(
             (int, float), filter_leq("delay"))
+
         self._path_function = nx.all_shortest_paths
 
     def clear(self):
-        """Remove all nodes and links registered."""
+        """
+        Remove all nodes and links registered.
+        """
         self.graph.clear()
 
     def update_topology(self, topology):
@@ -132,16 +140,16 @@ class KytosGraph:
         return paths
 
     def exact_path(self, total_delay, source, destination):
-        '''Obtain paths with total delays equal or close to the user's requirements. 
-           This function utilizes the ExactDelayPathfinder library developed by the AmLight
-           team at FIU.
-        '''
+        """Obtain paths with total delays equal or close to the user's requirements.
+
+        This function utilizes the ExactDelayPathfinder
+        library developed by the AmLight team at FIU.
+        """
         pathfinder = ExactDelayPathfinder()
         result = []
         result = pathfinder.search(self.graph, total_delay, source, destination)
         return result
 
-               
     def constrained_flexible_paths(self, source, destination,
                                    minimum_hits=None, **metrics):
         """Calculate the constrained shortest paths with flexibility."""
@@ -156,8 +164,8 @@ class KytosGraph:
         results = []
         paths = []
         i = 0
-        while (paths == [] and i in range(0, minimum_hits+1)):
-            for combo in combinations(flexible.items(), length-i):
+        while paths == [] and i in range(0, minimum_hits + 1):
+            for combo in combinations(flexible.items(), length - i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
                     source, destination,
@@ -196,6 +204,6 @@ class KytosGraph:
 
     def get_nodes(self):
         return self.graph.nodes
-    
+
     def get_edges(self):
         return self.graph.edges
