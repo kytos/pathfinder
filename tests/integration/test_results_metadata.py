@@ -11,8 +11,9 @@ class TestResultsMetadata(TestResults):
     """
 
     def test_path1(self):
-        """Tests to see if the edges used in the paths of the result set
-        do not have poor reliability"""
+        """Tests to see if the edges used in the paths
+        of the result set do not have poor reliability
+        """
         reliabilities = []
         requirements = {"reliability": 3}
         poor_reliability = 1
@@ -32,8 +33,9 @@ class TestResultsMetadata(TestResults):
         self.assertNotIn(poor_reliability, reliabilities)
 
     def test_path2(self):
-        """Tests to see if the edges used in the paths from User 1 to User 2
-        have less than 30 delay."""
+        """Tests to see if the edges used in the paths
+        from User 1 to User 2 have less than 30 delay.
+        """
         delays = []
         requirements = {"delay": 29}
 
@@ -54,8 +56,9 @@ class TestResultsMetadata(TestResults):
             self.assertEqual(delay > requirements["delay"], False)
 
     def test_path3(self):
-        """Tests to see if the edges used in the paths from User 1 to User 2
-        have at least 20 bandwidth."""
+        """Tests to see if the edges used in the paths
+        from User 1 to User 2 have at least 20 bandwidth.
+        """
         bandwidths = []
         requirements = {"bandwidth": 20}
 
@@ -76,8 +79,9 @@ class TestResultsMetadata(TestResults):
             self.assertEqual(bandwidth < requirements["bandwidth"], False)
 
     def test_path4(self):
-        """Tests to see if the edges used in the paths from User 1 to User 2
-        have at least 20 bandwidth and under 30 delay."""
+        """Tests to see if the edges used in the paths from User 1
+        to User 2 have at least 20 bandwidth and under 30 delay.
+        """
         bandwidths = []
         delays = []
         requirements = {"bandwidth": 20, "delay": 29}
@@ -137,29 +141,35 @@ class TestResultsMetadata(TestResults):
             "User1:1", "S2:1", {
                 "reliability": 3, "ownership": "B", "delay": 30,
                 "bandwidth": 20}, links)
+
         TestResults.add_metadata_to_link(
             "User1:2", "S5:1", {
                 "reliability": 1, "ownership": "A", "delay": 5,
                 "bandwidth": 50}, links)
+
         TestResults.add_metadata_to_link(
             "User1:3", "S4:1", {
                 "reliability": 3, "ownership": "A", "delay": 60,
                 "bandwidth": 10}, links)
+
         TestResults.add_metadata_to_link(
             "S2:2", "User2:1", {
                 "reliability": 3, "ownership": "B", "delay": 30,
                 "bandwidth": 20}, links)
+
         TestResults.add_metadata_to_link(
             "User2:2", "S4:2", {
                 "reliability": 3, "ownership": "B", "delay": 30,
                 "bandwidth": 10}, links)
+
         TestResults.add_metadata_to_link(
             "S5:2", "S4:3", {
                 "reliability": 1, "ownership": "A", "delay": 10,
                 "bandwidth": 50}, links)
+
         TestResults.add_metadata_to_link(
             "User2:3", "S4:4", {
                 "reliability": 3, "ownership": "A", "delay": 29,
                 "bandwidth": 20}, links)
 
-        return (switches, links)
+        return switches, links
