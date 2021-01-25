@@ -114,28 +114,16 @@ class TestResultsMetadata(TestResults):
         interfaces = {}
         links = {}
 
-        TestResults.create_switch("User1", switches)
-        TestResults.add_interfaces(3, switches["User1"], interfaces)
+        TestResultsMetadata.setting_switches_interfaces(interfaces, switches)
 
-        TestResults.create_switch("S2", switches)
-        TestResults.add_interfaces(2, switches["S2"], interfaces)
+        TestResultsMetadata.setting_links(interfaces, links)
 
-        TestResults.create_switch("User2", switches)
-        TestResults.add_interfaces(3, switches["User2"], interfaces)
+        TestResultsMetadata.adding_metadata(links)
 
-        TestResults.create_switch("S4", switches)
-        TestResults.add_interfaces(4, switches["S4"], interfaces)
+        return switches, links
 
-        TestResults.create_switch("S5", switches)
-        TestResults.add_interfaces(2, switches["S5"], interfaces)
-
-        TestResults.create_link("User1:1", "S2:1", interfaces, links)
-        TestResults.create_link("User1:2", "S5:1", interfaces, links)
-        TestResults.create_link("User1:3", "S4:1", interfaces, links)
-        TestResults.create_link("S2:2", "User2:1", interfaces, links)
-        TestResults.create_link("User2:2", "S4:2", interfaces, links)
-        TestResults.create_link("S5:2", "S4:3", interfaces, links)
-        TestResults.create_link("User2:3", "S4:4", interfaces, links)
+    @staticmethod
+    def adding_metadata(links):
 
         TestResults.add_metadata_to_link(
             "User1:1", "S2:1", {
@@ -172,4 +160,37 @@ class TestResultsMetadata(TestResults):
                 "reliability": 3, "ownership": "A", "delay": 29,
                 "bandwidth": 20}, links)
 
-        return switches, links
+    @staticmethod
+    def setting_links(interfaces, links):
+
+        TestResults.create_link("User1:1", "S2:1", interfaces, links)
+
+        TestResults.create_link("User1:2", "S5:1", interfaces, links)
+
+        TestResults.create_link("User1:3", "S4:1", interfaces, links)
+
+        TestResults.create_link("S2:2", "User2:1", interfaces, links)
+
+        TestResults.create_link("User2:2", "S4:2", interfaces, links)
+
+        TestResults.create_link("S5:2", "S4:3", interfaces, links)
+
+        TestResults.create_link("User2:3", "S4:4", interfaces, links)
+
+    @staticmethod
+    def setting_switches_interfaces(interfaces, switches):
+
+        TestResults.create_switch("User1", switches)
+        TestResults.add_interfaces(3, switches["User1"], interfaces)
+
+        TestResults.create_switch("S2", switches)
+        TestResults.add_interfaces(2, switches["S2"], interfaces)
+
+        TestResults.create_switch("User2", switches)
+        TestResults.add_interfaces(3, switches["User2"], interfaces)
+
+        TestResults.create_switch("S4", switches)
+        TestResults.add_interfaces(4, switches["S4"], interfaces)
+
+        TestResults.create_switch("S5", switches)
+        TestResults.add_interfaces(2, switches["S5"], interfaces)
