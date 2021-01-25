@@ -146,7 +146,6 @@ class KytosGraph:
         library developed by the AmLight team at FIU.
         """
         pathfinder = ExactDelayPathfinder()
-        result = []
         result = pathfinder.search(self.graph, total_delay, source, destination)
         return result
 
