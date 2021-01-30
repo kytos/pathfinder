@@ -5,7 +5,8 @@ from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
 import traceback
 # pylint: disable=import-error
-from napps.kytos.pathfinder.graph import KytosGraph
+# from napps.kytos.pathfinder.graph import KytosGraph
+from graph import KytosGraph
 
 # pylint: enable=import-error
 
@@ -145,7 +146,10 @@ class Main(KytosNApp):
         """
         if 'topology' not in event.content:
             return
-        topology = event.content['topology']
-        self._topology = topology
-        self.graph.update_topology(topology)
-        log.debug('Topology graph updated.')
+        try:
+            topology = event.content['topology']
+            self._topology = topology
+            self.graph.update_topology(topology)
+            log.debug('Topology graph updated.')
+        except TypeError as err:
+            log.debug(err)
