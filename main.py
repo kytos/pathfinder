@@ -11,7 +11,8 @@ from napps.kytos.pathfinder.graph import KytosGraph
 
 
 class Main(KytosNApp):
-    """Main class of kytos/pathfinder NApp.
+    """
+    Main class of kytos/pathfinder NApp.
 
     This class is the entry point for this napp.
     """
@@ -28,7 +29,8 @@ class Main(KytosNApp):
         """Shutdown the napp."""
 
     def _filter_paths(self, paths, desired, undesired):
-        """Apply filters to the paths list.
+        """
+        Apply filters to the paths list.
 
         Make sure that each path in the list has all the desired links and none
         of the undesired ones.
@@ -91,7 +93,10 @@ class Main(KytosNApp):
 
     @rest('v2/path-exact-delay', methods=['POST'])
     def path_exact_delay(self):
-        """Calculate the path with the exact delay between the source and destination."""
+        """
+        Calculate the path with the exact delay
+        between the source and destination.
+        """
         data = request.get_json()
 
         source = data.get('source')
@@ -111,7 +116,9 @@ class Main(KytosNApp):
 
     @rest('v2/best-constrained-paths', methods=['POST'])
     def shortest_constrained_path(self):
-        """Get the set of shortest paths between the source and destination."""
+        """
+        Get the set of shortest paths between the source and destination.
+        """
         data = request.get_json()
 
         source = data.get('source')
@@ -130,9 +137,10 @@ class Main(KytosNApp):
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
-        """Update the graph when the network topology was updated.
+        """
+        Update the graph when the network topology was updated.
 
-        Clear the current graph and create a new with the most topoly updated.
+        Clear the current graph and create a new with the most topology updated.
         """
         if 'topology' not in event.content:
             return
