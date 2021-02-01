@@ -91,7 +91,7 @@ class KytosGraph:
                     self.graph.add_edge(node.id, interface.id)
 
             except AttributeError:
-                pass
+                raise TypeError("Problems encountered updating nodes inside the graph")
 
     def update_links(self, links):
         """Update all links inside the graph."""
