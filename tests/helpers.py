@@ -4,6 +4,10 @@ from unittest.mock import MagicMock
 from kytos.lib.helpers import (get_interface_mock, get_link_mock,
                                get_switch_mock)
 
+from kytos.core.interface import Interface
+from kytos.core.switch import Switch
+from kytos.core.link import Link
+
 
 def get_topology_mock():
     """Create a default topology."""
