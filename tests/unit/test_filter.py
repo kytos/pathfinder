@@ -1,7 +1,8 @@
 """Test filter methods"""
 from unittest import TestCase
 
-from napps.kytos.pathfinder.graph import Filter
+# from napps.kytos.pathfinder.graph import Filter
+from graph import Filter
 from tests.helpers import get_test_filter_function
 
 

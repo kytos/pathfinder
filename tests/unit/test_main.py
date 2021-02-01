@@ -1,12 +1,14 @@
 """Test Main methods."""
+
 from unittest import TestCase
 from unittest.mock import patch
 
 from kytos.core.events import KytosEvent
 from kytos.lib.helpers import get_controller_mock, get_test_client
 
-from napps.kytos.pathfinder.main import Main
-from tests.helpers import get_topology_mock
+# from napps.kytos.pathfinder.main import Main
+from main import Main
+from tests.helpers import get_topology_mock, get_topology_with_metadata
 
 
 # pylint: disable=protected-access

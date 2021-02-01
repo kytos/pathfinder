@@ -12,9 +12,14 @@ from graph import KytosGraph
 class TestResults(TestCase):
     """Tests for the graph class."""
 
-    def initializer(self):
+    def initializer(self, val=0):
         """Test setup for a specific topology"""
-        switches, links = self.generate_topology()
+
+        method_name = "generate_topology" if not val else "generate_topology_" + str(val)
+        method = getattr(self, method_name)
+        method()
+        switches, links = method()
+
         self.graph = KytosGraph()
         self.graph.clear()
         self.graph.update_nodes(switches)

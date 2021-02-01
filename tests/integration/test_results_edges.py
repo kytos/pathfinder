@@ -16,24 +16,51 @@ class TestResultsEdges(TestResults):
     """
 
     def test_path1(self):
-        """Tests paths between all users using unconstrained path alogrithm."""
+        """Tests paths between all users using unconstrained path algorithm."""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
+        valid = True
         for point_a, point_b in combos:
             results = self.get_path(point_a, point_b)
-            self.assertNotEqual(results, [])
+            if not results:
+                valid = False
+                break
+
+        self.assertNotEqual(valid, False)
+
+    def test_path12(self):
+        """Tests paths between all users using unconstrained path algorithm."""
+        combos = combinations(["User1", "User2", "User3", "User4", "User5"], 2)
+        self.initializer()
+
+        valid = True
+        for point_a, point_b in combos:
+            results = self.get_path(point_a, point_b)
+            if not results:
+                valid = False
+                break
+
+        self.assertEqual(valid, False)
 
     def test_path2(self):
         """Tests paths between all users using constrained path algorithm,
-        with no constraints set."""
+        with no constraints set.
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(point_a, point_b)
             self.assertNotEqual(results, [])
 
     def test_path3(self):
         """Tests paths between all users using constrained path algorithm,
-        with the ownership constraint set to B."""
+        with the ownership constraint set to B.
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, base=dict(ownership="B"))
@@ -54,8 +81,11 @@ class TestResultsEdges(TestResults):
 
     def test_path4(self):
         """Tests paths between all users using constrained path algorithm,
-        with the reliability constraint set to 3."""
+        with the reliability constraint set to 3.
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, base=dict(reliability=3))
@@ -68,8 +98,11 @@ class TestResultsEdges(TestResults):
 
     def test_path5(self):
         """Tests paths between all users using constrained path algorithm,
-        with the bandwidth contraint set to 100."""
+        with the bandwidth constraint set to 100.
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, base=dict(bandwidth=100))
@@ -82,8 +115,11 @@ class TestResultsEdges(TestResults):
 
     def test_path6(self):
         """Tests paths between all users using constrained path algorithm,
-        with the delay constraint set to 50."""
+        with the delay constraint set to 50.
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, base=dict(delay=50))
@@ -113,9 +149,12 @@ class TestResultsEdges(TestResults):
     def test_path7(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50, the bandwidth constraint set
-        to 100, the reliability contraint set to 3, and the ownership
-        constraint set to 'B' """
+        to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, base=dict(delay=50, bandwidth=100,
@@ -177,11 +216,14 @@ class TestResultsEdges(TestResults):
     def test_path8(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50, the bandwidth constraint
-        set to 100, the reliability contraint set to 3, and the ownership
+        set to 100, the reliability constraint set to 3, and the ownership
         constraint set to 'B'
 
-        Tests conducted with flexibility enabled"""
+        Tests conducted with flexibility enabled
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(
                 point_a, point_b, flexible=dict(delay=50, bandwidth=100,
@@ -247,11 +289,14 @@ class TestResultsEdges(TestResults):
     def test_path9(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50, the bandwidth constraint
-        set to 100, the reliability contraint set to 3, and the ownership
+        set to 100, the reliability constraint set to 3, and the ownership
         constraint set to 'B'
 
-        Tests conducted with all but ownership flexible"""
+        Tests conducted with all but ownership flexible
+        """
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
+        self.initializer()
+
         for point_a, point_b in combos:
             results = self.get_path_constrained(point_a, point_b,
                                                 base={"ownership": "B"},
@@ -318,7 +363,10 @@ class TestResultsEdges(TestResults):
     def test_path10(self):
         """Tests that TypeError is generated by get_path_constrained
 
-        Tests with ownership using an int type rather than string"""
+        Tests with ownership using an int type rather than string
+        """
+        self.initializer()
+
         with self.assertRaises(TypeError):
             self.get_path_constrained(
                 "User1", "User2", base={"ownership": 1})
@@ -376,68 +424,95 @@ class TestResultsEdges(TestResults):
         TestResults.add_interfaces(3, switches["User4"], interfaces)
 
         TestResultsEdges._fill_links(links, interfaces)
+
         TestResultsEdges._add_metadata_to_links(links)
 
-        return (switches, links)
+        return switches, links
 
     @staticmethod
     def _add_metadata_to_links(links):
         links["S1:1<->S2:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 105})
+
         links["S1:2<->User1:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S2:2<->User4:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 10})
+
         links["S3:1<->S5:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 10, "delay": 112})
+
         links["S3:2<->S7:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S3:3<->S8:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S3:4<->S11:1"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 6})
+
         links["S3:5<->User3:1"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S3:6<->User4:2"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 10})
+
         links["S4:1<->S5:2"].extend_metadata(
             {"reliability": 1, "bandwidth": 100, "delay": 30,
              "ownership": "A"})
+
         links["S4:2<->User1:2"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 110,
              "ownership": "A"})
+
         links["S5:3<->S6:1"].extend_metadata(
             {"reliability": 1, "bandwidth": 100, "delay": 40})
+
         links["S5:4<->S6:2"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 40,
              "ownership": "A"})
+
         links["S5:5<->S8:2"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 112})
+
         links["S5:6<->User1:3"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 60})
+
         links["S6:3<->S9:1"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 60})
+
         links["S6:4<->S9:2"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 62})
+
         links["S6:5<->S10:1"].extend_metadata(
             {"bandwidth": 100, "delay": 108, "ownership": "A"})
+
         links["S7:2<->S8:3"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S8:4<->S9:3"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 32})
+
         links["S8:5<->S9:4"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 110})
+
         links["S8:6<->S10:2"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "ownership": "A"})
+
         links["S8:7<->S11:2"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 7})
+
         links["S8:8<->User3:2"].extend_metadata(
             {"reliability": 5, "bandwidth": 100, "delay": 1})
+
         links["S10:3<->User2:1"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 10,
              "ownership": "A"})
+
         links["S11:3<->User2:2"].extend_metadata(
             {"reliability": 3, "bandwidth": 100, "delay": 6})
+
         links["User1:4<->User4:3"].extend_metadata(
             {"reliability": 5, "bandwidth": 10, "delay": 105})
 
@@ -445,11 +520,9 @@ class TestResultsEdges(TestResults):
     def _fill_links(links, interfaces):
         links["S1:1<->S2:1"] = Link(interfaces["S1:1"], interfaces["S2:1"])
 
-        links["S1:2<->User1:1"] = Link(interfaces["S1:2"],
-                                       interfaces["User1:1"])
+        links["S1:2<->User1:1"] = Link(interfaces["S1:2"], interfaces["User1:1"])
 
-        links["S2:2<->User4:1"] = Link(interfaces["S2:2"],
-                                       interfaces["User4:1"])
+        links["S2:2<->User4:1"] = Link(interfaces["S2:2"], interfaces["User4:1"])
 
         links["S3:1<->S5:1"] = Link(interfaces["S3:1"], interfaces["S5:1"])
 
@@ -459,16 +532,13 @@ class TestResultsEdges(TestResults):
 
         links["S3:4<->S11:1"] = Link(interfaces["S3:4"], interfaces["S11:1"])
 
-        links["S3:5<->User3:1"] = Link(interfaces["S3:5"],
-                                       interfaces["User3:1"])
+        links["S3:5<->User3:1"] = Link(interfaces["S3:5"], interfaces["User3:1"])
 
-        links["S3:6<->User4:2"] = Link(interfaces["S3:6"],
-                                       interfaces["User4:2"])
+        links["S3:6<->User4:2"] = Link(interfaces["S3:6"], interfaces["User4:2"])
 
         links["S4:1<->S5:2"] = Link(interfaces["S4:1"], interfaces["S5:2"])
 
-        links["S4:2<->User1:2"] = Link(interfaces["S4:2"],
-                                       interfaces["User1:2"])
+        links["S4:2<->User1:2"] = Link(interfaces["S4:2"], interfaces["User1:2"])
 
         links["S5:3<->S6:1"] = Link(interfaces["S5:3"], interfaces["S6:1"])
 
@@ -476,8 +546,7 @@ class TestResultsEdges(TestResults):
 
         links["S5:5<->S8:2"] = Link(interfaces["S5:5"], interfaces["S8:2"])
 
-        links["S5:6<->User1:3"] = Link(interfaces["S5:6"],
-                                       interfaces["User1:3"])
+        links["S5:6<->User1:3"] = Link(interfaces["S5:6"], interfaces["User1:3"])
 
         links["S6:3<->S9:1"] = Link(interfaces["S6:3"], interfaces["S9:1"])
 
@@ -495,14 +564,10 @@ class TestResultsEdges(TestResults):
 
         links["S8:7<->S11:2"] = Link(interfaces["S8:7"], interfaces["S11:2"])
 
-        links["S8:8<->User3:2"] = Link(interfaces["S8:8"],
-                                       interfaces["User3:2"])
+        links["S8:8<->User3:2"] = Link(interfaces["S8:8"], interfaces["User3:2"])
 
-        links["S10:3<->User2:1"] = Link(interfaces["S10:3"],
-                                        interfaces["User2:1"])
+        links["S10:3<->User2:1"] = Link(interfaces["S10:3"], interfaces["User2:1"])
 
-        links["S11:3<->User2:2"] = Link(interfaces["S11:3"],
-                                        interfaces["User2:2"])
+        links["S11:3<->User2:2"] = Link(interfaces["S11:3"], interfaces["User2:2"])
 
-        links["User1:4<->User4:3"] = Link(interfaces["User1:4"],
-                                          interfaces["User4:3"])
+        links["User1:4<->User4:3"] = Link(interfaces["User1:4"], interfaces["User4:3"])
