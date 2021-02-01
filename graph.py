@@ -105,18 +105,18 @@ class KytosGraph:
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
 
-        self._set_default_metadata(keys)
+        # self._set_default_metadata(keys)  # It creates errors during the path construction
 
-    def _set_default_metadata(self, keys):
-        """Set metadata to all links.
-
-        Set the value to zero for inexistent metadata in a link to make those
-        irrelevant in pathfinding.
-        """
-        for key in keys:
-            for endpoint_a, endpoint_b in self.graph.edges:
-                if key not in self.graph[endpoint_a][endpoint_b]:
-                    self.graph[endpoint_a][endpoint_b][key] = 0
+    # def _set_default_metadata(self, keys):
+    #     """Set metadata to all links.
+    #
+    #     Set the value to zero for inexistent metadata in a link to make those
+    #     irrelevant in pathfinding.
+    #     """
+    #     for key in keys:
+    #         for endpoint_a, endpoint_b in self.graph.edges:
+    #             if key not in self.graph[endpoint_a][endpoint_b]:
+    #                 self.graph[endpoint_a][endpoint_b][key] = 0
 
     def get_link_metadata(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
