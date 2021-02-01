@@ -1,4 +1,5 @@
 """Module to help to create tests."""
+
 from unittest.mock import MagicMock
 
 from kytos.lib.helpers import (get_interface_mock, get_link_mock,
