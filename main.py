@@ -104,10 +104,8 @@ class Main(KytosNApp):
         delay = data.get('delay')
 
         graph_data = {}
-        # result = []
         try:
             result = self.graph.exact_path(delay, source, destination)
-        # except Exception as e:
         except Exception:
             return jsonify({"exception": str(traceback.format_exc())})
             
