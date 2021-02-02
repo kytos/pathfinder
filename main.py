@@ -7,7 +7,6 @@ import traceback
 # pylint: disable=import-error
 # from napps.kytos.pathfinder.graph import KytosGraph
 from graph import KytosGraph
-
 # pylint: enable=import-error
 
 
