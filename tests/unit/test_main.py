@@ -35,26 +35,6 @@ class TestMain(TestCase):
 
         self.assertIsNone(self.napp._topology)
 
-    # # @patch('napps.kytos.pathfinder.graph.KytosGraph.shortest_paths')
-    # @patch('pathfinder.graph.KytosGraph.shortest_paths')
-    # def test_shortest_path(self, mock_shortest_paths):
-    #     """Test shortest path."""
-    #     self.napp._topology = get_topology_mock()
-    #     path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]
-    #     mock_shortest_paths.return_value = [path]
-    #
-    #     api = get_test_client(self.napp.controller, self.napp)
-    #     url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
-    #     data = {"source": "00:00:00:00:00:00:00:01:1",
-    #             "destination": "00:00:00:00:00:00:00:02:1",
-    #             "desired_links": ["1"],
-    #             "undesired_links": None}
-    #     response = api.open(url, method='POST', json=data)
-    #
-    #     expected_response = {'paths': [{'hops': path}]}
-    #     self.assertEqual(response.json, expected_response)
-    #     self.assertEqual(response.status_code, 200)
-
     def setting_shortest_path_mocked(self, mock_shortest_paths):
         self.napp._topology = get_topology_mock()
         path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]
@@ -90,38 +70,6 @@ class TestMain(TestCase):
         response = api.open(url, method='POST', json=data)
 
         self.assertEqual(response.status_code, 200)
-
-    # # @patch('napps.kytos.pathfinder.graph.KytosGraph.' +
-    # #        'constrained_flexible_paths', autospec=True)
-    # @patch('pathfinder.graph.KytosGraph.' +
-    #        'constrained_flexible_paths', autospec=True)
-    # def test_shortest_constrained_path(self, mock_constrained_flexible_paths):
-    #     """Test constrained flexible paths."""
-    #     source = "00:00:00:00:00:00:00:01:1"
-    #     destination = "00:00:00:00:00:00:00:02:1"
-    #     path = [source, destination]
-    #     base_metrics = {"ownership": "bob"}
-    #     fle_metrics = {"delay": 30}
-    #     metrics = {**base_metrics, **fle_metrics}
-    #     mock_constrained_flexible_paths.return_value = [
-    #         {"paths": [path], "metrics": metrics}]
-    #
-    #     api = get_test_client(self.napp.controller, self.napp)
-    #     url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" +\
-    #         "best-constrained-paths"
-    #     data = {"source": "00:00:00:00:00:00:00:01:1",
-    #             "destination": "00:00:00:00:00:00:00:02:1",
-    #             "base_metrics": {"ownership": "bob"},
-    #             "flexible_metrics": {"delay": 30},
-    #             "minimum_flexible_hits": 1}
-    #     response = api.open(url, method='POST', json=data)
-    #     expected_response = [{"metrics": metrics, "paths": [path]}]
-    #
-    #     self.assertEqual(response.json, expected_response)
-    #     self.assertEqual(response.status_code, 200)
-
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.' +
-    #        'constrained_flexible_paths', autospec=True)
 
     def setting_shortest_constrained_path_mocked(self, mock_constrained_flexible_paths):
         source = "00:00:00:00:00:00:00:01:1"
@@ -165,22 +113,6 @@ class TestMain(TestCase):
                 mock_constrained_flexible_paths)
 
         self.assertEqual(response.status_code, 200)
-
-    # def test_filter_paths(self):
-    #     """Test filter paths."""
-    #     self.napp._topology = get_topology_mock()
-    #     paths = [{"hops": ["00:00:00:00:00:00:00:01:1",
-    #                        "00:00:00:00:00:00:00:02:1"]}]
-    #     desired, undesired = ["1"], None
-    #
-    #     filtered_paths = self.napp._filter_paths(paths, desired, undesired)
-    #     self.assertEqual(filtered_paths, paths)
-    #
-    #     paths = [{"hops": ["00:00:00:00:00:00:00:01:2",
-    #                        "00:00:00:00:00:00:00:03:1"]}]
-    #     desired, undesired = None, ["2"]
-    #     filtered_paths = self.napp._filter_paths(paths, desired, undesired)
-    #     self.assertEqual(filtered_paths, [])
 
     def test_filter_paths_response_on_desired(self):
         """Test filter paths."""
