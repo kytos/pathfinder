@@ -10,62 +10,57 @@ class TestResultsMetadata(TestResults):
     Tests if the metadata in search result edges have passing values.
     """
 
-    def test_path00(self):
+    def test_path_constrained_user_user(self):
         self.initializer()
         result = self.get_path_constrained("User1", "User2")
         self.assertNotEqual(result, [], True)
 
-    def test_path01(self):
+    def test_path_constrained_user_switch(self):
         self.initializer()
         result = self.get_path_constrained("User1", "S4")
         self.assertNotEqual(result, [], True)
 
-    def test_path02(self):
+    def test_path_constrained_switch_switch(self):
         self.initializer()
         result = self.get_path_constrained("S2", "S4")
         self.assertNotEqual(result, [], True)
 
-    def test_path03(self):
+    def test_no_path_constrained_user_user(self):
+        self.initializer()
+        result = self.get_path_constrained("User1", "User3")
+        self.assertEqual(result, [], True)
+
+    def test_path_constrained_user_user_t1(self):
+        self.initializer(val=1)
+        result = self.get_path_constrained("User1", "User3")
+        self.assertNotEqual(result, [], True)
+
+    def test_no_path_constrained_user_user_t1(self):
         self.initializer(val=1)
         result = self.get_path_constrained("User1", "User2")
         self.assertEqual(result, [], True)
 
-    def test_path04(self):
+    def test_no_path_constrained_switch_switch_t1(self):
         self.initializer(val=1)
         result = self.get_path_constrained("S1", "S2")
         self.assertEqual(result, [], True)
 
-    def test_path05(self):
-        self.initializer(val=1)
-        result = self.get_path_constrained("S2", "S3")
-        self.assertEqual(result, [], True)
-
-    def test_path06(self):
-        self.initializer(val=1)
-        result = self.get_path_constrained("User1", "User3")
-        self.assertNotEqual(result, [], True)
-
-    def test_path07(self):
+    def test_path_constrained_user_user_t2(self):
         self.initializer(val=2)
         result = self.get_path_constrained("User1", "User2")
         self.assertNotEqual(result, [], True)
 
-    def test_path08(self):
+    def test_path_constrained_user_switch_t2(self):
         self.initializer(val=2)
         result = self.get_path_constrained("User1", "S4")
         self.assertNotEqual(result, [], True)
 
-    def test_path09(self):
+    def test_path_constrained_switch_switch_t2(self):
         self.initializer(val=2)
         result = self.get_path_constrained("S2", "S4")
         self.assertNotEqual(result, [], True)
 
-    def test_path010(self):
-        self.initializer()
-        result = self.get_path_constrained("User1", "User3")
-        self.assertEqual(result, [], True)
-
-    def test_path10(self):
+    def test_path_constrained_reliability(self):
         """Tests to see if the edges used in the paths
         of the result set do not have poor reliability
         """
@@ -77,7 +72,7 @@ class TestResultsMetadata(TestResults):
 
         self.assertNotEqual(result, [])
 
-    def test_path11(self):
+    def test_no_path_constrained_reliability(self):
         """Tests to see if the edges used in the paths
         of the result set do not have poor reliability
         """
@@ -89,7 +84,7 @@ class TestResultsMetadata(TestResults):
 
         self.assertEqual(result, [])
 
-    def test_path1(self):
+    def test_path_constrained_reliability_detailed(self):
         """Tests to see if the edges used in the paths
         of the result set do not have poor reliability
         """
@@ -116,7 +111,7 @@ class TestResultsMetadata(TestResults):
         else:
             self.assertNotEqual(result, [])
 
-    def test_path2(self):
+    def test_path_constrained_delay(self):
         """Tests to see if the edges used in the paths
         from User 1 to User 2 have less than 30 delay.
         """
@@ -148,7 +143,7 @@ class TestResultsMetadata(TestResults):
 
         self.assertEqual(valid, True)
 
-    def test_path3(self):
+    def test_path_constrained_bandwidth_detailed(self):
         """Tests to see if the edges used in the paths
         from User 1 to User 2 have at least 20 bandwidth.
         """
@@ -179,7 +174,7 @@ class TestResultsMetadata(TestResults):
 
             self.assertEqual(valid, True)
 
-    def test_path30(self):
+    def test_path_constrained_bandwidth_detailed_t2(self):
         """Tests to see if the edges used in the paths
         from User 1 to User 2 have at least 20 bandwidth.
         """
@@ -203,7 +198,7 @@ class TestResultsMetadata(TestResults):
             for bandwidth in bandwidths:
                 self.assertEqual(bandwidth < requirements["bandwidth"], False)
 
-    def test_path4(self):
+    def test_path_constrained_bandwidth_delay(self):
         """Tests to see if the edges used in the paths from User 1
         to User 2 have at least 20 bandwidth and under 30 delay.
         """
@@ -394,6 +389,7 @@ class TestResultsMetadata(TestResults):
     @staticmethod
     def generate_topology_2():
         """Generates a predetermined topology"""
+
         switches = {}
         interfaces = {}
         links = {}
