@@ -25,18 +25,44 @@ class TestGraph(TestCase):
 
         self.mock_graph.clear.assert_called()
 
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
-    @patch('graph.KytosGraph.update_links')
-    @patch('graph.KytosGraph.update_nodes')
-    def test_update_topology(self, *args):
-        """Test update topology."""
+    def setting_update_topology(self, *args):
         (mock_update_nodes, mock_update_links) = args
         topology = get_topology_mock()
         self.kytos_graph.update_topology(topology)
 
         self.mock_graph.clear.assert_called()
+
+        return mock_update_nodes, mock_update_links, topology
+
+    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
+    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
+    @patch('graph.KytosGraph.update_links')
+    @patch('graph.KytosGraph.update_nodes')
+    def test_update_topology_switches(self, *args):
+    # def test_update_topology_switches(self):
+        """Test update topology."""
+        # (mock_update_nodes, mock_update_links) = args
+        # topology = get_topology_mock()
+        # self.kytos_graph.update_topology(topology)
+        #
+        # self.mock_graph.clear.assert_called()
+        mock_update_nodes, _, topology = self.setting_update_topology(*args)
         mock_update_nodes.assert_called_with(topology.switches)
+        # mock_update_links.assert_called_with(topology.links)
+
+    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
+    # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
+    @patch('graph.KytosGraph.update_links')
+    @patch('graph.KytosGraph.update_nodes')
+    def test_update_topology_links(self, *args):
+        """Test update topology."""
+        # (mock_update_nodes, mock_update_links) = args
+        # topology = get_topology_mock()
+        # self.kytos_graph.update_topology(topology)
+        #
+        # self.mock_graph.clear.assert_called()
+        # mock_update_nodes.assert_called_with(topology.switches)
+        _, mock_update_links, topology = self.setting_update_topology(*args)
         mock_update_links.assert_called_with(topology.links)
 
     def test_update_nodes(self):
@@ -66,19 +92,6 @@ class TestGraph(TestCase):
                 self.kytos_graph.update_nodes(topology.switches)
 
         self.assertRaises(AttributeError)
-
-    # @patch('napps.kytos.pathfinder.graph.KytosGraph._set_default_metadata')
-    # @patch('graph.KytosGraph._set_default_metadata')
-    # def test_update_links(self, mock_set_default_metadata):
-    #     """Test update nodes."""
-    #     topology = get_topology_mock()
-    #     self.kytos_graph.update_links(topology.links)
-    #
-    #     keys = []
-    #     all_metadata = [link.metadata for link in topology.links.values()]
-    #     for metadata in all_metadata:
-    #         keys.extend(key for key in metadata.keys())
-    #     mock_set_default_metadata.assert_called_with(keys)
 
     def test_remove_switch_hops(self):
         """Test remove switch hops."""
