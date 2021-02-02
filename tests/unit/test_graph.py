@@ -39,16 +39,9 @@ class TestGraph(TestCase):
     @patch('graph.KytosGraph.update_links')
     @patch('graph.KytosGraph.update_nodes')
     def test_update_topology_switches(self, *args):
-    # def test_update_topology_switches(self):
         """Test update topology."""
-        # (mock_update_nodes, mock_update_links) = args
-        # topology = get_topology_mock()
-        # self.kytos_graph.update_topology(topology)
-        #
-        # self.mock_graph.clear.assert_called()
         mock_update_nodes, _, topology = self.setting_update_topology(*args)
         mock_update_nodes.assert_called_with(topology.switches)
-        # mock_update_links.assert_called_with(topology.links)
 
     # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_links')
     # @patch('napps.kytos.pathfinder.graph.KytosGraph.update_nodes')
@@ -56,12 +49,6 @@ class TestGraph(TestCase):
     @patch('graph.KytosGraph.update_nodes')
     def test_update_topology_links(self, *args):
         """Test update topology."""
-        # (mock_update_nodes, mock_update_links) = args
-        # topology = get_topology_mock()
-        # self.kytos_graph.update_topology(topology)
-        #
-        # self.mock_graph.clear.assert_called()
-        # mock_update_nodes.assert_called_with(topology.switches)
         _, mock_update_links, topology = self.setting_update_topology(*args)
         mock_update_links.assert_called_with(topology.links)
 
