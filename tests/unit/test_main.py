@@ -177,7 +177,7 @@ class TestMain(TestCase):
 
         self.assertIsNotNone(response.json.get('exception'))
 
-    def test_shortest_constrained_path(self):
+    def test_shortest_constrained_path_400_exception(self):
         """Test shortest path."""
 
         self.setting_path()
@@ -197,3 +197,24 @@ class TestMain(TestCase):
             response = api.open(url, method='POST', json=data)
 
         self.assertEqual(response.status_code, 400)
+
+    def test_shortest_constrained_path_500_exception(self):
+        """Test shortest path."""
+
+        self.setting_path()
+        api = get_test_client(self.napp.controller, self.napp)
+
+        with patch('graph.KytosGraph.constrained_flexible_paths', side_effect=Exception):
+
+            url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + \
+                  "best-constrained-paths"
+
+            data = {"source": "00:00:00:00:00:00:00:01:1",
+                    "destination": "00:00:00:00:00:00:00:02:1",
+                    "base_metrics": {"ownership": "bob"},
+                    "flexible_metrics": {"delay": 30},
+                    "minimum_flexible_hits": 1}
+
+            response = api.open(url, method='POST', json=data)
+
+        self.assertEqual(response.status_code, 500)
