@@ -161,9 +161,7 @@ class TestMain(TestCase):
 
         self.assertEqual(paths, response.json['Exact Path Result'])
 
-    def test_shortest_path_exception(self):
-        """Test shortest path."""
-
+    def setting_shortest_path_exception(self):
         api = get_test_client(self.napp.controller, self.napp)
         url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + \
               "path-exact-delay"
@@ -172,7 +170,21 @@ class TestMain(TestCase):
                 "destination": "User4",
                 "delay": 30}
 
+        return api, url, data
+
+    def test_shortest_path_broader_exception(self):
+        """Test shortest path."""
+        api, url, data = self.setting_shortest_path_exception()
         with patch('graph.KytosGraph.exact_path', side_effect=Exception):
+            response = api.open(url, method='POST', json=data)
+
+        self.assertIsNotNone(response.json.get('exception'))
+
+    def test_shortest_path_specific_exception(self):
+        """Test shortest path."""
+        api, url, data = self.setting_shortest_path_exception()
+
+        with patch('graph.KytosGraph.exact_path', side_effect=TypeError):
             response = api.open(url, method='POST', json=data)
 
         self.assertIsNotNone(response.json.get('exception'))
