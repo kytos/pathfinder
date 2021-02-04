@@ -26,6 +26,8 @@ class TestGraph(TestCase):
         self.mock_graph.clear.assert_called()
 
     def setting_update_topology(self, *args):
+        """Set the primary elements needed to
+        test the topology update process."""
         (mock_update_nodes, mock_update_links) = args
         topology = get_topology_mock()
         self.kytos_graph.update_topology(topology)

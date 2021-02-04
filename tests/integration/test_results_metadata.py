@@ -11,51 +11,71 @@ class TestResultsMetadata(TestResults):
     """
 
     def test_path_constrained_user_user(self):
+        """Test to see if there is a constrained
+        path between User - User."""
         self.initializer()
         result = self.get_path_constrained("User1", "User2")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_user_switch(self):
+        """Test to see if there is a constrained
+        path between User - Switch."""
         self.initializer()
         result = self.get_path_constrained("User1", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_switch_switch(self):
+        """Test to see if there is a constrained
+        path between Switch - Switch."""
         self.initializer()
         result = self.get_path_constrained("S2", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_no_path_constrained_user_user(self):
+        """Test to see if there is NOT a constrained
+        path between User - User."""
         self.initializer()
         result = self.get_path_constrained("User1", "User3")
         self.assertEqual(result, [], True)
 
     def test_path_constrained_user_user_t1(self):
+        """Test to see if there is a constrained path between
+        User - User using the 2nd topology variant."""
         self.initializer(val=1)
         result = self.get_path_constrained("User1", "User3")
         self.assertNotEqual(result, [], True)
 
     def test_no_path_constrained_user_user_t1(self):
+        """Test to see if there is NOT a constrained path between
+        User - User using the 2nd topology variant."""
         self.initializer(val=1)
         result = self.get_path_constrained("User1", "User2")
         self.assertEqual(result, [], True)
 
     def test_no_path_constrained_switch_switch_t1(self):
+        """Test to see if there is NOT a constrained path between
+        Switch - Switch using the 2nd topology variant."""
         self.initializer(val=1)
         result = self.get_path_constrained("S1", "S2")
         self.assertEqual(result, [], True)
 
     def test_path_constrained_user_user_t2(self):
+        """Test to see if there is a constrained path between
+        User - User using the 3rd topology variant."""
         self.initializer(val=2)
         result = self.get_path_constrained("User1", "User2")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_user_switch_t2(self):
+        """Test to see if there is a constrained path between
+        User - Switch using the 3rd topology variant."""
         self.initializer(val=2)
         result = self.get_path_constrained("User1", "S4")
         self.assertNotEqual(result, [], True)
 
     def test_path_constrained_switch_switch_t2(self):
+        """Test to see if there is a constrained path between
+        two switches using the 3rd topology variant."""
         self.initializer(val=2)
         result = self.get_path_constrained("S2", "S4")
         self.assertNotEqual(result, [], True)
@@ -230,7 +250,7 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def generate_topology():
-        """Generates a predetermined topology"""
+        """Generates a predetermined topology."""
         switches = {}
         interfaces = {}
         links = {}
@@ -244,23 +264,8 @@ class TestResultsMetadata(TestResults):
         return switches, links
 
     @staticmethod
-    def generate_topology_1():
-        """Generates a predetermined topology"""
-        switches = {}
-        interfaces = {}
-        links = {}
-
-        TestResultsMetadata.setting_switches_interfaces_1(interfaces, switches)
-
-        TestResultsMetadata.setting_links_1(interfaces, links)
-
-        TestResultsMetadata.adding_metadata_1(links)
-
-        return switches, links
-
-    @staticmethod
     def setting_switches_interfaces(interfaces, switches):
-
+        """Generates the switches in a a predetermined topology."""
         TestResults.create_switch("User1", switches)
         TestResults.add_interfaces(3, switches["User1"], interfaces)
 
@@ -278,7 +283,7 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def setting_links(interfaces, links):
-
+        """Generates the links in a a predetermined topology."""
         TestResults.create_link("User1:1", "S2:1", interfaces, links)
 
         TestResults.create_link("User1:2", "S5:1", interfaces, links)
@@ -295,7 +300,7 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def adding_metadata(links):
-
+        """Add the links' metadata in a a predetermined topology."""
         TestResults.add_metadata_to_link(
             "User1:1", "S2:1", {
                 "reliability": 3, "ownership": "B", "delay": 30,
@@ -332,8 +337,25 @@ class TestResultsMetadata(TestResults):
                 "bandwidth": 20}, links)
 
     @staticmethod
-    def setting_switches_interfaces_1(interfaces, switches):
+    def generate_topology_1():
+        """Generates a predetermined topology
+        - 2nd Variant."""
+        switches = {}
+        interfaces = {}
+        links = {}
 
+        TestResultsMetadata.setting_switches_interfaces_1(interfaces, switches)
+
+        TestResultsMetadata.setting_links_1(interfaces, links)
+
+        TestResultsMetadata.adding_metadata_1(links)
+
+        return switches, links
+
+    @staticmethod
+    def setting_switches_interfaces_1(interfaces, switches):
+        """Generates the switches in a a predetermined topology
+        - 2nd variant."""
         TestResults.create_switch("User1", switches)
         TestResults.add_interfaces(2, switches["User1"], interfaces)
 
@@ -354,7 +376,8 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def setting_links_1(interfaces, links):
-
+        """Generates the links in a a predetermined topology
+        - 2nd Variant."""
         TestResults.create_link("User1:1", "S1:1", interfaces, links)
 
         TestResults.create_link("User1:2", "S3:1", interfaces, links)
@@ -365,7 +388,8 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def adding_metadata_1(links):
-
+        """Add the links' metadata in a a predetermined topology
+        - 2nd Variant."""
         TestResults.add_metadata_to_link(
             "User1:1", "S1:1", {
                 "reliability": 3, "ownership": "B", "delay": 30,
@@ -388,8 +412,8 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def generate_topology_2():
-        """Generates a predetermined topology"""
-
+        """Generates a predetermined topology
+        - 3rd Variant."""
         switches = {}
         interfaces = {}
         links = {}
@@ -404,7 +428,8 @@ class TestResultsMetadata(TestResults):
 
     @staticmethod
     def adding_metadata_2(links):
-
+        """Add the links' metadata in a a predetermined topology
+        - 3rd Variant."""
         TestResults.add_metadata_to_link(
             "User1:1", "S2:1", {
                 "reliability": 3, "ownership": "B",

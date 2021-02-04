@@ -45,7 +45,8 @@ def get_topology_mock():
 
 
 def topology_setting():
-
+    """Set the default values associated
+    to a "real" topology."""
     switches_to_interface_counts = {"S1": 2, "S2": 2, "S3": 6, "S4": 2,
                                     "S5": 6, "S6": 5, "S7": 2, "S8": 8,
                                     "S9": 4, "S10": 3, "S11": 3,

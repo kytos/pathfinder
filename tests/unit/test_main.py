@@ -36,6 +36,8 @@ class TestMain(TestCase):
         self.assertIsNone(self.napp._topology)
 
     def setting_shortest_path_mocked(self, mock_shortest_paths):
+        """Set the primary elements needed to test the retrieving
+        process of the shortest path under a mocked approach."""
         self.napp._topology = get_topology_mock()
         path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]
         mock_shortest_paths.return_value = [path]
@@ -72,6 +74,8 @@ class TestMain(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def setting_shortest_constrained_path_mocked(self, mock_constrained_flexible_paths):
+        """Set the primary elements needed to test the retrieving process
+        of the shortest constrained path under a mocked approach."""
         source = "00:00:00:00:00:00:00:01:1"
         destination = "00:00:00:00:00:00:00:02:1"
         path = [source, destination]
@@ -134,6 +138,8 @@ class TestMain(TestCase):
         self.assertEqual(filtered_paths, [])
 
     def setting_path(self):
+        """Set the primary elements needed to test the topology
+        update process under a "real-simulated" scenario."""
         topology = get_topology_with_metadata()
         event = KytosEvent(name='kytos.topology.updated',
                            content={'topology': topology})
@@ -141,7 +147,6 @@ class TestMain(TestCase):
 
     def test_shortest_path(self):
         """Test shortest path."""
-
         self.setting_path()
 
         api = get_test_client(self.napp.controller, self.napp)
@@ -162,6 +167,8 @@ class TestMain(TestCase):
         self.assertEqual(paths, response.json['Exact Path Result'])
 
     def setting_shortest_path_exception(self):
+        """Set the primary elements needed to test the
+        shortest path behavior under exception actions."""
         api = get_test_client(self.napp.controller, self.napp)
         url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + \
               "path-exact-delay"
@@ -189,14 +196,13 @@ class TestMain(TestCase):
 
         self.assertIsNotNone(response.json.get('exception'))
 
-    def test_shortest_constrained_path_400_exception(self):
-        """Test shortest path."""
-
+    def setting_shortest_constrained_path_exception(self, side_effect):
+        """Set the primary elements needed to test the shortest
+        constrained path behavior under exception actions."""
         self.setting_path()
         api = get_test_client(self.napp.controller, self.napp)
 
-        with patch('graph.KytosGraph.constrained_flexible_paths', side_effect=TypeError):
-
+        with patch('graph.KytosGraph.constrained_flexible_paths', side_effect=side_effect):
             url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + \
                   "best-constrained-paths"
 
@@ -207,26 +213,17 @@ class TestMain(TestCase):
                     "minimum_flexible_hits": 1}
 
             response = api.open(url, method='POST', json=data)
+
+        return response
+
+    def test_shortest_constrained_path_400_exception(self):
+        """Test shortest path."""
+        response = self.setting_shortest_constrained_path_exception(TypeError)
 
         self.assertEqual(response.status_code, 400)
 
     def test_shortest_constrained_path_500_exception(self):
         """Test shortest path."""
-
-        self.setting_path()
-        api = get_test_client(self.napp.controller, self.napp)
-
-        with patch('graph.KytosGraph.constrained_flexible_paths', side_effect=Exception):
-
-            url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/" + \
-                  "best-constrained-paths"
-
-            data = {"source": "00:00:00:00:00:00:00:01:1",
-                    "destination": "00:00:00:00:00:00:00:02:1",
-                    "base_metrics": {"ownership": "bob"},
-                    "flexible_metrics": {"delay": 30},
-                    "minimum_flexible_hits": 1}
-
-            response = api.open(url, method='POST', json=data)
+        response = self.setting_shortest_constrained_path_exception(Exception)
 
         self.assertEqual(response.status_code, 500)

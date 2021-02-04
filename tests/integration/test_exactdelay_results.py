@@ -1,9 +1,13 @@
+"""Module to test the Pathfinder algorithm
+performance with some constrains."""
+
 from unittest import TestCase
 from exactdelaypathfinder.core import ExactDelayPathfinder
 import networkx as nx
 
 
 class TestExactDelayResults(TestCase):
+    """Tests for the Exact Delay result constrain."""
 
     def setUp(self):
         self.pathfinder = ExactDelayPathfinder()
