@@ -133,6 +133,8 @@ class Main(KytosNApp):
             return jsonify(paths)
         except TypeError as err:
             return jsonify({"error": str(err)}), 400
+        except Exception as err:
+            return jsonify({"error": str(err)}), 500
 
     @listen_to('kytos.topology.updated')
     def update_topology(self, event):
@@ -149,4 +151,6 @@ class Main(KytosNApp):
             self.graph.update_topology(topology)
             log.debug('Topology graph updated.')
         except TypeError as err:
+            log.debug(err)
+        except Exception as err:
             log.debug(err)
