@@ -192,23 +192,6 @@ class TestResultsEdges(TestResults):
         """
         self.assertTrue(self.paths_between_all_users("User4:3", {'bandwidth': 100}))
 
-    # def test_path5(self):
-    #     """Tests paths between all users using constrained path algorithm,
-    #     with the bandwidth constraint set to 100.
-    #     """
-    #     combos = combinations(["User1", "User2", "User3", "User4"], 2)
-    #     self.initializer()
-    #
-    #     for point_a, point_b in combos:
-    #         results = self.get_path_constrained(
-    #             point_a, point_b, base=dict(bandwidth=100))
-    #         for result in results:
-    #             for path in result["paths"]:
-    #                 self.assertNotIn("S3:1", path)
-    #                 self.assertNotIn("S5:1", path)
-    #                 self.assertNotIn("User1:4", path)
-    #                 self.assertNotIn("User4:3", path)
-
     def test_path6(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50.
