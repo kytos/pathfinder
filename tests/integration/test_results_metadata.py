@@ -163,6 +163,17 @@ class TestResultsMetadata(TestResults):
 
         self.assertEqual(valid, True)
 
+    def bandwidth_list_builder(self, bandwidths, result):
+        """Method to set up bandwidth metadata"""
+        for path in result[0]["paths"]:
+            for i in range(1, len(path)):
+                endpoint_a = path[i - 1]
+                endpoint_b = path[i]
+                meta_data = self.graph.get_link_metadata(
+                    endpoint_a, endpoint_b)
+                if meta_data and "bandwidth" in meta_data.keys():
+                    bandwidths.append(meta_data["bandwidth"])
+
     def test_path_constrained_bandwidth_detailed(self):
         """Tests to see if the edges used in the paths
         from User 1 to User 2 have at least 20 bandwidth.
@@ -177,8 +188,6 @@ class TestResultsMetadata(TestResults):
         if result:
             self.bandwidth_list_builder(bandwidths, result)
 
-            # for bandwidth in bandwidths:
-            #     self.assertEqual(bandwidth < requirements["bandwidth"], False)
             valid = True
             for bandwidth in bandwidths:
                 if bandwidth < requirements["bandwidth"]:
@@ -186,16 +195,6 @@ class TestResultsMetadata(TestResults):
                     break
 
             self.assertEqual(valid, True)
-
-    def bandwidth_list_builder(self, bandwidths, result):
-        for path in result[0]["paths"]:
-            for i in range(1, len(path)):
-                endpoint_a = path[i - 1]
-                endpoint_b = path[i]
-                meta_data = self.graph.get_link_metadata(
-                    endpoint_a, endpoint_b)
-                if meta_data and "bandwidth" in meta_data.keys():
-                    bandwidths.append(meta_data["bandwidth"])
 
     def test_path_constrained_bandwidth_detailed_t2(self):
         """Tests to see if the edges used in the paths
