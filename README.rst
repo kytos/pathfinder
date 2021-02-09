@@ -7,7 +7,7 @@ Overview
 .. attention::
 
     THIS NAPP IS STILL EXPERIMENTAL AND IT'S EVENTS, METHODS AND STRUCTURES MAY
-    CHANGE A LOT ON THE NEXT FEW DAYS/WEEKS, USE IT AT YOUR OWN DISCERNEMENT
+    CHANGE A LOT ON THE NEXT FEW DAYS/WEEKS, USE IT AT YOUR OWN DISCERNMENT
 
 The NApp **kytos/pathfinder** is a NApp responsible for creating a graph with
 the latest network topology and providing rest endpoint to calculate the best
@@ -16,7 +16,7 @@ each link is a connection between two devices. In the graph, each device
 represents a node and each link represents an edge between two nodes.
 
 The NApp learns custom properties from the topology, being able to define the
-best paths based on a weighted parmeter. Please see the Rest API documentation
+best paths based on a weighted parameter. Please see the Rest API documentation
 for details.
 
 ##########
@@ -49,7 +49,7 @@ kytos/topology.updated
 
 *buffer*: ``app``
 
-Listening on this event will make sure that this NApp has the lateste topology.
+Listening on this event will make sure that this NApp has the latest topology.
 
 
 Content
