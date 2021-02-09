@@ -1,7 +1,2 @@
-<<<<<<< HEAD
 networkx==2.2
-exactdelaypathfinder==0.1.0
-=======
-=======
 exactdelaypathfinder
->>>>>>> Change requirements to always install latest version of exactdelaypathfinder
