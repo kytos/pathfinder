@@ -56,7 +56,7 @@ class TestResultsEdges(TestResults):
 
     def paths_between_all_users(self, item, base=None, flexible=None, metrics=None):
         """Method to verify the existence of a path between
-        a set of point given different constrains"""
+        a set of points given different constrains"""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
 
