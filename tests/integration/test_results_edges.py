@@ -51,35 +51,6 @@ class TestResultsEdges(EdgesSettings):
             results = self.get_path_constrained(point_a, point_b)
             self.assertNotEqual(results, [])
 
-    def paths_between_all_users(self, item, base=None, flexible=None, metrics=None):
-        """Method to verify the existence of a path between
-        a set of points given different constrains"""
-        combos = combinations(["User1", "User2", "User3", "User4"], 2)
-        self.initializer()
-
-        valid = True
-        for point_a, point_b in combos:
-            results = []
-            if base is not None and flexible is None:
-                results = self.get_path_constrained(
-                    point_a, point_b, base=base)
-
-            elif base is None and flexible is not None:
-                results = self.get_path_constrained(
-                    point_a, point_b, flexible=flexible)
-
-            for result in results:
-                if metrics is not None:
-                    if metrics in result["metrics"]:
-                        for path in result["paths"]:
-                            if item in path:
-                                valid = False
-                else:
-                    for path in result["paths"]:
-                        if item in path:
-                            valid = False
-        return valid
-
     def test_path3_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
