@@ -175,14 +175,7 @@ class TestResultsMetadata(TestResults):
         result = self.get_path_constrained("User1", "User2", base=requirements)
 
         if result:
-            for path in result[0]["paths"]:
-                for i in range(1, len(path)):
-                    endpoint_a = path[i - 1]
-                    endpoint_b = path[i]
-                    meta_data = self.graph.get_link_metadata(
-                        endpoint_a, endpoint_b)
-                    if meta_data and "bandwidth" in meta_data.keys():
-                        bandwidths.append(meta_data["bandwidth"])
+            self.bandwidth_list_builder(bandwidths, result)
 
             # for bandwidth in bandwidths:
             #     self.assertEqual(bandwidth < requirements["bandwidth"], False)
@@ -193,6 +186,16 @@ class TestResultsMetadata(TestResults):
                     break
 
             self.assertEqual(valid, True)
+
+    def bandwidth_list_builder(self, bandwidths, result):
+        for path in result[0]["paths"]:
+            for i in range(1, len(path)):
+                endpoint_a = path[i - 1]
+                endpoint_b = path[i]
+                meta_data = self.graph.get_link_metadata(
+                    endpoint_a, endpoint_b)
+                if meta_data and "bandwidth" in meta_data.keys():
+                    bandwidths.append(meta_data["bandwidth"])
 
     def test_path_constrained_bandwidth_detailed_t2(self):
         """Tests to see if the edges used in the paths
@@ -206,14 +209,7 @@ class TestResultsMetadata(TestResults):
         result = self.get_path_constrained("User1", "User2", base=requirements)
 
         if result:
-            for path in result[0]["paths"]:
-                for i in range(1, len(path)):
-                    endpoint_a = path[i - 1]
-                    endpoint_b = path[i]
-                    meta_data = self.graph.get_link_metadata(
-                        endpoint_a, endpoint_b)
-                    if meta_data and "bandwidth" in meta_data.keys():
-                        bandwidths.append(meta_data["bandwidth"])
+            self.bandwidth_list_builder(bandwidths, result)
 
             for bandwidth in bandwidths:
                 self.assertEqual(bandwidth < requirements["bandwidth"], False)
