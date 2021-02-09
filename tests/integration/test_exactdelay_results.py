@@ -14,6 +14,7 @@ class TestExactDelayResults(TestCase):
         self.G = nx.Graph()
 
     def add_edges(self):
+        """Method to set up edges in the graph structure"""
         edges = [('User1', 'S2', {'delay': 10}), ('User1', 'S3', {'delay': 37}),
                  ('S2', 'S4', {'delay': 24}), ('S3', 'S4', {'delay': 48}),
                  ('S3', 'S6', {'delay': 96}), ('S4', 'S5', {'delay': 1}),
