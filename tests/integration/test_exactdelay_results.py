@@ -31,7 +31,7 @@ class TestExactDelayResults(TestCase):
         self.add_edges()
 
         # Create result variables and run the test search
-        result = []
+        # result = []
         result = self.pathfinder.search(self.G, 64, 'User1', 'User2')
         first_result = result[0]
         actual = first_result.get('total_delay')  # extract first result
@@ -47,7 +47,7 @@ class TestExactDelayResults(TestCase):
         isolated_nodes = ['S7']
         self.G.add_nodes_from(isolated_nodes)
 
-        result = []
+        # result = []
 
         # Find path to the unreachable node - impossible
         result = self.pathfinder.search(self.G, 64, 'User1', 'S7')
