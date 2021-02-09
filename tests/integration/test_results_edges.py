@@ -66,7 +66,6 @@ class TestResultsEdges(TestResults):
                 for path in result["paths"]:
                     if item in path:
                         valid = False
-                    # self.assertNotIn("S4:1", path)
 
         return valid
 
@@ -74,18 +73,6 @@ class TestResultsEdges(TestResults):
         """Tests paths between all users using constrained path algorithm,
         with the ownership constraint set to B.
         """
-        # combos = combinations(["User1", "User2", "User3", "User4"], 2)
-        # self.initializer()
-        #
-        # valid = True
-        # for point_a, point_b in combos:
-        #     results = self.get_path_constrained(
-        #         point_a, point_b, base=dict(ownership="B"))
-        #     for result in results:
-        #         for path in result["paths"]:
-        #             if "S4:1" in path:
-        #                 valid = False
-        #             # self.assertNotIn("S4:1", path)
         self.assertTrue(self.paths_between_all_users("S4:1"))
 
     def test_path3_2(self):
@@ -153,31 +140,6 @@ class TestResultsEdges(TestResults):
         with the ownership constraint set to B.
         """
         self.assertTrue(self.paths_between_all_users("User2:1"))
-
-    # def test_path3(self):
-    #     """Tests paths between all users using constrained path algorithm,
-    #     with the ownership constraint set to B.
-    #     """
-    #     combos = combinations(["User1", "User2", "User3", "User4"], 2)
-    #     self.initializer()
-    #
-    #     for point_a, point_b in combos:
-    #         results = self.get_path_constrained(
-    #             point_a, point_b, base=dict(ownership="B"))
-    #         for result in results:
-    #             for path in result["paths"]:
-    #                 # self.assertNotIn("S4:1", path)
-    #                 # self.assertNotIn("S5:2", path)
-    #                 # self.assertNotIn("S4:2", path)
-    #                 # self.assertNotIn("User1:2", path)
-    #                 # self.assertNotIn("S5:4", path)
-    #                 # self.assertNotIn("S6:2", path)
-    #                 # self.assertNotIn("S6:5", path)
-    #                 # self.assertNotIn("S10:1", path)
-    #                 # self.assertNotIn("S8:6", path)
-    #                 # self.assertNotIn("S10:2", path)
-    #                 # self.assertNotIn("S10:3", path)
-    #                 self.assertNotIn("User2:1", path)
 
     def test_path4(self):
         """Tests paths between all users using constrained path algorithm,
