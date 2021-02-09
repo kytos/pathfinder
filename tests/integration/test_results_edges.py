@@ -54,23 +54,37 @@ class TestResultsEdges(TestResults):
             results = self.get_path_constrained(point_a, point_b)
             self.assertNotEqual(results, [])
 
-    def paths_between_all_users(self, item, base=None):
+    def paths_between_all_users(self, item, base=None, flexible=None, metrics=None):
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
 
-        if base is not None:
-            value = {my_key: my_val for (my_key, my_val) in base.items()}
-            base.update(value)
+        # if base is not None:
+        #     value = {my_key: my_val for (my_key, my_val) in base.items()}
+        #     # base.update(value)
 
         valid = True
         for point_a, point_b in combos:
-            results = self.get_path_constrained(
-                point_a, point_b, base=base)
-            for result in results:
-                for path in result["paths"]:
-                    if item in path:
-                        valid = False
+            if base is not None and flexible is None:
+                results = self.get_path_constrained(
+                    point_a, point_b, base=base)
+                for result in results:
+                    for path in result["paths"]:
+                        if item in path:
+                            valid = False
 
+            elif base is None and flexible is not None:
+                results = self.get_path_constrained(
+                    point_a, point_b, flexible=flexible)
+                for result in results:
+                    if metrics is not None:
+                        if metrics in result["metrics"]:
+                            for path in result["paths"]:
+                                if item in path:
+                                    valid = False
+                    else:
+                        for path in result["paths"]:
+                            if item in path:
+                                valid = False
         return valid
 
     def test_path3_1(self):
@@ -759,7 +773,7 @@ class TestResultsEdges(TestResults):
                                                                  'bandwidth': 100,
                                                                  'ownership': "B"}))
 
-    def test_path8(self):
+    def test_path8_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50, the bandwidth constraint
         set to 100, the reliability constraint set to 3, and the ownership
@@ -767,70 +781,658 @@ class TestResultsEdges(TestResults):
 
         Tests conducted with flexibility enabled
         """
-        combos = combinations(["User1", "User2", "User3", "User4"], 2)
-        self.initializer()
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S1:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
 
-        for point_a, point_b in combos:
-            results = self.get_path_constrained(
-                point_a, point_b, flexible=dict(delay=50, bandwidth=100,
-                                                reliability=3,
-                                                ownership="B"))
-            for result in results:
-                # delay = 50 checks
-                if "delay" in result["metrics"]:
-                    for path in result["paths"]:
-                        self.assertNotIn("S1:1", path)
-                        self.assertNotIn("S2:1", path)
-                        self.assertNotIn("S3:1", path)
-                        self.assertNotIn("S5:1", path)
-                        self.assertNotIn("S4:2", path)
-                        self.assertNotIn("User1:2", path)
-                        self.assertNotIn("S5:5", path)
-                        self.assertNotIn("S8:2", path)
-                        self.assertNotIn("S5:6", path)
-                        self.assertNotIn("User1:3", path)
-                        self.assertNotIn("S6:3", path)
-                        self.assertNotIn("S9:1", path)
-                        self.assertNotIn("S6:4", path)
-                        self.assertNotIn("S9:2", path)
-                        self.assertNotIn("S6:5", path)
-                        self.assertNotIn("S10:1", path)
-                        self.assertNotIn("S8:5", path)
-                        self.assertNotIn("S9:4", path)
-                        self.assertNotIn("User1:4", path)
-                        self.assertNotIn("User4:3", path)
+    def test_path8_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
 
-                # bandwidth = 100 checks
-                if "bandwidth" in result["metrics"]:
-                    for path in result["paths"]:
-                        self.assertNotIn("S3:1", path)
-                        self.assertNotIn("S5:1", path)
-                        self.assertNotIn("User1:4", path)
-                        self.assertNotIn("User4:3", path)
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S2:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
 
-                # reliability = 3 checks
-                if "reliability" in result["metrics"]:
-                    for path in result["paths"]:
-                        self.assertNotIn("S4:1", path)
-                        self.assertNotIn("S5:2", path)
-                        self.assertNotIn("S5:3", path)
-                        self.assertNotIn("S6:1", path)
+    def test_path8_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
 
-                # ownership = "B" checks
-                if "ownership" in result["metrics"]:
-                    for path in result["paths"]:
-                        self.assertNotIn("S4:1", path)
-                        self.assertNotIn("S5:2", path)
-                        self.assertNotIn("S4:2", path)
-                        self.assertNotIn("User1:2", path)
-                        self.assertNotIn("S5:4", path)
-                        self.assertNotIn("S6:2", path)
-                        self.assertNotIn("S6:5", path)
-                        self.assertNotIn("S10:1", path)
-                        self.assertNotIn("S8:6", path)
-                        self.assertNotIn("S10:2", path)
-                        self.assertNotIn("S10:3", path)
-                        self.assertNotIn("User2:1", path)
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S3:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S5:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S4:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("User1:2", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S5:5", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S8:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S5:6", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("User1:3", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S6:3", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S9:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S6:4", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S9:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S6:5", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S10:1", flexible={'delay': 50,
+                                                                        'bandwidth': 100,
+                                                                        'reliability': 3,
+                                                                        'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S8:5", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("S9:4", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_1_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("User1:4", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_2_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # delay = 50
+        self.assertTrue(self.paths_between_all_users("User4:3", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='delay'))
+
+    def test_path8_2_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # bandwidth = 100
+        self.assertTrue(self.paths_between_all_users("S3:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='bandwidth'))
+
+    def test_path8_2_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # bandwidth = 100
+        self.assertTrue(self.paths_between_all_users("S5:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='bandwidth'))
+
+    def test_path8_2_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # bandwidth = 100
+        self.assertTrue(self.paths_between_all_users("User1:4", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='bandwidth'))
+
+    def test_path8_2_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # bandwidth = 100
+        self.assertTrue(self.paths_between_all_users("User4:3", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"},
+                                                     metrics='bandwidth'))
+
+    def test_path8_2_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # reliability = 3
+        self.assertTrue(self.paths_between_all_users("S4:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='reliability'))
+
+    def test_path8_2_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # reliability = 3
+        self.assertTrue(self.paths_between_all_users("S5:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='reliability'))
+
+    def test_path8_2_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # reliability = 3
+        self.assertTrue(self.paths_between_all_users("S5:3", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='reliability'))
+
+    def test_path8_2_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # reliability = 3
+        self.assertTrue(self.paths_between_all_users("S6:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"},
+                                                     metrics='reliability'))
+
+    def test_path8_2_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S4:1", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S5:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S4:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("User1:2", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"}))
+
+    def test_path8_3_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S5:4", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S6:2", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S6:5", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S10:1", flexible={'delay': 50,
+                                                                        'bandwidth': 100,
+                                                                        'reliability': 3,
+                                                                        'ownership': "B"}))
+
+    def test_path8_3_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S8:6", flexible={'delay': 50,
+                                                                       'bandwidth': 100,
+                                                                       'reliability': 3,
+                                                                       'ownership': "B"}))
+
+    def test_path8_3_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S10:2", flexible={'delay': 50,
+                                                                        'bandwidth': 100,
+                                                                        'reliability': 3,
+                                                                        'ownership': "B"}))
+
+    def test_path8_3_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("S10:3", flexible={'delay': 50,
+                                                                        'bandwidth': 100,
+                                                                        'reliability': 3,
+                                                                        'ownership': "B"}))
+
+    def test_path8_4_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50, the bandwidth constraint
+        set to 100, the reliability constraint set to 3, and the ownership
+        constraint set to 'B'
+
+        Tests conducted with flexibility enabled
+        """
+        # ownership = "B"
+        self.assertTrue(self.paths_between_all_users("User2:1", flexible={'delay': 50,
+                                                                          'bandwidth': 100,
+                                                                          'reliability': 3,
+                                                                          'ownership': "B"}))
+
+    # def test_path8(self):
+    #     """Tests paths between all users using constrained path algorithm,
+    #     with the delay constraint set to 50, the bandwidth constraint
+    #     set to 100, the reliability constraint set to 3, and the ownership
+    #     constraint set to 'B'
+    #
+    #     Tests conducted with flexibility enabled
+    #     """
+    #     combos = combinations(["User1", "User2", "User3", "User4"], 2)
+    #     self.initializer()
+    #
+    #     for point_a, point_b in combos:
+    #         results = self.get_path_constrained(
+    #             point_a, point_b, flexible=dict(delay=50, bandwidth=100,
+    #                                             reliability=3,
+    #                                             ownership="B"))
+    #         for result in results:
+    #             # delay = 50 checks
+    #             # if "delay" in result["metrics"]:
+    #             #     for path in result["paths"]:
+    #             # self.assertNotIn("S1:1", path)
+    #             # self.assertNotIn("S2:1", path)
+    #             # self.assertNotIn("S3:1", path)
+    #             # self.assertNotIn("S5:1", path)
+    #             # self.assertNotIn("S4:2", path)
+    #             # self.assertNotIn("User1:2", path)
+    #             # self.assertNotIn("S5:5", path)
+    #             # self.assertNotIn("S8:2", path)
+    #             # self.assertNotIn("S5:6", path)
+    #             # self.assertNotIn("User1:3", path)
+    #             # self.assertNotIn("S6:3", path)
+    #             # self.assertNotIn("S9:1", path)
+    #             # self.assertNotIn("S6:4", path)
+    #             # self.assertNotIn("S9:2", path)
+    #             # self.assertNotIn("S6:5", path)
+    #             # self.assertNotIn("S10:1", path)
+    #             # self.assertNotIn("S8:5", path)
+    #             # self.assertNotIn("S9:4", path)
+    #             # self.assertNotIn("User1:4", path)
+    #             # self.assertNotIn("User4:3", path)
+    #
+    #             # bandwidth = 100 checks
+    #             # if "bandwidth" in result["metrics"]:
+    #             #     for path in result["paths"]:
+    #             #         # self.assertNotIn("S3:1", path)
+    #             #         # self.assertNotIn("S5:1", path)
+    #             #         # self.assertNotIn("User1:4", path)
+    #             #         self.assertNotIn("User4:3", path)
+    #
+    #             # # reliability = 3 checks
+    #             # if "reliability" in result["metrics"]:
+    #             #     for path in result["paths"]:
+    #             #         # self.assertNotIn("S4:1", path)
+    #             #         # self.assertNotIn("S5:2", path)
+    #             #         # self.assertNotIn("S5:3", path)
+    #             #         # self.assertNotIn("S6:1", path)
+    #
+    #             # ownership = "B" checks
+    #             if "ownership" in result["metrics"]:
+    #                 for path in result["paths"]:
+    #                     # self.assertNotIn("S4:1", path)
+    #                     # self.assertNotIn("S5:2", path)
+    #                     # self.assertNotIn("S4:2", path)
+    #                     # self.assertNotIn("User1:2", path)
+    #                     # self.assertNotIn("S5:4", path)
+    #                     # self.assertNotIn("S6:2", path)
+    #                     # self.assertNotIn("S6:5", path)
+    #                     # self.assertNotIn("S10:1", path)
+    #                     # self.assertNotIn("S8:6", path)
+    #                     # self.assertNotIn("S10:2", path)
+    #                     # self.assertNotIn("S10:3", path)
+    #                     self.assertNotIn("User2:1", path)
 
     def test_path9(self):
         """Tests paths between all users using constrained path algorithm,
