@@ -55,12 +55,10 @@ class TestResultsEdges(TestResults):
             self.assertNotEqual(results, [])
 
     def paths_between_all_users(self, item, base=None, flexible=None, metrics=None):
+        """Method to verify the existence of a path between
+        a set of point given different constrains"""
         combos = combinations(["User1", "User2", "User3", "User4"], 2)
         self.initializer()
-
-        # if base is not None:
-        #     value = {my_key: my_val for (my_key, my_val) in base.items()}
-        #     # base.update(value)
 
         valid = True
         for point_a, point_b in combos:
