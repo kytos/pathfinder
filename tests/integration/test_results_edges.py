@@ -144,22 +144,46 @@ class TestResultsEdges(TestResults):
         """
         self.assertTrue(self.paths_between_all_users("User2:1", {'ownership': "B"}))
 
-    def test_path4(self):
+    def test_path4_1(self):
         """Tests paths between all users using constrained path algorithm,
         with the reliability constraint set to 3.
         """
-        combos = combinations(["User1", "User2", "User3", "User4"], 2)
-        self.initializer()
+        self.assertTrue(self.paths_between_all_users("S4:1", {'reliability': 3}))
 
-        for point_a, point_b in combos:
-            results = self.get_path_constrained(
-                point_a, point_b, base=dict(reliability=3))
-            for result in results:
-                for path in result["paths"]:
-                    self.assertNotIn("S4:1", path)
-                    self.assertNotIn("S5:2", path)
-                    self.assertNotIn("S5:3", path)
-                    self.assertNotIn("S6:1", path)
+    def test_path4_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the reliability constraint set to 3.
+        """
+        self.assertTrue(self.paths_between_all_users("S5:2", {'reliability': 3}))
+
+    def test_path4_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the reliability constraint set to 3.
+        """
+        self.assertTrue(self.paths_between_all_users("S5:3", {'reliability': 3}))
+
+    def test_path4_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the reliability constraint set to 3.
+        """
+        self.assertTrue(self.paths_between_all_users("S6:1", {'reliability': 3}))
+
+    # def test_path4(self):
+    #     """Tests paths between all users using constrained path algorithm,
+    #     with the reliability constraint set to 3.
+    #     """
+    #     combos = combinations(["User1", "User2", "User3", "User4"], 2)
+    #     self.initializer()
+    #
+    #     for point_a, point_b in combos:
+    #         results = self.get_path_constrained(
+    #             point_a, point_b, base=dict(reliability=3))
+    #         for result in results:
+    #             for path in result["paths"]:
+    #                 self.assertNotIn("S4:1", path)
+    #                 self.assertNotIn("S5:2", path)
+    #                 self.assertNotIn("S5:3", path)
+    #                 self.assertNotIn("S6:1", path)
 
     def test_path5(self):
         """Tests paths between all users using constrained path algorithm,
