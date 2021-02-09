@@ -192,6 +192,138 @@ class TestResultsEdges(TestResults):
         """
         self.assertTrue(self.paths_between_all_users("User4:3", {'bandwidth': 100}))
 
+    def test_path6_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S1:1", {'delay': 50}))
+
+    def test_path6_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S2:1", {'delay': 50}))
+
+    def test_path6_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S3:1", {'delay': 50}))
+
+    def test_path6_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S3:1", {'delay': 50}))
+
+    def test_path6_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S5:1", {'delay': 50}))
+
+    def test_path6_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S4:2", {'delay': 50}))
+
+    def test_path6_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("User1:2", {'delay': 50}))
+
+    def test_path6_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S5:5", {'delay': 50}))
+
+    def test_path6_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S8:2", {'delay': 50}))
+
+    def test_path6_1_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S5:6", {'delay': 50}))
+
+    def test_path6_1_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("User1:3", {'delay': 50}))
+
+    def test_path6_1_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S6:3", {'delay': 50}))
+
+    def test_path6_1_3(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S9:1", {'delay': 50}))
+
+    def test_path6_1_4(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S6:4", {'delay': 50}))
+
+    def test_path6_1_5(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S9:2", {'delay': 50}))
+
+    def test_path6_1_6(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S6:5", {'delay': 50}))
+
+    def test_path6_1_7(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S6:5", {'delay': 50}))
+
+    def test_path6_1_8(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S10:1", {'delay': 50}))
+
+    def test_path6_1_9(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S8:5", {'delay': 50}))
+
+    def test_path6_2_0(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("S9:4", {'delay': 50}))
+
+    def test_path6_2_1(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("User1:4", {'delay': 50}))
+
+    def test_path6_2_2(self):
+        """Tests paths between all users using constrained path algorithm,
+        with the delay constraint set to 50.
+        """
+        self.assertTrue(self.paths_between_all_users("User4:3", {'delay': 50}))
+
     def test_path6(self):
         """Tests paths between all users using constrained path algorithm,
         with the delay constraint set to 50.
@@ -204,25 +336,25 @@ class TestResultsEdges(TestResults):
                 point_a, point_b, base=dict(delay=50))
             for result in results:
                 for path in result["paths"]:
-                    self.assertNotIn("S1:1", path)
-                    self.assertNotIn("S2:1", path)
-                    self.assertNotIn("S3:1", path)
-                    self.assertNotIn("S5:1", path)
-                    self.assertNotIn("S4:2", path)
-                    self.assertNotIn("User1:2", path)
-                    self.assertNotIn("S5:5", path)
-                    self.assertNotIn("S8:2", path)
-                    self.assertNotIn("S5:6", path)
-                    self.assertNotIn("User1:3", path)
-                    self.assertNotIn("S6:3", path)
-                    self.assertNotIn("S9:1", path)
-                    self.assertNotIn("S6:4", path)
-                    self.assertNotIn("S9:2", path)
-                    self.assertNotIn("S6:5", path)
-                    self.assertNotIn("S10:1", path)
-                    self.assertNotIn("S8:5", path)
-                    self.assertNotIn("S9:4", path)
-                    self.assertNotIn("User1:4", path)
+                    # self.assertNotIn("S1:1", path)
+                    # self.assertNotIn("S2:1", path)
+                    # self.assertNotIn("S3:1", path)
+                    # self.assertNotIn("S5:1", path)
+                    # self.assertNotIn("S4:2", path)
+                    # self.assertNotIn("User1:2", path)
+                    # self.assertNotIn("S5:5", path)
+                    # self.assertNotIn("S8:2", path)
+                    # self.assertNotIn("S5:6", path)
+                    # self.assertNotIn("User1:3", path)
+                    # self.assertNotIn("S6:3", path)
+                    # self.assertNotIn("S9:1", path)
+                    # self.assertNotIn("S6:4", path)
+                    # self.assertNotIn("S9:2", path)
+                    # self.assertNotIn("S6:5", path)
+                    # self.assertNotIn("S10:1", path)
+                    # self.assertNotIn("S8:5", path)
+                    # self.assertNotIn("S9:4", path)
+                    # self.assertNotIn("User1:4", path)
                     self.assertNotIn("User4:3", path)
 
     def test_path7(self):
