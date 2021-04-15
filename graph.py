@@ -95,28 +95,13 @@ class KytosGraph:
 
     def update_links(self, links):
         """Update all links inside the graph."""
-        # keys = []
         for link in links.values():
             if link.is_active():
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
                 for key, value in link.metadata.items():
-                    # keys.append(key) if key not in keys else keys
                     endpoint_a = link.endpoint_a.id
                     endpoint_b = link.endpoint_b.id
                     self.graph[endpoint_a][endpoint_b][key] = value
-
-        # self._set_default_metadata(keys)  # It creates errors during the path construction
-
-    # def _set_default_metadata(self, keys):
-    #     """Set metadata to all links.
-    #
-    #     Set the value to zero for inexistent metadata in a link to make those
-    #     irrelevant in pathfinding.
-    #     """
-    #     for key in keys:
-    #         for endpoint_a, endpoint_b in self.graph.edges:
-    #             if key not in self.graph[endpoint_a][endpoint_b]:
-    #                 self.graph[endpoint_a][endpoint_b][key] = 0
 
     def get_link_metadata(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
@@ -159,18 +144,11 @@ class KytosGraph:
         length = len(flexible)
         if minimum_hits is None:
             minimum_hits = length
-            # minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
-        # minimum_hits = min(max(minimum_hits, 0), length)
         results = []
         paths = []
-        # i = 0
         i = minimum_hits
-        # while paths == [] and i in range(0, minimum_hits + 1):
-        # while paths == [] and i in range(length, minimum_hits - 1, -1):
         while paths == [] and i <= length:
-            # for combo in combinations(flexible.items(), length - i):
-            # for combo in combinations(flexible.items(), i):
             for combo in combinations(flexible.items(), i):
                 additional = dict(combo)
                 paths = self._constrained_shortest_paths(
