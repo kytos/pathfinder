@@ -143,15 +143,10 @@ class KytosGraph:
                                                    **base))
         length = len(flexible)
         if minimum_hits is None:
-            # minimum_hits = length
             minimum_hits = 0
         minimum_hits = min(length, max(0, minimum_hits))
-        # minimum_hits = max(minimum_hits, 0)
         results = []
         paths = []
-        # i = minimum_hits
-        # i = 0
-        # while paths == [] and i <= length:
         for i in range(length, minimum_hits - 1, -1):
             for combo in combinations(flexible.items(), i):
                 additional = dict(combo)
@@ -162,7 +157,6 @@ class KytosGraph:
                 if paths:
                     results.append(
                         {"paths": paths, "metrics": {**base, **additional}})
-            # i = i + 1
             if paths:
                 break
         return results
