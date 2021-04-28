@@ -23,6 +23,18 @@ Fixed
 Security
 ========
 
+[2.2.4] - 2021-05-27
+********************
+
+Changed
+=======
+- Changed ``setup.py`` to alert when a test fails on Travis.
+- Updated ``requirements/dev.txt`` file.
+
+Fixed
+=====
+- Fixed a bug in parsing metadata of links (fix #64).
+
 
 [2.2.3] - 2020-07-24
 ********************
