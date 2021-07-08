@@ -1,19 +1,58 @@
 openapi: 3.0.0
 info:
   title: kytos/pathfinder
-  version: v2
+  version: 2.2.2
   description: "**Warning**: *This documentation is experimental and will
   change soon.*\n
+  ## Introduction\n
+  Kytos Pathfinder's Best Path API has a single endpoint used to provide the best path between two points in a graph when given the following:\n
+  * Source\n
+  * Destination\n
+  * Constraints\n
+  
+The Kytos Pathfinder repository can be found [here.](https://github.com/kytos/pathfinder)\n
+## Overview\n
+This API uses HTTP POST requests with JSON arguments and JSON responses."
 
-  Keeps track of topology changes, and calculates the best path between two
-  points."
+tags:
+    - name: Paths
 
 paths:
-  /api/kytos/pathfinder/v2:
+  /api/kytos/pathfinder/v2/:
     post:
-      summary: "Return a list of best paths between source and destination, in order."
+      summary: Returns best paths between the source and destination.
+      description: "Returns a list of best paths between source and destination, in order. These best paths, namely their metadata, meet standards set by the user.\n
+      
+        _Standards_, or _Constraints_, are optional, user-specified attributes that best paths will have. The following is an example of a constraint that this API supports:\n
+        
+            - Bandwidth must be at least **34** units\n
+            - Delay must be at most **45** units\n
+            - Owner must be **Joe**.\n
+            - Reliability can be at least **3** units, or utilization can be at most **32** units, or both.\n
+            - Path must have links **A** and **B**.\n
+            - Path must not have link **C**.\n
+        
+        A path's metadata is the set of data names and corresponding values that each of its edges holds. The following edge data are currently supported:\n
+            - Bandwidth\n
+            - Delay\n
+            - Reliability\n
+            - Utilization\n
+            - Priority\n
+            - Ownership\n
+        
+        A path has an attribute if each of its edges has that attribute. For example, if a path's metadata has the attribute `bandwidth is at least 50 units`, then each of its edges has a bandwidth of **50** units or higher.\n
+        
+        To see the connection between a user's standards and a path's metadata, assume a path has two edges **A** and **B**, with the following metadata:\n
+            - A: bandwidth **44**, delay **56**\n
+            - B: bandwidth **22**, delay **38**\n
+        
+        If the user is looking for a path with attribute `delay is at most 60 units`, this path will appear in the search results since edges **A** and **B** have delays that are at most **60** units.\n
+        
+        If the user is looking for a path with attribute `delay is at most 55 units`, however, this path will ***not*** appear in the search results since edge **A** lacks a delay that is at most **55** units.\n"
+
+      tags:
+        - Paths
       requestBody:
-        required: true
         content:
           application/json:
             schema:
@@ -21,72 +60,152 @@ paths:
               properties:
                 source:
                   type: string
-                  description:
-                  required: true
+                  description: The source identifier. It may be a datapath or an interface.
                   example: '00:00:00:00:00:00:00:01:1'
                 destination:
                   type: string
-                  description: "The destination identifier. It may be a datapath or an interface."
-                  required: true
+                  description: The destination identifier. It may be a datapath or an interface.
                   example: '00:00:00:00:00:00:00:02:2'
                 desired_links:
                   type: array
-                  required: false
-                  description: "List of desired links inside all paths found. All paths will have the desired links."
-                  example:
-                    - "f13e8308-ecb2-49be-b507-3823af9cc409"
-                    - "ee8d9017-1efd-49ac-9149-4cbeea86f751"
-                    - "a3723e31-bdd3-4102-8b1a-c9fbde6d301a"
-                undesired_links:
-                  type: array
-                  required: false
-                  description: "List of undesired links in all paths found. When an undesired link is found the endpoint will ignore remove that."
+                  description: Constraint in the form of a list of desired links inside all paths found. All paths will have the desired links.
+                  items:
+                    $ref: "#/components/schemas/Link"
                   example:
                     - '2bd01b0d-c875-4263-ad38-fec0b2999582'
                     - 'c41f6249-3ea6-4aba-a083-08049face1e2'
                     - '7e8b6bd2-701e-4465-894a-40623e727047'
-                parameter:
+                undesired_links:
                   type: array
-                  required: false
-                  description:  "Optional parameters sent to pathfinder"
-                  example: "custom_weight"
+                  description: Constraint in the form of a list of undesired links in all paths found. When an undesired link is found the endpoint will ignore remove that.
+                  items:
+                    $ref: "#/components/schemas/Link"
+                  example:
+                    - "f13e8308-ecb2-49be-b507-3823af9cc409"
+                    - "ee8d9017-1efd-49ac-9149-4cbeea86f751"
+                    - "a3723e31-bdd3-4102-8b1a-c9fbde6d301a"
+                base_metrics:
+                  description: Constraint in the form of a set that contains attributes. Paths will have every attribute specified in this set.
+                  allOf:
+                    - $ref: "#/components/schemas/Attributes"
+                  example:
+                    bandwidth: 30.5
+                    ownership: "Bill"
+                flexible_metrics:
+                  description: Constraint in the form of a set that contains attributes. Paths will have a user-specified minimum number of attributes specified in this set.
+                  allOf:
+                    - $ref: "#/components/schemas/Attributes"
+                  example:
+                    delay: 81
+                    utilization: 30.5
+                    reliability: 3
+                minimum_flexible_hits:
+                  type: integer
+                  description: Minimum number of attributes listed in flexible_metrics that a path will meet.
+                  example: 2
+                  minimum: 1
+                  maximum: 6
+              required:
+                - source
+                - destination
+
       responses:
         200:
-          description: "Best paths calculated with success."
+          description: Best paths found, with legal metadata.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  paths:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Path"
+                  0:
+                    type: object
+                    properties:
+                      metrics:
+                        description: Path attributes that meet a user's standards.
+                        allOf:
+                          - $ref: "#/components/schemas/Attributes"
+                      paths:
+                        type: array
+                        description: Best paths found
+                        items:
+                          $ref: "#/components/schemas/Path"
+        400:
+          description: Illegal value provided.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/badRequest"
+              examples:
+                Illegal bandwidth value:
+                  value:
+                    error: "Error in bandwidth value: Expected type: (<class 'int'>, <class 'float'>)"
+                Illegal ownership value:
+                  value:
+                    error: "Error in ownership value: Expected type: (<class 'str'>)"
 
 components:
   schemas:
     Hop:
       type: string
-      description: Hop identification. Usally is a `switch.id:interface.id`.
-      example: 00:00:00:00:00:00:00:01:1
-
+      description: Hop identification. Usually is a `switch.id:interface.id`.
+      example: 00:00:00:00:00:00:00:01:3
+      
+    Link:
+      type: string
+      description: Link identification.
+      example: f13e8308-ecb2-49be-b507-3823af9cc409
+      
     Path:
+      type: array
+      description: Hops between two points
+      items:
+        $ref: "#/components/schemas/Hop"
+      example:
+        - 00:00:00:00:00:00:00:01:1
+        - 00:00:00:00:00:00:00:01:2
+        - 00:00:00:00:00:00:00:01:3
+            
+    Attributes:
       type: object
-      description: Path between two points
       properties:
-        hops:
-          type: array
-          description: Hops between two points
-          items:
-            $ref: "#/components/schemas/Hop"
-          example:
-            $ref: "#/examples/Hops"
-
-examples:
-  Hops:
-    - 00:00:00:00:00:00:00:01:1
-    - 00:00:00:00:00:00:00:01
-    - 00:00:00:00:00:00:00:01:2
-    - 00:00:00:00:00:00:00:02:1
-    - 00:00:00:00:00:00:00:02
-    - 00:00:00:00:00:00:00:02:2
+        bandwidth:
+          type: number
+          description: Minimum bandwidth attribute.
+          example: 36.2
+          minimum: 0
+          maximum: 100
+        utilization:
+          type: number
+          description: Maximum utilization attribute.
+          example: 58
+          minimum: 0
+          maximum: 100
+        priority:
+          type: number
+          description: Minimum priority attribute.
+          example: 81
+          minimum: 0
+          maximum: 100
+        reliability:
+          type: number
+          description: Minimum reliability attribute.
+          example: 42
+          minimum: 0
+          maximum: 100
+        delay:
+          type: number
+          description: Maximum delay attribute.
+          example: 58.72
+          minimum: 0
+          maximum: 100
+        ownership:
+          type: string
+          description: Exact owner attribute.
+          example: "Bill"
+          
+    badRequest:
+      title: Bad Request
+      type: object
+      properties:
+          error:
+              type: string
