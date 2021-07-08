@@ -1,20 +1,95 @@
 <template>
   <k-toolbar-item icon="compass" tooltip="Napp Pathfinder">
-    <k-accordion>
-      <k-accordion-item title="Best Path">
-        <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+    <div class="scroll">
+      <k-accordion>
+        <k-accordion-item title="Best Path">
+         <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
           :value.sync="source"></k-dropdown>
-        <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+         <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
           :value.sync ="destination"></k-dropdown>
-       <k-select icon="link" title="Desired links:" :options="get_links"
-        :value.sync ="desired_links"></k-select>
-       <k-select icon="link" title="Undesired links:" :options="get_links"
-        :value.sync ="undesired_links"></k-select>
-        <k-button icon="search" title="Search" :on_click="get_paths">
-        </k-button>
+         <k-select icon="link" title="Desired links:" :options="get_links"
+          :value.sync ="desired_links"></k-select>
+         <k-select icon="link" title="Undesired links:" :options="get_links"
+          :value.sync ="undesired_links"></k-select>
+         <k-button icon="search" title="Search" :on_click="get_paths">
+         </k-button>
+        </k-accordion-item>
 
-      </k-accordion-item>
-    <k-accordion>
+        <k-accordion-item title="Best Constrained Path">
+           <k-dropdown icon="circle-o" title="Source:" :options="get_interfaces"
+            :value.sync="source_constrained"></k-dropdown>
+           <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
+            :value.sync ="destination_constrained"></k-dropdown>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'bandwidth'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['bandwidth']" 
+               :value.sync="is_flexible.bandwidth"></k-dropdown>
+            </div>
+            <k-slider icon="adjust" :action="function(val) {metrics.bandwidth = parseInt(val)}"></k-slider>
+          </div>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'reliability'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['reliability']" 
+              :value.sync="is_flexible.reliability"></k-dropdown>
+            </div>
+            <k-slider icon="adjust" :action="function(val) {metrics.reliability = parseInt(val)}"></k-slider>
+          </div>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'delay'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['delay']" 
+              :value.sync="is_flexible.delay"></k-dropdown>
+            </div>
+            <k-slider icon="adjust" :action="function(val) {metrics.delay = parseInt(val)}"></k-slider>
+          </div>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'utilization'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['utilization']" 
+              :value.sync="is_flexible.utilization"></k-dropdown>
+            </div>
+            <k-slider icon="adjust" :action="function(val) {metrics.utilization = parseInt(val)}"></k-slider>
+          </div>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'priority'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['priority']" 
+              :value.sync="is_flexible.priority"></k-dropdown>
+            </div>
+            <k-slider icon="adjust" :action="function(val) {metrics.priority = parseInt(val)}"></k-slider>
+          </div>
+          <div class="metric">
+            <div class="checkbox">
+              <k-checkbox :model.sync = "checked_list" :value = "'ownership'"></k-checkbox>
+            </div>
+            <div class="dropdown">
+              <k-dropdown :options="metric_options['ownership']" 
+              :value.sync="is_flexible.ownership"></k-dropdown>
+            </div>
+          </div>
+          <k-input :value.sync="metrics.ownership"></k-input>
+          <div class="text">
+            Minimum Flexible Hits:
+          </div>
+          <k-slider :max = 6
+          :action="function (val) {minimum_flexible_hits = parseInt(val)}"></k-slider>
+          <k-button icon="search" title="Search" :on_click="get_constrained_paths">
+          </k-button>
+        </k-accordion-item>
+      <k-accordion>
+    </div>
   </k-toolbar-item>
 </template>
 
@@ -46,6 +121,41 @@ module.exports = {
       });
 
     },
+    get_constrained_paths(){
+      var self = this
+      var base_metrics = {}
+      var flexible_metrics = {}
+      for(var checked of self.checked_list) {
+        if (self.is_flexible[checked]) {
+          flexible_metrics[checked] = self.metrics[checked]
+        } else {
+          base_metrics[checked] = self.metrics[checked]
+        }
+      }
+      
+      $.ajax({
+        async: true,
+        dataType: "json",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({"source": self.source_constrained,
+               "destination": self.destination_constrained,
+               "base_metrics": base_metrics,
+               "flexible_metrics": flexible_metrics,
+               "minimum_flexible_hits": self.minimum_flexible_hits
+               }),
+
+        url: this.$kytos_server_api + "kytos/pathfinder/v2/best-constrained-paths",
+        success: function(data) {
+            if (data[0] !== undefined){
+                self.paths = data[0]['paths'][0];
+            } else {
+                self.paths = []
+            }
+          self.show();
+        }
+      });
+    },
     get_topology(){
       var self = this
       $.ajax({
@@ -74,6 +184,43 @@ module.exports = {
   },
 
   computed: {
+    metric_options(){
+      var metric_options = {}
+
+      var bandwidth_options = []
+      var reliability_options = []
+      var delay_options = []
+      var utilization_options = []
+      var priority_options = []
+      var ownership_options = []
+
+      bandwidth_options.push({value: false, description: 'Bandwidth', selected: true});
+      bandwidth_options.push({value: true, description: 'Bandwidth (Flexible)'});
+      
+      reliability_options.push({value: false, description: 'Reliability', selected: true});
+      reliability_options.push({value: true, description: 'Reliability (Flexible)'});
+
+      delay_options.push({value: false, description: 'Delay', selected: true});
+      delay_options.push({value: true, description: 'Delay (Flexible)'});
+
+      utilization_options.push({value: false, description: 'Utilization', selected: true});
+      utilization_options.push({value: true, description: 'Utilization (Flexible)'});
+
+      priority_options.push({value: false, description: 'Priority', selected: true});
+      priority_options.push({value: true, description: 'Priority (Flexible)'});
+
+      ownership_options.push({value: false, description: 'Ownership', selected: true});
+      ownership_options.push({value: true, description: 'Ownership (Flexible)'});
+
+      metric_options["bandwidth"] = bandwidth_options
+      metric_options["reliability"] = reliability_options
+      metric_options["delay"] = delay_options
+      metric_options["utilization"] = utilization_options
+      metric_options["priority"] = priority_options
+      metric_options["ownership"] = ownership_options
+
+      return metric_options;
+    },
     get_interfaces(){
       var interfaces = []
       $.each(this.switches, function(key, value){
@@ -106,8 +253,37 @@ module.exports = {
       source: "",
       destination: "",
       desired_links: [],
-      undesired_links: []
+      undesired_links: [],
+      source_constrained: "",
+      destination_constrained: "",
+      checked_list: [],
+      metrics:{
+        bandwidth: 0,
+        reliability: 0,
+        delay: 0,
+        utilization: 0,
+        priority: 0,
+        ownership: ""
+      },
+      is_flexible:{
+        bandwidth: false,
+        reliability: false,
+        delay: false,
+        utilization: false,
+        priority: false,
+        ownership: false
+      },
+      minimum_flexible_hits: 0
     }
   }
 }
 </script>
+
+<style type="text/css">
+  body {overflow-y:hidden;}
+  .scroll {overflow-y: auto; height:calc(100vh - 60px);}
+  .metric {width:100%; overflow: hidden;}
+  .checkbox {width:10%; float: left;}
+  .dropdown {width:90%; float: left;}
+  .text {font-size: 75%; float: left; margin-top: 1vh;}
+</style>
