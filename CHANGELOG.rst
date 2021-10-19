@@ -34,6 +34,7 @@ Changed
 - Updated ``openapi.yml`` spec accordingly to EP23-2
 - ``POST v2/`` JSON response now includes both ``cost`` and ``metrics`` attributes, in addition to the ``hops`` attribute.
 - Added a basic validation support for the API until full spec validation is implemented.
+- Formatted changing files with ``black -l 79``
 
 Added
 =====
