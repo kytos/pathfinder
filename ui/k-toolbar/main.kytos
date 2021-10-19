@@ -88,6 +88,13 @@
 
           <div class="metric">
             <div>
+              <k-input icon="arrow-right" placeholder="SPF max number of paths"
+              :action="function (val) {spf_max_paths = parseInt(val)}"></k-input>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div>
               <k-input icon="arrow-right" placeholder="SPF path maximum cost"
               :action="function (val) {spf_max_path_cost = parseInt(val)}"></k-input>
             </div>
