@@ -22,7 +22,7 @@ if 'bdist_wheel' in sys.argv:
 BASE_ENV = Path(os.environ.get('VIRTUAL_ENV', '/'))
 
 NAPP_NAME = 'pathfinder'
-NAPP_VERSION = '2.2.3'
+NAPP_VERSION = '2.3.0'
 
 # Kytos var folder
 VAR_PATH = BASE_ENV / 'var' / 'lib' / 'kytos'
@@ -81,7 +81,7 @@ class TestCommand(Command):
     def initialize_options(self):
         """Set default size and type args."""
         self.size = 'all'
-        self.type = 'unit'
+        self.type = 'all'
 
     def finalize_options(self):
         """Post-process."""
@@ -118,7 +118,8 @@ class Test(TestCommand):
         if markers == "small":
             markers = 'not medium and not large'
         size_args = "" if self.size == "all" else "-m '%s'" % markers
-        return '--addopts="tests/%s %s"' % (self.type, size_args)
+        test_type = "" if self.type == "all" else self.type
+        return '--addopts="tests/%s %s"' % (test_type, size_args)
 
     def run(self):
         """Run tests."""
