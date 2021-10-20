@@ -1,5 +1,6 @@
 """Module to test the KytosGraph in graph.py."""
 
+# pylint: disable=too-many-public-methods
 from tests.integration.metadata_settings import MetadataSettings
 
 

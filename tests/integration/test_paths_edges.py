@@ -36,6 +36,7 @@ class TestPathsEdges(EdgesSettings):
                 assert path["hops"][-1] == destination
 
     def test_cspf_delay_spf_attribute_between_u1_u4(self):
+        """Test CSPF delay spf attribute between user1 and user4."""
         self.initializer()
         source = "User1"
         destination = "User4"
@@ -47,10 +48,11 @@ class TestPathsEdges(EdgesSettings):
         for path in paths:
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
-        paths = self.graph._path_cost_builder(paths, weight=spf_attribute)
+        paths = self.graph.path_cost_builder(paths, weight=spf_attribute)
         assert paths[0]["cost"] == 105 + 1 + 1
 
     def test_cspf_reliability_between_u1_u2(self):
+        """Test CSPF reliability constraint between user1 and user2."""
         self.initializer()
         source = "User1"
         destination = "User2"
@@ -68,10 +70,11 @@ class TestPathsEdges(EdgesSettings):
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
             assert path["metrics"] == {"reliability": 3}
-        paths = self.graph._path_cost_builder(paths)
+        paths = self.graph.path_cost_builder(paths)
         assert paths[0]["cost"] == 12
 
     def test_cspf_bandwidth_between_u1_u4(self):
+        """Test CSPF bandwidth constraint between user1 and user4."""
         self.initializer()
         source = "User1"
         destination = "User4"
@@ -96,10 +99,11 @@ class TestPathsEdges(EdgesSettings):
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
             assert path["metrics"] == {"bandwidth": 100}
-        paths = self.graph._path_cost_builder(paths, weight=spf_attribute)
+        paths = self.graph.path_cost_builder(paths, weight=spf_attribute)
         assert paths[0]["cost"] == 122
 
     def test_cspf_delay_between_u2_u3(self):
+        """Test CSPF delay constraint between user2 and user3."""
         self.initializer()
         source = "User2"
         destination = "User3"
@@ -116,10 +120,11 @@ class TestPathsEdges(EdgesSettings):
         for path in paths:
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
-        paths = self.graph._path_cost_builder(paths)
+        paths = self.graph.path_cost_builder(paths)
         assert paths[0]["cost"] >= 3
 
     def test_cspf_ownership_between_s4_s6(self):
+        """Test CSPF ownership constraint between switch4 and switch6."""
         self.initializer()
         source = "S6:2"
         destination = "S4:2"
@@ -136,10 +141,11 @@ class TestPathsEdges(EdgesSettings):
         for path in paths:
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
-        paths = self.graph._path_cost_builder(paths)
+        paths = self.graph.path_cost_builder(paths)
         assert paths[0]["cost"] >= 3
 
     def test_cspf_flexible_between_s4_s6(self):
+        """Test CSPF flexible constraint between switch4 and switch6."""
         self.initializer()
         source = "S6:2"
         destination = "S4:2"
@@ -155,7 +161,7 @@ class TestPathsEdges(EdgesSettings):
         for path in paths:
             assert path["hops"][0] == source
             assert path["hops"][-1] == destination
-        paths = self.graph._path_cost_builder(paths)
+        paths = self.graph.path_cost_builder(paths)
         assert paths[0]["cost"] >= 3
 
     def test_cspf_paths_mandatory_with_flexible(self):

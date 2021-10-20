@@ -1,5 +1,6 @@
 """Module to help to create tests."""
 
+# pylint: disable=too-many-locals
 from unittest.mock import MagicMock
 
 from kytos.core.interface import Interface
@@ -207,7 +208,7 @@ def get_topology_with_metadata():
     for key, value in switches_to_interface_counts.items():
         switches[key].interfaces = {}
         for i in range(1, value + 1):
-            str1 = "{}:{}".format(switches[key].dpid, i)
+            str1 = f"{switches[key].dpid}:{i}"
             interface = Interface(str1, i, switches[key])
             switches[key].update_interface(interface)
             interfaces[interface.id] = interface

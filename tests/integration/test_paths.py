@@ -42,7 +42,7 @@ class TestPaths(TestCase):
     def add_interfaces(count, switch, interfaces):
         """Add a new interface to the list of interfaces"""
         for i in range(1, count + 1):
-            str1 = "{}:{}".format(switch.dpid, i)
+            str1 = f"{switch.dpid}:{i}"
             interface = Interface(str1, i, switch)
             interfaces[str1] = interface
             switch.update_interface(interface)
@@ -50,7 +50,7 @@ class TestPaths(TestCase):
     @staticmethod
     def create_link(interface_a, interface_b, interfaces, links):
         """Add a new link between two interfaces into the list of links"""
-        compounded = "{}|{}".format(interface_a, interface_b)
+        compounded = f"{interface_a}|{interface_b}"
         final_name = compounded
         links[final_name] = Link(
             interfaces[interface_a], interfaces[interface_b]
@@ -59,5 +59,5 @@ class TestPaths(TestCase):
     @staticmethod
     def add_metadata_to_link(interface_a, interface_b, metrics, links):
         """Add metadata to an existing link in the list of links"""
-        compounded = "{}|{}".format(interface_a, interface_b)
+        compounded = f"{interface_a}|{interface_b}"
         links[compounded].extend_metadata(metrics)

@@ -6,7 +6,7 @@ from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
 from kytos.core.helpers import listen_to
 from napps.kytos.pathfinder.graph import KytosGraph
-# pylint: disable=import-error
+# pylint: disable=import-error,no-self-use
 from werkzeug.exceptions import BadRequest
 
 
@@ -103,10 +103,10 @@ class Main(KytosNApp):
             spf_attr = parameter or "hop"
         data["spf_attribute"] = spf_attr
 
-        if spf_attr not in self.graph._spf_edge_data_cbs:
+        if spf_attr not in self.graph.spf_edge_data_cbs:
             raise BadRequest(
                 "Invalid 'spf_attribute'. Valid values: "
-                f"{', '.join(self.graph._spf_edge_data_cbs.keys())}"
+                f"{', '.join(self.graph.spf_edge_data_cbs.keys())}"
             )
 
         try:
@@ -168,7 +168,7 @@ class Main(KytosNApp):
                     paths = self.graph.constrained_k_shortest_paths(
                         data["source"],
                         data["destination"],
-                        weight=self.graph._spf_edge_data_cbs[spf_attr],
+                        weight=self.graph.spf_edge_data_cbs[spf_attr],
                         k=spf_max_paths,
                         minimum_hits=minimum_hits,
                         mandatory_metrics=mandatory_metrics,
@@ -178,11 +178,11 @@ class Main(KytosNApp):
                     paths = self.graph.k_shortest_paths(
                         data["source"],
                         data["destination"],
-                        weight=self.graph._spf_edge_data_cbs[spf_attr],
+                        weight=self.graph.spf_edge_data_cbs[spf_attr],
                         k=spf_max_paths,
                     )
 
-                paths = self.graph._path_cost_builder(
+                paths = self.graph.path_cost_builder(
                     paths,
                     weight=spf_attr,
                 )

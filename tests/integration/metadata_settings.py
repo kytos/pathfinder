@@ -10,9 +10,7 @@ class MetadataSettings(TestPaths):
     @staticmethod
     def generate_topology():
         """Generate a predetermined topology."""
-        switches = {}
-        interfaces = {}
-        links = {}
+        switches, interfaces, links = {}, {}, {}
 
         MetadataSettings.setting_switches_interfaces(interfaces, switches)
 

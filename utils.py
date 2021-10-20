@@ -1,4 +1,5 @@
 """Utils module of kytos/pathfinder Kytos Network Application."""
+# pylint: disable=unused-argument
 
 
 def lazy_filter(filter_type, filter_func):
@@ -17,21 +18,21 @@ def lazy_filter(filter_type, filter_func):
     return filter_closure
 
 
-def nx_edge_data_weight(u, v, edge_data):
+def nx_edge_data_weight(edge_u, edge_v, edge_data):
     """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("hop"):
         return edge_data["hop"]
     return 1
 
 
-def nx_edge_data_delay(u, v, edge_data):
+def nx_edge_data_delay(edge_u, edge_v, edge_data):
     """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("delay"):
         return edge_data["delay"]
     return 1
 
 
-def nx_edge_data_priority(u, v, edge_data):
+def nx_edge_data_priority(edge_u, edge_v, edge_data):
     """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("priority"):
         return edge_data["priority"]

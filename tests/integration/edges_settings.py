@@ -13,9 +13,7 @@ class EdgesSettings(TestPaths):
     @staticmethod
     def generate_topology():
         """Generate a predetermined topology."""
-        switches = {}
-        interfaces = {}
-        links = {}
+        switches, interfaces, links = {}, {}, {}
 
         TestPaths.create_switch("S1", switches)
         TestPaths.add_interfaces(2, switches["S1"], interfaces)

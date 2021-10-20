@@ -1,5 +1,6 @@
 """Module Graph of kytos/pathfinder Kytos Network Application."""
 
+# pylint: disable=too-many-arguments,too-many-locals
 from itertools import combinations, islice
 
 from kytos.core import log
@@ -29,7 +30,7 @@ class KytosGraph:
             "utilization": lazy_filter((int, float), filter_le("utilization")),
             "delay": lazy_filter((int, float), filter_le("delay")),
         }
-        self._spf_edge_data_cbs = {
+        self.spf_edge_data_cbs = {
             "hop": nx_edge_data_weight,
             "delay": nx_edge_data_delay,
             "priority": nx_edge_data_priority,
@@ -88,7 +89,7 @@ class KytosGraph:
             cost += self.graph[node][nbr].get(weight, default_cost)
         return cost
 
-    def _path_cost_builder(self, paths, weight="hop", default_weight=1):
+    def path_cost_builder(self, paths, weight="hop", default_weight=1):
         """Build the cost of a path given a list of paths."""
         paths_acc = []
         for path in paths:

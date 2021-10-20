@@ -1,4 +1,5 @@
 """Test filter methods"""
+# pylint: disable=protected-access
 from unittest import TestCase
 
 from napps.kytos.pathfinder.utils import lazy_filter

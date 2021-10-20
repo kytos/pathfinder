@@ -3,6 +3,8 @@
 Run "python3 setup.py --help-commands" to list all available commands and their
 descriptions.
 """
+
+# pylint: disable=consider-using-f-string,consider-using-sys-exit
 import os
 import shutil
 import sys
@@ -62,7 +64,7 @@ class SimpleCommand(Command):
         """Post-process options."""
 
 
-# pylint: disable=attribute-defined-outside-init, abstract-method
+# pylint: disable=attribute-defined-outside-init,abstract-method
 class TestCommand(Command):
     """Test tags decorators."""
 
@@ -72,7 +74,7 @@ class TestCommand(Command):
     ]
 
     sizes = ('small', 'medium', 'large', 'all')
-    types = ('unit', 'integration', 'e2e')
+    types = ('unit', 'integration', 'e2e', 'all')
 
     def get_args(self):
         """Return args to be used in test command."""

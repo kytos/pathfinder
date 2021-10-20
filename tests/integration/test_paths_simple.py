@@ -39,8 +39,8 @@ class TestPathsSimple(TestPaths):
         assert results
         for result in results:
             path = result["hops"]
-            assert "S1" == path[0]
-            assert "S1" == path[-1]
+            assert path[0] == "S1"
+            assert path[-1] == "S1"
 
     def test_path_s1_s3_constrained_red(self):
         """Tests path from s1 to s3 constrained ownership red"""
