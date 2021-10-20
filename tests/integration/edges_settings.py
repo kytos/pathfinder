@@ -1,8 +1,9 @@
-"""Module to overwrite all the needed methods"""
+"""Module to overwrite all the needed methods."""
 
 # Core modules to import
 from kytos.core.link import Link
 
+# pylint: disable=E0401
 from tests.integration.test_paths import TestPaths
 
 
@@ -11,7 +12,7 @@ class EdgesSettings(TestPaths):
 
     @staticmethod
     def generate_topology():
-        """Generates a predetermined topology"""
+        """Generate a predetermined topology."""
         switches = {}
         interfaces = {}
         links = {}

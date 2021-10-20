@@ -83,7 +83,6 @@ class Main(KytosNApp):
 
     def _validate_payload(self, data):
         """Validate shortest_path v2/ POST endpoint."""
-
         if data.get("desired_links"):
             if not isinstance(data["desired_links"], list):
                 raise BadRequest(

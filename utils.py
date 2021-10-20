@@ -2,9 +2,12 @@
 
 
 def lazy_filter(filter_type, filter_func):
-    """Lazy typed filter on top of the built-in function, it's meant
-    to be used when the values to be filtered for are only defined later on
-    dynamically at runtime."""
+    """
+    Lazy typed filter on top of the built-in function.
+
+    It's meant to be used when the values to be filtered for
+    are only defined later on dynamically at runtime.
+    """
 
     def filter_closure(value, items):
         if not isinstance(value, filter_type):
@@ -15,39 +18,36 @@ def lazy_filter(filter_type, filter_func):
 
 
 def nx_edge_data_weight(u, v, edge_data):
-    """Helper function callback meant to be used with nx shortest path methods
-    that take a weight callback, providing a fallback default value"""
-
+    """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("hop"):
         return edge_data["hop"]
     return 1
 
 
 def nx_edge_data_delay(u, v, edge_data):
-    """Helper function callback meant to be used with nx shortest path methods
-    that take a weight callback, providing a fallback default value"""
-
+    """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("delay"):
         return edge_data["delay"]
     return 1
 
 
 def nx_edge_data_priority(u, v, edge_data):
-    """Helper function callback meant to be used with nx shortest path methods
-    that take a weight callback, providing a fallback default value"""
-
+    """Return custom edge data value to be used as a callback by nx."""
     if edge_data.get("priority"):
         return edge_data["priority"]
     return 1
 
 
 def filter_le(metric):
+    """Lazy filter_le."""
     return lambda x: (lambda nx_edge_tup: nx_edge_tup[2].get(metric, x) <= x)
 
 
 def filter_ge(metric):
+    """Lazy filter_ge."""
     return lambda x: (lambda nx_edge_tup: nx_edge_tup[2].get(metric, x) >= x)
 
 
 def filter_in(metric):
+    """Lazy filter_in."""
     return lambda x: (lambda nx_edge_tup: x in nx_edge_tup[2].get(metric, {x}))

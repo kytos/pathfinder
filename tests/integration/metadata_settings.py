@@ -1,4 +1,6 @@
-"""Module to overwrite all the needed methods"""
+"""Module to overwrite all the needed methods."""
+
+# pylint: disable=E0401
 from tests.integration.test_paths import TestPaths
 
 
@@ -7,7 +9,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def generate_topology():
-        """Generates a predetermined topology."""
+        """Generate a predetermined topology."""
         switches = {}
         interfaces = {}
         links = {}
@@ -22,7 +24,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def setting_switches_interfaces(interfaces, switches):
-        """Generates the switches in a a predetermined topology."""
+        """Generate the switches in a a predetermined topology."""
         TestPaths.create_switch("User1", switches)
         TestPaths.add_interfaces(3, switches["User1"], interfaces)
 
@@ -40,7 +42,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def setting_links(interfaces, links):
-        """Generates the links in a a predetermined topology."""
+        """Generate the links in a a predetermined topology."""
         TestPaths.create_link("User1:1", "S2:1", interfaces, links)
 
         TestPaths.create_link("User1:2", "S5:1", interfaces, links)
@@ -150,8 +152,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def generate_topology_1():
-        """Generates a predetermined topology
-        - 2nd Variant."""
+        """Generate a predetermined topology, 2nd variant."""
         switches = {}
         interfaces = {}
         links = {}
@@ -166,8 +167,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def setting_switches_interfaces_1(interfaces, switches):
-        """Generates the switches in a a predetermined topology
-        - 2nd variant."""
+        """Generate the switches in a a topology, 2nd variant."""
         TestPaths.create_switch("User1", switches)
         TestPaths.add_interfaces(2, switches["User1"], interfaces)
 
@@ -188,8 +188,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def setting_links_1(interfaces, links):
-        """Generates the links in a a predetermined topology
-        - 2nd Variant."""
+        """Generate the links in a a topology, 2nd variant."""
         TestPaths.create_link("User1:1", "S1:1", interfaces, links)
 
         TestPaths.create_link("User1:2", "S3:1", interfaces, links)
@@ -200,8 +199,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def adding_metadata_1(links):
-        """Add the links' metadata in a a predetermined topology
-        - 2nd Variant."""
+        """Add the links' metadata in a a topology, 2nd variant."""
         TestPaths.add_metadata_to_link(
             "User1:1",
             "S1:1",
@@ -252,8 +250,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def generate_topology_2():
-        """Generates a predetermined topology
-        - 3rd Variant."""
+        """Generate a predetermined topology, 3rd variant."""
         switches = {}
         interfaces = {}
         links = {}
@@ -268,8 +265,7 @@ class MetadataSettings(TestPaths):
 
     @staticmethod
     def adding_metadata_2(links):
-        """Add the links' metadata in a a predetermined topology
-        - 3rd Variant."""
+        """Add the links' metadata in a topology, 3rd variant."""
         TestPaths.add_metadata_to_link(
             "User1:1",
             "S2:1",

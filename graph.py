@@ -36,9 +36,7 @@ class KytosGraph:
         }
 
     def clear(self):
-        """
-        Remove all nodes and links registered.
-        """
+        """Remove all nodes and links registered."""
         self.graph.clear()
 
     def update_topology(self, topology):
@@ -118,9 +116,10 @@ class KytosGraph:
     def k_shortest_paths(
         self, source, destination, weight=None, k=1, graph=None
     ):
-        """Compute up to k shortest paths and return them.
-        This procedure is based on algorithm by Jin Y. Yen [1].
+        """
+        Compute up to k shortest paths and return them.
 
+        This procedure is based on algorithm by Jin Y. Yen [1].
         Since Yen's algorithm calls Dijkstra's up to k times, the time
         complexity will be proportional to K * Dijkstra's, average
         O(K(|V| + |E|)logV), assuming it's using a heap, where V is the
