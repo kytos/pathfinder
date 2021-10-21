@@ -158,8 +158,7 @@ components:
           description: Path cost
           example: 100
         hops:
-          allOf:
-            - $ref: "#/components/schemas/Hops"
+          $ref: "#/components/schemas/Hops"
       
     Paths:
       type: array
