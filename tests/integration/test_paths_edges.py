@@ -13,11 +13,12 @@ class TestPathsEdges(EdgesSettings):
         self.initializer()
 
         for source, destination in combos:
-            paths = self.graph.k_shortest_paths(source, destination)
-            assert paths
-            for path in paths:
-                assert path[0] == source
-                assert path[-1] == destination
+            with self.subTest(source=source, destination=destination):
+                paths = self.graph.k_shortest_paths(source, destination)
+                assert paths
+                for path in paths:
+                    assert path[0] == source
+                    assert path[-1] == destination
 
     def test_constrained_k_shortest_paths_among_users(self):
         """Tests paths between all users using constrained path algorithm,
@@ -27,13 +28,14 @@ class TestPathsEdges(EdgesSettings):
         self.initializer()
 
         for source, destination in combos:
-            paths = self.graph.constrained_k_shortest_paths(
-                source, destination
-            )
-            assert paths
-            for path in paths:
-                assert path["hops"][0] == source
-                assert path["hops"][-1] == destination
+            with self.subTest(source=source, destination=destination):
+                paths = self.graph.constrained_k_shortest_paths(
+                    source, destination
+                )
+                assert paths
+                for path in paths:
+                    assert path["hops"][0] == source
+                    assert path["hops"][-1] == destination
 
     def test_cspf_delay_spf_attribute_between_u1_u4(self):
         """Test CSPF delay spf attribute between user1 and user4."""
