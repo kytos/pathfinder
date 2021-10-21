@@ -111,7 +111,7 @@ paths:
                   type: integer
                   description: Minimum number of attributes listed in flexible_metrics that a path will meet.
                   example: 2
-                  minimum: 1
+                  minimum: 0
                   maximum: 6
                 parameter:
                   type: string
