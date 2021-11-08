@@ -1,12 +1,16 @@
 <template>
     <k-accordion>
-      <k-accordion-item title="Best Path">
-          <k-property-panel>
-            <k-property-panel-item v-for="(path, index) in content"
-                                   v-if="content" :name="String(index)" :value="path"
-                                   :key="index">
-            </k-property-panel-item>
-          </k-property-panel>
+      <k-accordion-item title="Best Paths">
+          <div>
+            <k-property-panel v-for="(path, index) in content">
+              <k-accordion-item :title=format_title(index,path['cost'])>
+                <k-property-panel-item v-for="(cur_path, path_index) in path['hops']"
+                                       v-if="content" :name="String(path_index)" :value="cur_path"
+                                       :key="path_index">
+                </k-property-panel-item>
+              </k-accordion-item>
+            </k-property-panel>
+          </div>
         </k-accordion-item>
     </k-accordion>
 </template>
@@ -14,6 +18,11 @@
 <script>
  module.exports = {
    props: ["content"],
+   methods: {
+     format_title(index, cost){
+        return "Path " + index + ", cost: " + cost + ", hops: ";
+     }
+   },
    data () {
      return {
        display: false,

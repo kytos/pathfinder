@@ -3,6 +3,8 @@
 Run "python3 setup.py --help-commands" to list all available commands and their
 descriptions.
 """
+
+# pylint: disable=consider-using-f-string,consider-using-sys-exit
 import os
 import shutil
 import sys
@@ -22,7 +24,7 @@ if 'bdist_wheel' in sys.argv:
 BASE_ENV = Path(os.environ.get('VIRTUAL_ENV', '/'))
 
 NAPP_NAME = 'pathfinder'
-NAPP_VERSION = '2.2.4'
+NAPP_VERSION = '2.3.0'
 
 # Kytos var folder
 VAR_PATH = BASE_ENV / 'var' / 'lib' / 'kytos'
@@ -62,7 +64,7 @@ class SimpleCommand(Command):
         """Post-process options."""
 
 
-# pylint: disable=attribute-defined-outside-init, abstract-method
+# pylint: disable=attribute-defined-outside-init,abstract-method
 class TestCommand(Command):
     """Test tags decorators."""
 
@@ -72,7 +74,7 @@ class TestCommand(Command):
     ]
 
     sizes = ('small', 'medium', 'large', 'all')
-    types = ('unit', 'integration', 'e2e')
+    types = ('unit', 'integration', 'e2e', 'all')
 
     def get_args(self):
         """Return args to be used in test command."""
@@ -81,7 +83,7 @@ class TestCommand(Command):
     def initialize_options(self):
         """Set default size and type args."""
         self.size = 'all'
-        self.type = 'unit'
+        self.type = 'all'
 
     def finalize_options(self):
         """Post-process."""
@@ -118,7 +120,8 @@ class Test(TestCommand):
         if markers == "small":
             markers = 'not medium and not large'
         size_args = "" if self.size == "all" else "-m '%s'" % markers
-        return '--addopts="tests/%s %s"' % (self.type, size_args)
+        test_type = "" if self.type == "all" else self.type
+        return '--addopts="tests/%s %s"' % (test_type, size_args)
 
     def run(self):
         """Run tests."""
