@@ -1,6 +1,7 @@
 """Module to test the KytosGraph in graph.py."""
 from itertools import combinations
 
+# pylint: disable=import-error
 from tests.integration.edges_settings import EdgesSettings
 
 
