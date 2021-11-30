@@ -2,6 +2,7 @@
 from kytos.core.link import Link
 
 # module under test
+# pylint: disable=import-error
 from tests.integration.test_paths import TestPaths
 
 
