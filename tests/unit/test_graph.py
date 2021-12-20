@@ -168,3 +168,19 @@ class TestGraph(TestCase):
         result = self.kytos_graph.get_link_metadata(endpoint_a, endpoint_b)
 
         assert result == metadata
+
+    def test_update_link_metadata(self):
+        """Test update link metadata."""
+        graph = MagicMock()
+        link = MagicMock()
+        endpoint_a_id = 1
+        endpoint_b_id = 2
+        link.endpoint_a.id = endpoint_a_id
+        link.endpoint_b.id = endpoint_b_id
+        link.metadata.items.return_value = [("reliability", 50)]
+        self.kytos_graph.graph = graph
+        self.kytos_graph.update_link_metadata(link)
+        call_res = str(self.kytos_graph.graph._mock_mock_calls)
+        assert "__getitem__(1)" in call_res
+        assert "__getitem__(2)" in call_res
+        assert "__setitem__('reliability', 50)" in call_res
