@@ -75,12 +75,6 @@ class KytosGraph:
             endpoint_b = link.endpoint_b.id
             self.graph[endpoint_a][endpoint_b][key] = value
 
-    def remove_link_metadata(self, link, key):
-        """Remove link metadata given a key."""
-        endpoint_a = link.endpoint_a.id
-        endpoint_b = link.endpoint_b.id
-        return self.graph[endpoint_a][endpoint_b].pop(key, None)
-
     def get_link_metadata(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
         return self.graph.get_edge_data(endpoint_a, endpoint_b)

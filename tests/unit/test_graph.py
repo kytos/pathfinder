@@ -184,18 +184,3 @@ class TestGraph(TestCase):
         assert "__getitem__(1)" in call_res
         assert "__getitem__(2)" in call_res
         assert "__setitem__('reliability', 50)" in call_res
-
-    def test_remove_link_metadata(self):
-        """Test remove link metadata."""
-        graph = MagicMock()
-        link = MagicMock()
-        endpoint_a_id = 1
-        endpoint_b_id = 2
-        link.endpoint_a.id = endpoint_a_id
-        link.endpoint_b.id = endpoint_b_id
-        self.kytos_graph.graph = graph
-        self.kytos_graph.remove_link_metadata(link, "reliability")
-        call_res = str(self.kytos_graph.graph._mock_mock_calls)
-        assert "__getitem__(1)" in call_res
-        assert "__getitem__(2)" in call_res
-        assert "pop('reliability', None)" in call_res
