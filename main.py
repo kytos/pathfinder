@@ -208,5 +208,8 @@ class Main(KytosNApp):
     @listen_to("kytos/topology.links.metadata.(added|removed)")
     def on_links_metadata_changed(self, event):
         """Update the graph when links' metadata are added or removed."""
+        link = event.content["link"]
         with self._lock:
-            self.graph_update_link_metadata(event["link"])
+            self.graph.update_link_metadata(link)
+        metadata = event.content["metadata"]
+        log.debug(f"Topology graph updated link id: {link.id} metadata: {metadata}")

@@ -184,3 +184,16 @@ class TestGraph(TestCase):
         assert "__getitem__(1)" in call_res
         assert "__getitem__(2)" in call_res
         assert "__setitem__('reliability', 50)" in call_res
+
+    def test_update_link_unsupported_metadata(self):
+        """Test update link metadata with an unsupported key."""
+        graph = MagicMock()
+        link = MagicMock()
+        endpoint_a_id = 1
+        endpoint_b_id = 2
+        link.endpoint_a.id = endpoint_a_id
+        link.endpoint_b.id = endpoint_b_id
+        link.metadata.items.return_value = [("random_metric", 50)]
+        self.kytos_graph.graph = graph
+        self.kytos_graph.update_link_metadata(link)
+        assert self.kytos_graph.graph._mock_mock_calls == []
