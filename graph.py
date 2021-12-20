@@ -71,6 +71,8 @@ class KytosGraph:
     def update_link_metadata(self, link):
         """Update link metadata."""
         for key, value in link.metadata.items():
+            if key not in self._filter_functions:
+                continue
             endpoint_a = link.endpoint_a.id
             endpoint_b = link.endpoint_b.id
             self.graph[endpoint_a][endpoint_b][key] = value

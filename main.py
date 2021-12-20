@@ -139,8 +139,7 @@ class Main(KytosNApp):
             data["minimum_flexible_hits"] = minimum_hits
         except (TypeError, ValueError):
             raise BadRequest(
-                f"minimum_hits {data.get('minimum_flexible_hits')} must"
-                " be an int"
+                f"minimum_hits {data.get('minimum_flexible_hits')} must be an int"
             )
 
         return data
@@ -205,3 +204,9 @@ class Main(KytosNApp):
             self._topology = topology
             self.graph.update_topology(topology)
         log.debug("Topology graph updated.")
+
+    @listen_to("kytos/topology.links.metadata.(added|removed)")
+    def on_links_metadata_changed(self, event):
+        """Update the graph when links' metadata are added or removed."""
+        with self._lock:
+            self.graph_update_link_metadata(event["link"])
