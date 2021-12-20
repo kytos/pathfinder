@@ -66,10 +66,20 @@ class KytosGraph:
         for link in links.values():
             if link.is_active():
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
-                for key, value in link.metadata.items():
-                    endpoint_a = link.endpoint_a.id
-                    endpoint_b = link.endpoint_b.id
-                    self.graph[endpoint_a][endpoint_b][key] = value
+                self.update_link_metadata(link)
+
+    def update_link_metadata(self, link):
+        """Update link metadata."""
+        for key, value in link.metadata.items():
+            endpoint_a = link.endpoint_a.id
+            endpoint_b = link.endpoint_b.id
+            self.graph[endpoint_a][endpoint_b][key] = value
+
+    def remove_link_metadata(self, link, key):
+        """Remove link metadata given a key."""
+        endpoint_a = link.endpoint_a.id
+        endpoint_b = link.endpoint_b.id
+        return self.graph[endpoint_a][endpoint_b].pop(key, None)
 
     def get_link_metadata(self, endpoint_a, endpoint_b):
         """Return the metadata of a link."""
