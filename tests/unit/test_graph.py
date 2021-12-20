@@ -9,7 +9,7 @@ from tests.helpers import (
     get_topology_with_metadata_mock,
 )
 
-# pylint: disable=arguments-differ, protected-access
+# pylint: disable=arguments-differ, protected-access, no-member
 
 
 class TestGraph(TestCase):
