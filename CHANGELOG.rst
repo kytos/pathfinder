@@ -23,6 +23,14 @@ Fixed
 Security
 ========
 
+[2.4.0] - 2021-12-20
+********************
+
+Added
+=====
+- Subscribed to to `kytos/topology.links.metadata.(added|removed)` events to update the graph when computing the CSPF accordingly.
+
+
 [2.3.0] - 2021-10-19
 ********************
 
