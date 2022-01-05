@@ -278,6 +278,16 @@ def symlink_if_different(path, target):
         path.symlink_to(target)
 
 
+def read_requirements(path="requirements/run.txt"):
+    """Read requirements file and return a list."""
+    with open(path, "r", encoding="utf8") as file:
+        return [
+            line.strip()
+            for line in file.readlines()
+            if not line.startswith("#")
+        ]
+
+
 setup(name=f'kytos_{NAPP_NAME}',
       version=NAPP_VERSION,
       description='Core NApps developed by Kytos Team',
@@ -285,9 +295,7 @@ setup(name=f'kytos_{NAPP_NAME}',
       author='Kytos Team',
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',
-      install_requires=[line.strip()
-                        for line in open("requirements/run.txt").readlines()
-                        if not line.startswith('#')],
+      install_requires=read_requirements(),
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       extras_require={
