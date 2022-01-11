@@ -6,6 +6,7 @@ from unittest.mock import patch
 from kytos.core.events import KytosEvent
 from kytos.lib.helpers import get_controller_mock, get_test_client
 
+# pylint: disable=import-error
 from napps.kytos.pathfinder.main import Main
 from tests.helpers import get_topology_mock, get_topology_with_metadata
 

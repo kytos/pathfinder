@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, call, patch
 
 from napps.kytos.pathfinder.graph import KytosGraph
+# pylint: disable=import-error
 from tests.helpers import (
     get_filter_links_fake,
     get_topology_mock,
