@@ -23,6 +23,16 @@ Fixed
 Security
 ========
 
+
+[2.4.1] - 2022-01-21
+********************
+
+Changed
+=======
+- Upgraded requirements
+- Updated README to refer to Kytos NG
+
+
 [2.4.0] - 2021-12-20
 ********************
 
