@@ -195,6 +195,10 @@ class Main(KytosNApp):
         return jsonify({"paths": paths})
 
     @listen_to("kytos.topology.updated")
+    def on_topology_updated(self, event):
+        """Update the graph when the network topology is updated."""
+        self.update_topology(event)
+
     def update_topology(self, event):
         """Update the graph when the network topology is updated."""
         if "topology" not in event.content:
