@@ -126,4 +126,8 @@ class TestPathsSimple(TestPaths):
             {"bandwidth": 49, "ownership": "blue"}
         )
 
+        for link in links.values():
+            link.enable()
+            link.activate()
+
         return switches, links
