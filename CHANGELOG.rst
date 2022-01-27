@@ -23,6 +23,14 @@ Fixed
 Security
 ========
 
+[2022.1.0] - 2022-01-25
+***********************
+
+Changed
+=======
+- Adapted ``update_nodes`` to only add if node.status is ``EntityStatus.UP``
+- Adapted ``update_links`` to only add if link.status is ``EntityStatus.UP``
+
 
 [2.4.1] - 2022-01-21
 ********************

@@ -4,6 +4,7 @@
 from itertools import combinations, islice
 
 from kytos.core import log
+from kytos.core.common import EntityStatus
 from napps.kytos.pathfinder.utils import (filter_ge, filter_in, filter_le,
                                           lazy_filter, nx_edge_data_delay,
                                           nx_edge_data_priority,
@@ -50,11 +51,14 @@ class KytosGraph:
         """Update all nodes inside the graph."""
         for node in nodes.values():
             try:
+                if node.status != EntityStatus.UP:
+                    continue
                 self.graph.add_node(node.id)
 
                 for interface in node.interfaces.values():
-                    self.graph.add_node(interface.id)
-                    self.graph.add_edge(node.id, interface.id)
+                    if interface.status == EntityStatus.UP:
+                        self.graph.add_node(interface.id)
+                        self.graph.add_edge(node.id, interface.id)
 
             except AttributeError as err:
                 raise TypeError(
@@ -64,7 +68,7 @@ class KytosGraph:
     def update_links(self, links):
         """Update all links inside the graph."""
         for link in links.values():
-            if link.is_active():
+            if link.status == EntityStatus.UP:
                 self.graph.add_edge(link.endpoint_a.id, link.endpoint_b.id)
                 self.update_link_metadata(link)
 

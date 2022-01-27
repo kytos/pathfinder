@@ -271,3 +271,7 @@ class EdgesSettings(TestPaths):
         links["User1:4<->User4:3"] = Link(
             interfaces["User1:4"], interfaces["User4:3"]
         )
+
+        for link in links.values():
+            link.enable()
+            link.activate()

@@ -2,7 +2,9 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, call, patch
 
+from kytos.core.common import EntityStatus
 from napps.kytos.pathfinder.graph import KytosGraph
+
 # pylint: disable=import-error
 from tests.helpers import (
     get_filter_links_fake,
@@ -53,24 +55,45 @@ class TestGraph(TestCase):
         _, mock_update_links, topology = self.setting_update_topology(*args)
         mock_update_links.assert_called_with(topology.links)
 
+    def test_update_links(self):
+        """Test update_links."""
+        topology = get_topology_mock()
+        self.kytos_graph.update_links(topology.links)
+        assert self.mock_graph.add_edge.call_count == len(topology.links)
+
+    def test_update_links_not_up(self):
+        """Test update_links entity not up."""
+        topology = get_topology_mock()
+        keys_num = 2
+        for key in list(topology.links.keys())[:keys_num]:
+            topology.links[key].status = EntityStatus.DOWN
+
+        self.kytos_graph.update_links(topology.links)
+        assert self.mock_graph.add_edge.call_count == len(topology.links) - keys_num
+
+    def test_update_nodes_not_up(self):
+        """Test update_nodes entity not up."""
+        topology = get_topology_mock()
+        keys_num = 2
+        for key in list(topology.switches.keys())[:keys_num]:
+            topology.switches[key].status = EntityStatus.DISABLED
+        for key in topology.switches.keys():
+            topology.switches[key].interfaces = {}
+
+        self.kytos_graph.update_nodes(topology.switches)
+        assert self.mock_graph.add_node.call_count == len(topology.switches) - keys_num
+
     def test_update_nodes(self):
         """Test update nodes."""
         topology = get_topology_mock()
         self.kytos_graph.update_nodes(topology.switches)
-        switch = topology.switches["00:00:00:00:00:00:00:01"]
 
-        calls = [call(switch.id)]
-        calls += [
-            call(interface.id) for interface in switch.interfaces.values()
-        ]
-        self.mock_graph.add_node.assert_has_calls(calls)
-
-        calls = [
-            call(switch.id, interface.id)
-            for interface in switch.interfaces.values()
-        ]
-
-        self.mock_graph.add_edge.assert_has_calls(calls)
+        edge_count = sum(
+            [len(sw.interfaces.values()) for sw in topology.switches.values()]
+        )
+        node_count = len(topology.switches) + edge_count
+        assert self.mock_graph.add_edge.call_count == edge_count
+        assert self.mock_graph.add_node.call_count == node_count
 
     def test_update_nodes_2(self):
         """Test update nodes."""
@@ -126,9 +149,7 @@ class TestGraph(TestCase):
         self.kytos_graph.k_shortest_paths = MagicMock(
             return_value=constrained_k_shortest_paths
         )
-        self.kytos_graph._filter_links = MagicMock(
-            side_effect=get_filter_links_fake
-        )
+        self.kytos_graph._filter_links = MagicMock(side_effect=get_filter_links_fake)
         k_shortest_paths = self.kytos_graph.constrained_k_shortest_paths(
             source,
             dest,
