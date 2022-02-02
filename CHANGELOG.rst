@@ -23,6 +23,14 @@ Fixed
 Security
 ========
 
+[2022.1.1] - 2022-02-02
+***********************
+
+Changed
+=======
+- Changed UI ``k-select`` links items description to try to use ``link.metadata.link_name``
+
+
 [2022.1.0] - 2022-01-25
 ***********************
 
