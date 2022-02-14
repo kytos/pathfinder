@@ -251,8 +251,8 @@ module.exports = {
     get_links(){
       var links = []
       $.each(this.links, function(key, value){
-        if (value.metadata.aliases != undefined && value.metadata.aliases.length != 0){
-          links.push({value:value.id, description:value.metadata.aliases[0]})
+        if (value.metadata.link_name !== undefined && value.metadata.link_name.length !== 0){
+          links.push({value:value.id, description:value.metadata.link_name})
         } else {
           links.push({value:value.id, description:value.id});
         }
