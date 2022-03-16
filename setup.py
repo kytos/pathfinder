@@ -297,7 +297,7 @@ setup(name=f'kytos_{NAPP_NAME}',
       license='MIT',
       install_requires=read_requirements(),
       setup_requires=['pytest-runner'],
-      tests_require=['pytest'],
+      tests_require=['pytest==7.0.0'],
       extras_require={
           'dev': [
               'coverage',
