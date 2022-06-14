@@ -30,7 +30,7 @@ class TestPathsSimple(TestPaths):
         """Tests a simple, impossible path"""
         self.initializer()
 
-        assert self.graph.constrained_k_shortest_paths("S1", "S4") == []
+        assert not self.graph.constrained_k_shortest_paths("S1", "S4")
 
     def test_path_to_self(self):
         """Tests a path to self again"""

@@ -71,13 +71,14 @@ class TestGraph(TestCase):
         self.kytos_graph.update_links(topology.links)
         assert self.mock_graph.add_edge.call_count == len(topology.links) - keys_num
 
+    # pylint: disable=consider-using-dict-items
     def test_update_nodes_not_up(self):
         """Test update_nodes entity not up."""
         topology = get_topology_mock()
         keys_num = 2
-        for key in list(topology.switches.keys())[:keys_num]:
+        for key in list(topology.switches)[:keys_num]:
             topology.switches[key].status = EntityStatus.DISABLED
-        for key in topology.switches.keys():
+        for key in topology.switches:
             topology.switches[key].interfaces = {}
 
         self.kytos_graph.update_nodes(topology.switches)
