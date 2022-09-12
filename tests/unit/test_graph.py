@@ -90,7 +90,7 @@ class TestGraph(TestCase):
         self.kytos_graph.update_nodes(topology.switches)
 
         edge_count = sum(
-            [len(sw.interfaces.values()) for sw in topology.switches.values()]
+            (len(sw.interfaces.values()) for sw in topology.switches.values())
         )
         node_count = len(topology.switches) + edge_count
         assert self.mock_graph.add_edge.call_count == edge_count
