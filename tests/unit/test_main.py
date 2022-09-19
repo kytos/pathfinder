@@ -163,13 +163,29 @@ class TestMain(TestCase):
                 "hops": [
                     "00:00:00:00:00:00:00:01:1",
                     "00:00:00:00:00:00:00:02:1",
+                    "00:00:00:00:00:00:00:02:2",
+                    "00:00:00:00:00:00:00:03:1",
                 ]
-            }
+            },
+            {
+                "hops": [
+                    "00:00:00:00:00:00:00:01:1",
+                    "00:00:00:00:00:00:00:01",
+                    "00:00:00:00:00:00:00:04",
+                    "00:00:00:00:00:00:00:04:1",
+                ],
+                "cost": 3,
+            },
         ]
-        desired, undesired = ["1"], None
+        link_id = "1"
+        desired = [link_id]
 
-        filtered_paths = self.napp._filter_paths(paths, desired, undesired)
-        self.assertEqual(filtered_paths, paths)
+        assert self.napp._topology.links[link_id]
+        filtered_paths = self.napp._filter_paths_desired_links(paths, desired)
+        assert filtered_paths == [paths[0]]
+
+        filtered_paths = self.napp._filter_paths_desired_links(paths, ["inexistent_id"])
+        assert not filtered_paths
 
     def test_filter_paths_le_cost_response(self):
         """Test filter paths."""
@@ -207,14 +223,20 @@ class TestMain(TestCase):
         paths = [
             {
                 "hops": [
-                    "00:00:00:00:00:00:00:01:2",
+                    "00:00:00:00:00:00:00:01:1",
+                    "00:00:00:00:00:00:00:02:1",
+                    "00:00:00:00:00:00:00:02:2",
                     "00:00:00:00:00:00:00:03:1",
                 ]
             }
         ]
-        desired, undesired = None, ["2"]
-        filtered_paths = self.napp._filter_paths(paths, desired, undesired)
-        self.assertEqual(filtered_paths, [])
+
+        undesired = ["2"]
+        filtered_paths = self.napp._filter_paths_desired_links(paths, undesired)
+        assert not filtered_paths
+
+        filtered_paths = self.napp._filter_paths_undesired_links(paths, ["none"])
+        assert filtered_paths == paths
 
     def setting_path(self):
         """Set the primary elements needed to test the topology
