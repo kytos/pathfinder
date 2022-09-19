@@ -7,6 +7,7 @@ All notable changes to the pathfinder NApp will be documented in this file.
 ********************************
 Added
 =====
+- Subscribed to ``kytos/topology.topology_loaded`` to be more promptly responsive
 
 Changed
 =======
@@ -19,6 +20,7 @@ Removed
 
 Fixed
 =====
+- Fixed ``undesired_links`` and ``desired_links`` filters
 
 Security
 ========

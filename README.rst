@@ -51,6 +51,7 @@ Events
 Subscribed
 ----------
 
+- ``kytos/topology.topology_loaded``
 - ``kytos/topology.updated``
 - ``kytos/topology.links.metadata.(added|removed)``
 
