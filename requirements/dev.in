@@ -1,3 +1,5 @@
 -e git+https://github.com/kytos-ng/python-openflow.git#egg=python-openflow
 -e git+https://github.com/kytos-ng/kytos.git#egg=kytos
 -e .[dev]
+pytest-asyncio==0.18.3
+black==22.3.0
