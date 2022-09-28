@@ -164,7 +164,7 @@ class TestMain(TestCase):
                     "00:00:00:00:00:00:00:01:1",
                     "00:00:00:00:00:00:00:02:1",
                     "00:00:00:00:00:00:00:02:2",
-                    "00:00:00:00:00:00:00:03:3",
+                    "00:00:00:00:00:00:00:03:2",
                 ]
             },
             {
@@ -183,6 +183,9 @@ class TestMain(TestCase):
             assert self.napp._topology.links[link]
         filtered_paths = self.napp._filter_paths_desired_links(paths, desired)
         assert filtered_paths == [paths[0]]
+
+        filtered_paths = self.napp._filter_paths_desired_links(paths, ["1", "2"])
+        assert not filtered_paths
 
         filtered_paths = self.napp._filter_paths_desired_links(paths, ["inexistent_id"])
         assert not filtered_paths

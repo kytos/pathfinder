@@ -106,7 +106,6 @@ class Main(KytosNApp):
         if not desired:
             return paths
         included_indexes = set(self._find_all_link_ids(paths, desired))
-        print(included_indexes, desired)
         return [path for idx, path in enumerate(paths) if idx in included_indexes]
 
     def _validate_payload(self, data):
