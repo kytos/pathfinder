@@ -20,7 +20,7 @@ Removed
 
 Fixed
 =====
-- Fixed ``undesired_links`` and ``desired_links`` filters
+- Fixed ``undesired_links`` (logical OR) and ``desired_links`` (logical AND) filters.
 
 Security
 ========
