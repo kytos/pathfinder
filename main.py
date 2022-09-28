@@ -1,5 +1,6 @@
 """Main module of kytos/pathfinder Kytos Network Application."""
 
+from typing import Generator
 from threading import Lock
 
 from flask import jsonify, request
@@ -50,19 +51,17 @@ class Main(KytosNApp):
 
     def _find_any_link_ids(
         self, paths: list[dict], link_ids: list[str]
-    ) -> set[int]:
+    ) -> Generator[int, None, None]:
         """Find indexes of the paths that contain any of the link ids."""
         endpoints_links = self._map_endpoints_from_link_ids(link_ids)
-        indexes: set[int] = set()
         for idx, path in enumerate(paths):
-            head, tail = path["hops"][:-1], path["hops"][1:]
-            if idx in indexes:
-                continue
+            head, tail, found = path["hops"][:-1], path["hops"][1:], False
             for endpoints in zip(head, tail):
                 if endpoints in endpoints_links:
-                    indexes.add(idx)
+                    found = True
                     break
-        return indexes
+            if found:
+                yield idx
 
     def _filter_paths_undesired_links(
         self, paths: list[dict], undesired: list[str]

@@ -164,7 +164,7 @@ class TestMain(TestCase):
                     "00:00:00:00:00:00:00:01:1",
                     "00:00:00:00:00:00:00:02:1",
                     "00:00:00:00:00:00:00:02:2",
-                    "00:00:00:00:00:00:00:03:1",
+                    "00:00:00:00:00:00:00:03:3",
                 ]
             },
             {
@@ -177,10 +177,10 @@ class TestMain(TestCase):
                 "cost": 3,
             },
         ]
-        link_id = "1"
-        desired = [link_id]
+        desired = ["1", "3"]
 
-        assert self.napp._topology.links[link_id]
+        for link in desired:
+            assert self.napp._topology.links[link]
         filtered_paths = self.napp._filter_paths_desired_links(paths, desired)
         assert filtered_paths == [paths[0]]
 
@@ -226,13 +226,21 @@ class TestMain(TestCase):
                     "00:00:00:00:00:00:00:01:1",
                     "00:00:00:00:00:00:00:02:1",
                     "00:00:00:00:00:00:00:02:2",
-                    "00:00:00:00:00:00:00:03:1",
+                    "00:00:00:00:00:00:00:03:2",
                 ]
             }
         ]
 
-        undesired = ["2"]
-        filtered_paths = self.napp._filter_paths_desired_links(paths, undesired)
+        undesired = ["1"]
+        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
+        assert not filtered_paths
+
+        undesired = ["3"]
+        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
+        assert not filtered_paths
+
+        undesired = ["1", "3"]
+        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
         assert not filtered_paths
 
         filtered_paths = self.napp._filter_paths_undesired_links(paths, ["none"])
