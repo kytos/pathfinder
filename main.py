@@ -1,6 +1,7 @@
 """Main module of kytos/pathfinder Kytos Network Application."""
 
 from threading import Lock
+from typing import Generator
 
 from flask import jsonify, request
 from kytos.core import KytosNApp, log, rest
@@ -29,57 +30,82 @@ class Main(KytosNApp):
     def shutdown(self):
         """Shutdown the napp."""
 
-    def _filter_paths(self, paths, desired, undesired):
-        """
-        Apply filters to the paths list.
-
-        Make sure that each path in the list has all the desired links and none
-        of the undesired ones.
-        """
-        filtered_paths = []
-
-        if desired:
-            for link_id in desired:
-                try:
-                    endpoint_a = self._topology.links[link_id].endpoint_a.id
-                    endpoint_b = self._topology.links[link_id].endpoint_b.id
-                except KeyError:
-                    return []
-
-                for path in paths:
-                    head = path["hops"][:-1]
-                    tail = path["hops"][1:]
-                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
-                        (endpoint_b, endpoint_a) in zip(head, tail)
-                    ):
-                        filtered_paths.append(path)
-        else:
-            filtered_paths = paths
-
-        if undesired:
-            for link_id in undesired:
-                try:
-                    endpoint_a = self._topology.links[link_id].endpoint_a.id
-                    endpoint_b = self._topology.links[link_id].endpoint_b.id
-                except KeyError:
-                    continue
-
-                for path in paths:
-                    head = path["hops"][:-1]
-                    tail = path["hops"][1:]
-                    if ((endpoint_a, endpoint_b) in zip(head, tail)) or (
-                        (endpoint_b, endpoint_a) in zip(head, tail)
-                    ):
-
-                        filtered_paths.remove(path)
-
-        return filtered_paths
-
     def _filter_paths_le_cost(self, paths, max_cost):
         """Filter by paths where the cost is le <= max_cost."""
         if not max_cost:
             return paths
         return [path for path in paths if path["cost"] <= max_cost]
+
+    def _map_endpoints_from_link_ids(self, link_ids: list[str]) -> dict:
+        """Map endpoints from link ids."""
+        endpoints = {}
+        for link_id in link_ids:
+            try:
+                link = self._topology.links[link_id]
+                endpoint_a, endpoint_b = link.endpoint_a, link.endpoint_b
+                endpoints[(endpoint_a.id, endpoint_b.id)] = link
+            except KeyError:
+                pass
+        return endpoints
+
+    def _find_all_link_ids(
+        self, paths: list[dict], link_ids: list[str]
+    ) -> Generator[int, None, None]:
+        """Find indexes of the paths that contain all link ids."""
+        endpoints_links = self._map_endpoints_from_link_ids(link_ids)
+        if not endpoints_links:
+            return None
+        endpoint_keys = set(endpoints_links.keys())
+        for idx, path in enumerate(paths):
+            head, tail, found_endpoints = path["hops"][:-1], path["hops"][1:], set()
+            for endpoint_a, endpoint_b in zip(head, tail):
+                if (endpoint_a, endpoint_b) in endpoints_links:
+                    found_endpoints.add((endpoint_a, endpoint_b))
+                if (endpoint_b, endpoint_a) in endpoints_links:
+                    found_endpoints.add((endpoint_b, endpoint_a))
+            if found_endpoints == endpoint_keys:
+                yield idx
+        return None
+
+    def _find_any_link_ids(
+        self, paths: list[dict], link_ids: list[str]
+    ) -> Generator[int, None, None]:
+        """Find indexes of the paths that contain any of the link ids."""
+        endpoints_links = self._map_endpoints_from_link_ids(link_ids)
+        if not endpoints_links:
+            return None
+        for idx, path in enumerate(paths):
+            head, tail, found = path["hops"][:-1], path["hops"][1:], False
+            for endpoint_a, endpoint_b in zip(head, tail):
+                if any(
+                    (
+                        (endpoint_a, endpoint_b) in endpoints_links,
+                        (endpoint_b, endpoint_a) in endpoints_links,
+                    )
+                ):
+                    found = True
+                    break
+            if found:
+                yield idx
+        return None
+
+    def _filter_paths_undesired_links(
+        self, paths: list[dict], undesired: list[str]
+    ) -> list[dict]:
+        """Filter by undesired_links, it performs a logical OR."""
+        if not undesired:
+            return paths
+        excluded_indexes = set(self._find_any_link_ids(paths, undesired))
+        return [path for idx, path in enumerate(paths) if idx not in excluded_indexes]
+
+    def _filter_paths_desired_links(
+        self, paths: list[dict], desired: list[str]
+    ) -> list[dict]:
+        """Filter by desired_links, it performs a logical AND."""
+        if not desired:
+            return paths
+        included_indexes = set(self._find_all_link_ids(paths, desired))
+        return [path for idx, path in enumerate(paths) if idx in included_indexes]
 
     def _validate_payload(self, data):
         """Validate shortest_path v2/ POST endpoint."""
@@ -189,12 +215,13 @@ class Main(KytosNApp):
         except TypeError as err:
             raise BadRequest(str(err))
 
-        paths = self._filter_paths(paths, desired, undesired)
         paths = self._filter_paths_le_cost(paths, max_cost=spf_max_path_cost)
+        paths = self._filter_paths_undesired_links(paths, undesired)
+        paths = self._filter_paths_desired_links(paths, desired)
         log.debug(f"Filtered paths: {paths}")
         return jsonify({"paths": paths})
 
-    @listen_to("kytos.topology.updated")
+    @listen_to("kytos.topology.updated", "kytos/topology.topology_loaded")
     def on_topology_updated(self, event):
         """Update the graph when the network topology is updated."""
         self.update_topology(event)
