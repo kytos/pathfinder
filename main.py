@@ -7,7 +7,6 @@ from flask import jsonify, request
 from kytos.core import KytosEvent, KytosNApp, log, rest
 from kytos.core.helpers import listen_to
 from napps.kytos.pathfinder.graph import KytosGraph
-
 # pylint: disable=import-error
 from werkzeug.exceptions import BadRequest
 
