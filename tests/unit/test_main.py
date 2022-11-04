@@ -1,7 +1,7 @@
 """Test Main methods."""
 
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from kytos.core.events import KytosEvent
 from kytos.lib.helpers import get_controller_mock, get_test_client
@@ -257,6 +257,30 @@ class TestMain(TestCase):
             name="kytos.topology.updated", content={"topology": topology}
         )
         self.napp.update_topology(event)
+
+    def test_update_links_changed(self):
+        """Test update_links_metadata_changed."""
+        self.napp.graph.update_link_metadata = MagicMock()
+        self.napp.controller.buffers.app.put = MagicMock()
+        event = KytosEvent(
+            name="kytos.topology.links.metadata.added",
+            content={"link": MagicMock(), "metadata": {}}
+        )
+        self.napp.update_links_metadata_changed(event)
+        assert self.napp.graph.update_link_metadata.call_count == 1
+        assert self.napp.controller.buffers.app.put.call_count == 0
+
+    def test_update_links_changed_key_error(self):
+        """Test update_links_metadata_changed key_error."""
+        self.napp.graph.update_link_metadata = MagicMock()
+        self.napp.controller.buffers.app.put = MagicMock()
+        event = KytosEvent(
+            name="kytos.topology.links.metadata.added",
+            content={"link": MagicMock()}
+        )
+        self.napp.update_links_metadata_changed(event)
+        assert self.napp.graph.update_link_metadata.call_count == 1
+        assert self.napp.controller.buffers.app.put.call_count == 1
 
     def test_shortest_path(self):
         """Test shortest path."""

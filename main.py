@@ -4,7 +4,7 @@ from threading import Lock
 from typing import Generator
 
 from flask import jsonify, request
-from kytos.core import KytosNApp, log, rest
+from kytos.core import KytosEvent, KytosNApp, log, rest
 from kytos.core.helpers import listen_to
 from napps.kytos.pathfinder.graph import KytosGraph
 # pylint: disable=import-error
@@ -221,7 +221,11 @@ class Main(KytosNApp):
         log.debug(f"Filtered paths: {paths}")
         return jsonify({"paths": paths})
 
-    @listen_to("kytos.topology.updated", "kytos/topology.topology_loaded")
+    @listen_to(
+        "kytos.topology.updated",
+        "kytos/topology.current",
+        "kytos/topology.topology_loaded",
+    )
     def on_topology_updated(self, event):
         """Update the graph when the network topology is updated."""
         self.update_topology(event)
@@ -234,13 +238,26 @@ class Main(KytosNApp):
         with self._lock:
             self._topology = topology
             self.graph.update_topology(topology)
-        log.debug("Topology graph updated.")
+        switches = list(topology.switches.keys())
+        links = list(topology.links.keys())
+        log.debug(f"Topology graph updated with switches: {switches}, links: {links}.")
+
+    def update_links_metadata_changed(self, event) -> None:
+        """Update the graph when links' metadata are added or removed."""
+        link = event.content["link"]
+        try:
+            with self._lock:
+                self.graph.update_link_metadata(link)
+            metadata = event.content["metadata"]
+            log.debug(f"Topology graph updated link id: {link.id} metadata: {metadata}")
+        except KeyError as exc:
+            log.warning(
+                f"Unexpected KeyError {str(exc)} on event {event}."
+                " pathfinder will reconciliate the topology"
+            )
+            self.controller.buffers.app.put(KytosEvent(name="kytos/topology.get"))
 
     @listen_to("kytos/topology.links.metadata.(added|removed)")
     def on_links_metadata_changed(self, event):
         """Update the graph when links' metadata are added or removed."""
-        link = event.content["link"]
-        with self._lock:
-            self.graph.update_link_metadata(link)
-        metadata = event.content["metadata"]
-        log.debug(f"Topology graph updated link id: {link.id} metadata: {metadata}")
+        self.update_links_metadata_changed(event)

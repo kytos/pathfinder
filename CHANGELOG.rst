@@ -8,6 +8,8 @@ All notable changes to the pathfinder NApp will be documented in this file.
 Added
 =====
 - Subscribed to ``kytos/topology.topology_loaded`` to be more promptly responsive
+- Subscribed to ``kytos/topology.current``
+- Updated ``on_links_metadata_changed`` to also try to reconciliate the topology
 
 Changed
 =======
