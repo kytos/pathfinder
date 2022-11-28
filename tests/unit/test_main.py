@@ -2,6 +2,7 @@
 
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
+from datetime import timedelta
 
 from kytos.core.events import KytosEvent
 from kytos.lib.helpers import get_controller_mock, get_test_client
@@ -28,6 +29,29 @@ class TestMain(TestCase):
         self.napp.update_topology(event)
 
         self.assertEqual(self.napp._topology, topology)
+
+    def test_update_topology_events_out_of_order(self):
+        """Test update topology events out of order.
+
+        If a subsequent older event is sent, then the topology
+        shouldn't get updated.
+        """
+        topology = get_topology_mock()
+        assert self.napp._topology_updated_at is None
+        first_event = KytosEvent(
+            name="kytos.topology.updated", content={"topology": topology}
+        )
+        self.napp.update_topology(first_event)
+        assert self.napp._topology_updated_at == first_event.timestamp
+        assert self.napp._topology == topology
+
+        second_topology = get_topology_mock()
+        second_event = KytosEvent(
+            name="kytos.topology.updated", content={"topology": second_topology}
+        )
+        second_event.timestamp = first_event.timestamp - timedelta(seconds=10)
+        self.napp.update_topology(second_event)
+        assert self.napp._topology == topology
 
     def test_update_topology_failure_case(self):
         """Test update topology method to failure case."""
@@ -269,6 +293,31 @@ class TestMain(TestCase):
         self.napp.update_links_metadata_changed(event)
         assert self.napp.graph.update_link_metadata.call_count == 1
         assert self.napp.controller.buffers.app.put.call_count == 0
+
+    def test_update_links_changed_out_of_order(self):
+        """Test update_links_metadata_changed out of order."""
+        self.napp.graph.update_link_metadata = MagicMock()
+        self.napp.controller.buffers.app.put = MagicMock()
+        link = MagicMock(id="1")
+        assert link.id not in self.napp._links_updated_at
+        event = KytosEvent(
+            name="kytos.topology.links.metadata.added",
+            content={"link": link, "metadata": {}}
+        )
+        self.napp.update_links_metadata_changed(event)
+        assert self.napp.graph.update_link_metadata.call_count == 1
+        assert self.napp.controller.buffers.app.put.call_count == 0
+        assert self.napp._links_updated_at[link.id] == event.timestamp
+
+        second_event = KytosEvent(
+            name="kytos.topology.links.metadata.added",
+            content={"link": link, "metadata": {}}
+        )
+        second_event.timestamp = event.timestamp - timedelta(seconds=10)
+        self.napp.update_links_metadata_changed(second_event)
+        assert self.napp.graph.update_link_metadata.call_count == 1
+        assert self.napp.controller.buffers.app.put.call_count == 0
+        assert self.napp._links_updated_at[link.id] == event.timestamp
 
     def test_update_links_changed_key_error(self):
         """Test update_links_metadata_changed key_error."""

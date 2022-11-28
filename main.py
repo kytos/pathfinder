@@ -23,6 +23,8 @@ class Main(KytosNApp):
         self.graph = KytosGraph()
         self._topology = None
         self._lock = Lock()
+        self._topology_updated_at = None
+        self._links_updated_at = {}
 
     def execute(self):
         """Do nothing."""
@@ -236,7 +238,13 @@ class Main(KytosNApp):
             return
         topology = event.content["topology"]
         with self._lock:
+            if (
+                self._topology_updated_at
+                and self._topology_updated_at > event.timestamp
+            ):
+                return
             self._topology = topology
+            self._topology_updated_at = event.timestamp
             self.graph.update_topology(topology)
         switches = list(topology.switches.keys())
         links = list(topology.links.keys())
@@ -247,7 +255,13 @@ class Main(KytosNApp):
         link = event.content["link"]
         try:
             with self._lock:
+                if (
+                    link.id in self._links_updated_at
+                    and self._links_updated_at[link.id] > event.timestamp
+                ):
+                    return
                 self.graph.update_link_metadata(link)
+                self._links_updated_at[link.id] = event.timestamp
             metadata = event.content["metadata"]
             log.debug(f"Topology graph updated link id: {link.id} metadata: {metadata}")
         except KeyError as exc:

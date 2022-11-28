@@ -23,6 +23,7 @@ Removed
 Fixed
 =====
 - Fixed ``undesired_links`` (logical OR) and ``desired_links`` (logical AND) filters.
+- Safe guards to discard graph topology older (out of order) events
 
 Security
 ========
