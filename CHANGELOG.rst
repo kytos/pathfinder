@@ -5,28 +5,20 @@ All notable changes to the pathfinder NApp will be documented in this file.
 
 [UNRELEASED] - Under development
 ********************************
+
+[2022.3.0] - 2022-12-15
+***********************
+
 Added
 =====
 - Subscribed to ``kytos/topology.topology_loaded`` to be more promptly responsive
 - Subscribed to ``kytos/topology.current``
 - Updated ``on_links_metadata_changed`` to also try to reconciliate the topology
 
-Changed
-=======
-
-Deprecated
-==========
-
-Removed
-=======
-
 Fixed
 =====
 - Fixed ``undesired_links`` (logical OR) and ``desired_links`` (logical AND) filters.
 - Safe guards to discard graph topology older (out of order) events
-
-Security
-========
 
 [2022.1.1] - 2022-02-02
 ***********************
