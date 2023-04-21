@@ -20,6 +20,11 @@ Fixed
 - Fixed ``undesired_links`` (logical OR) and ``desired_links`` (logical AND) filters.
 - Safe guards to discard graph topology older (out of order) events
 
+General Information
+===================
+- ``@rest`` endpoints are now run by ``starlette/uvicorn`` instead of ``flask/werkzeug``.
+
+
 [2022.1.1] - 2022-02-02
 ***********************
 
