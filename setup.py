@@ -263,15 +263,6 @@ setup(name=f'kytos_{NAPP_NAME}',
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',
       install_requires=read_requirements(),
-      extras_require={
-          'dev': [
-              'pytest==7.0.0',
-              'pytest-cov==3.0.0',
-              'pip-tools',
-              'yala',
-              'tox',
-          ],
-      },
       cmdclass={
           'clean': Cleaner,
           'coverage': TestCoverage,
