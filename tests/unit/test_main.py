@@ -1,6 +1,5 @@
 """Test Main methods."""
 
-from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from datetime import timedelta
 
@@ -13,12 +12,15 @@ from tests.helpers import get_topology_mock, get_topology_with_metadata
 
 
 # pylint: disable=protected-access
-class TestMain(TestCase):
+class TestMain:
     """Tests for the Main class."""
 
-    def setUp(self):
+    def setup_method(self):
         """Execute steps before each tests."""
-        self.napp = Main(get_controller_mock())
+        self.controller = get_controller_mock()
+        self.napp = Main(self.controller)
+        self.api_client = get_test_client(self.controller, self.napp)
+        self.endpoint = "kytos/pathfinder/v2/"
 
     def test_update_topology_success_case(self):
         """Test update topology method to success case."""
@@ -27,8 +29,7 @@ class TestMain(TestCase):
             name="kytos.topology.updated", content={"topology": topology}
         )
         self.napp.update_topology(event)
-
-        self.assertEqual(self.napp._topology, topology)
+        assert self.napp._topology == topology
 
     def test_update_topology_events_out_of_order(self):
         """Test update topology events out of order.
@@ -57,8 +58,7 @@ class TestMain(TestCase):
         """Test update topology method to failure case."""
         event = KytosEvent(name="kytos.topology.updated")
         self.napp.update_topology(event)
-
-        self.assertIsNone(self.napp._topology)
+        assert not self.napp._topology
 
     def setting_shortest_path_mocked(self, mock_shortest_paths):
         """Set the primary elements needed to test the retrieving
@@ -66,52 +66,49 @@ class TestMain(TestCase):
         self.napp._topology = get_topology_mock()
         path = ["00:00:00:00:00:00:00:01:1", "00:00:00:00:00:00:00:02:1"]
         mock_shortest_paths.return_value = [path]
+        return path
 
-        api = get_test_client(self.napp.controller, self.napp)
-
-        return api, path
-
-    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch("napps.kytos.pathfinder.graph.KytosGraph.k_shortest_paths")
-    def test_shortest_path_response(self, mock_shortest_paths, path_cost):
+    async def test_shortest_path_response(self, monkeypatch):
         """Test shortest path."""
         cost_mocked_value = 1
-        path_cost.return_value = cost_mocked_value
-        api, path = self.setting_shortest_path_mocked(mock_shortest_paths)
-        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
+        mock_path_cost = MagicMock(return_value=cost_mocked_value)
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph._path_cost", mock_path_cost)
+        mock_shortest_paths = MagicMock()
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph.k_shortest_paths", mock_shortest_paths)
+        path = self.setting_shortest_path_mocked(mock_shortest_paths)
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
-            "desired_links": ["1"],
-            "undesired_links": None,
+            "desired_links": ["1"]
         }
-        response = api.open(url, method="POST", json=data)
-
+        response = await self.api_client.post(self.endpoint, json=data)
+        assert response.status_code == 200
         expected_response = {
             "paths": [{"hops": path, "cost": cost_mocked_value}]
         }
-        self.assertEqual(response.json, expected_response)
+        assert response.json() == expected_response
 
-    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch("napps.kytos.pathfinder.graph.KytosGraph.k_shortest_paths")
-    def test_shortest_path_response_status_code(
-        self, mock_shortest_paths, path_cost
-    ):
+    async def test_shortest_path_response_status_code(self, monkeypatch):
         """Test shortest path."""
-        path_cost.return_value = 1
-        api, _ = self.setting_shortest_path_mocked(mock_shortest_paths)
-        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2"
+        cost_mocked_value = 1
+        mock_path_cost = MagicMock(return_value=cost_mocked_value)
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph._path_cost", mock_path_cost)
+        mock_shortest_paths = MagicMock()
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph.k_shortest_paths", mock_shortest_paths)
+        _ = self.setting_shortest_path_mocked(mock_shortest_paths)
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
-            "desired_links": ["1"],
-            "undesired_links": None,
+            "desired_links": ["1"]
         }
-        response = api.open(url, method="POST", json=data)
+        response = await self.api_client.post(self.endpoint, json=data)
+        assert response.status_code == 200
 
-        self.assertEqual(response.status_code, 200)
-
-    def setting_shortest_constrained_path_mocked(
+    async def setting_shortest_constrained_path_mocked(
         self, mock_constrained_k_shortest_paths
     ):
         """Set the primary elements needed to test the retrieving process
@@ -119,65 +116,53 @@ class TestMain(TestCase):
         source = "00:00:00:00:00:00:00:01:1"
         destination = "00:00:00:00:00:00:00:02:1"
         path = [source, destination]
-        base_metrics = {"ownership": "bob"}
+        mandatory_metrics = {"ownership": "bob"}
         fle_metrics = {"delay": 30}
-        metrics = {**base_metrics, **fle_metrics}
+        metrics = {**mandatory_metrics, **fle_metrics}
         mock_constrained_k_shortest_paths.return_value = [
-            {"hops": [path], "metrics": metrics}
+            {"hops": path, "metrics": metrics}
         ]
-
-        api = get_test_client(self.napp.controller, self.napp)
-        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
-            "base_metrics": {"ownership": "bob"},
+            "mandatory_metrics": {"ownership": "bob"},
             "flexible_metrics": {"delay": 30},
             "minimum_flexible_hits": 1,
         }
-        response = api.open(url, method="POST", json=data)
+        response = await self.api_client.post(self.endpoint, json=data)
 
         return response, metrics, path
 
-    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
-        autospec=True,
-    )
-    def test_shortest_constrained_path_response(
-        self, mock_constrained_k_shortest_paths, path_cost
-    ):
+    async def test_shortest_constrained_path_response(self, monkeypatch):
         """Test constrained flexible paths."""
-        cost_mocked_value = 1
-        path_cost.return_value = cost_mocked_value
+        mock_path_cost = MagicMock(return_value=1)
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph._path_cost", mock_path_cost)
+        mock_k = MagicMock()
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph.constrained_k_shortest_paths", mock_k)
         (
             response,
             metrics,
             path,
-        ) = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_k_shortest_paths
-        )
+        ) = await self.setting_shortest_constrained_path_mocked(mock_k)
         expected_response = [
-            {"metrics": metrics, "hops": [path], "cost": cost_mocked_value}
+            {"metrics": metrics, "hops": path, "cost": 1}
         ]
+        assert response.json()["paths"][0] == expected_response[0]
 
-        self.assertDictEqual(response.json["paths"][0], expected_response[0])
-
-    @patch("napps.kytos.pathfinder.graph.KytosGraph._path_cost")
-    @patch(
-        "napps.kytos.pathfinder.graph.KytosGraph.constrained_k_shortest_paths",
-        autospec=True,
-    )
-    def test_shortest_constrained_path_response_status_code(
-        self, mock_constrained_k_shortest_paths, path_cost
-    ):
+    async def test_shortest_constrained_path_response_status_code(self, monkeypatch):
         """Test constrained flexible paths."""
-        path_cost.return_value = 1
-        response, _, _ = self.setting_shortest_constrained_path_mocked(
-            mock_constrained_k_shortest_paths
+        mock_path_cost = MagicMock(return_value=1)
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph._path_cost", mock_path_cost)
+        mock_k = MagicMock()
+        monkeypatch.setattr("napps.kytos.pathfinder.graph."
+                            "KytosGraph.k_shortest_paths", mock_k)
+        response, _, _ = await self.setting_shortest_constrained_path_mocked(
+            mock_k
         )
-
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     def test_filter_paths_response_on_desired(self):
         """Test filter paths."""
@@ -282,7 +267,7 @@ class TestMain(TestCase):
         )
         self.napp.update_topology(event)
 
-    def test_update_links_changed(self):
+    async def test_update_links_changed(self):
         """Test update_links_metadata_changed."""
         self.napp.graph.update_link_metadata = MagicMock()
         self.napp.controller.buffers.app.put = MagicMock()
@@ -294,7 +279,7 @@ class TestMain(TestCase):
         assert self.napp.graph.update_link_metadata.call_count == 1
         assert self.napp.controller.buffers.app.put.call_count == 0
 
-    def test_update_links_changed_out_of_order(self):
+    async def test_update_links_changed_out_of_order(self):
         """Test update_links_metadata_changed out of order."""
         self.napp.graph.update_link_metadata = MagicMock()
         self.napp.controller.buffers.app.put = MagicMock()
@@ -319,7 +304,7 @@ class TestMain(TestCase):
         assert self.napp.controller.buffers.app.put.call_count == 0
         assert self.napp._links_updated_at[link.id] == event.timestamp
 
-    def test_update_links_changed_key_error(self):
+    async def test_update_links_changed_key_error(self):
         """Test update_links_metadata_changed key_error."""
         self.napp.graph.update_link_metadata = MagicMock()
         self.napp.controller.buffers.app.put = MagicMock()
@@ -331,49 +316,37 @@ class TestMain(TestCase):
         assert self.napp.graph.update_link_metadata.call_count == 1
         assert self.napp.controller.buffers.app.put.call_count == 1
 
-    def test_shortest_path(self):
+    async def test_shortest_path(self):
         """Test shortest path."""
         self.setting_path()
-
-        api = get_test_client(self.napp.controller, self.napp)
-        url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
-
         source, destination = "User1", "User4"
         data = {"source": source, "destination": destination}
+        response = await self.api_client.post(self.endpoint, json=data)
 
-        response = api.open(url, method="POST", json=data)
-
-        for path in response.json["paths"]:
+        for path in response.json()["paths"]:
             assert source == path["hops"][0]
             assert destination == path["hops"][-1]
 
-    def setting_shortest_constrained_path_exception(self, side_effect):
+    async def setting_shortest_constrained_path_exception(self, side_effect):
         """Set the primary elements needed to test the shortest
         constrained path behavior under exception actions."""
         self.setting_path()
-        api = get_test_client(self.napp.controller, self.napp)
-
         with patch(
             "napps.kytos.pathfinder.graph.KytosGraph."
             "constrained_k_shortest_paths",
             side_effect=side_effect,
         ):
-            url = "http://127.0.0.1:8181/api/kytos/pathfinder/v2/"
-
             data = {
                 "source": "00:00:00:00:00:00:00:01:1",
                 "destination": "00:00:00:00:00:00:00:02:1",
-                "base_metrics": {"ownership": "bob"},
+                "mandatory_metrics": {"ownership": "bob"},
                 "flexible_metrics": {"delay": 30},
                 "minimum_flexible_hits": 1,
             }
-
-            response = api.open(url, method="POST", json=data)
-
+            response = await self.api_client.post(self.endpoint, json=data)
         return response
 
-    def test_shortest_constrained_path_400_exception(self):
+    async def test_shortest_constrained_path_400_exception(self):
         """Test shortest path."""
-        response = self.setting_shortest_constrained_path_exception(TypeError)
-
-        self.assertEqual(response.status_code, 400)
+        res = await self.setting_shortest_constrained_path_exception(TypeError)
+        assert res.status_code == 400
