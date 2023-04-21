@@ -3,12 +3,11 @@
 from threading import Lock
 from typing import Generator
 
-from flask import jsonify, request
 from kytos.core import KytosEvent, KytosNApp, log, rest
 from kytos.core.helpers import listen_to
+from kytos.core.rest_api import (HTTPException, JSONResponse, Request,
+                                 get_json_or_400)
 from napps.kytos.pathfinder.graph import KytosGraph
-# pylint: disable=import-error
-from werkzeug.exceptions import BadRequest
 
 
 class Main(KytosNApp):
@@ -113,14 +112,16 @@ class Main(KytosNApp):
         """Validate shortest_path v2/ POST endpoint."""
         if data.get("desired_links"):
             if not isinstance(data["desired_links"], list):
-                raise BadRequest(
+                raise HTTPException(
+                    400,
                     f"TypeError: desired_links is supposed to be a list."
                     f" type: {type(data['desired_links'])}"
                 )
 
         if data.get("undesired_links"):
             if not isinstance(data["undesired_links"], list):
-                raise BadRequest(
+                raise HTTPException(
+                    400,
                     f"TypeError: undesired_links is supposed to be a list."
                     f" type: {type(data['undesired_links'])}"
                 )
@@ -132,7 +133,8 @@ class Main(KytosNApp):
         data["spf_attribute"] = spf_attr
 
         if spf_attr not in self.graph.spf_edge_data_cbs:
-            raise BadRequest(
+            raise HTTPException(
+                400,
                 "Invalid 'spf_attribute'. Valid values: "
                 f"{', '.join(self.graph.spf_edge_data_cbs.keys())}"
             )
@@ -140,7 +142,8 @@ class Main(KytosNApp):
         try:
             data["spf_max_paths"] = max(int(data.get("spf_max_paths", 2)), 1)
         except (TypeError, ValueError):
-            raise BadRequest(
+            raise HTTPException(
+                400,
                 f"spf_max_paths {data.get('spf_max_pahts')} must be an int"
             )
 
@@ -150,7 +153,8 @@ class Main(KytosNApp):
                 spf_max_path_cost = max(int(spf_max_path_cost), 1)
                 data["spf_max_path_cost"] = spf_max_path_cost
             except (TypeError, ValueError):
-                raise BadRequest(
+                raise HTTPException(
+                    400,
                     f"spf_max_path_cost {data.get('spf_max_path_cost')} must"
                     " be an int"
                 )
@@ -166,16 +170,17 @@ class Main(KytosNApp):
                 )
             data["minimum_flexible_hits"] = minimum_hits
         except (TypeError, ValueError):
-            raise BadRequest(
+            raise HTTPException(
+                400,
                 f"minimum_hits {data.get('minimum_flexible_hits')} must be an int"
             )
 
         return data
 
     @rest("v2/", methods=["POST"])
-    def shortest_path(self):
+    def shortest_path(self, request: Request) -> JSONResponse:
         """Calculate the best path between the source and destination."""
-        data = request.get_json()
+        data = get_json_or_400(request)
         data = self._validate_payload(data)
 
         desired = data.get("desired_links")
@@ -215,13 +220,13 @@ class Main(KytosNApp):
                 )
             log.debug(f"Found paths: {paths}")
         except TypeError as err:
-            raise BadRequest(str(err))
+            raise HTTPException(400, str(err))
 
         paths = self._filter_paths_le_cost(paths, max_cost=spf_max_path_cost)
         paths = self._filter_paths_undesired_links(paths, undesired)
         paths = self._filter_paths_desired_links(paths, desired)
         log.debug(f"Filtered paths: {paths}")
-        return jsonify({"paths": paths})
+        return JSONResponse({"paths": paths})
 
     @listen_to(
         "kytos.topology.updated",
