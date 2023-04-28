@@ -110,6 +110,16 @@ class Main(KytosNApp):
 
     def _validate_payload(self, data):
         """Validate shortest_path v2/ POST endpoint."""
+        if "source" not in data or not isinstance(data["source"], str):
+            raise HTTPException(
+                400,
+                detail=f"'source' is mandatory, got {data.get('source')}"
+            )
+        if "destination" not in data or not isinstance(data["destination"], str):
+            raise HTTPException(
+                400,
+                detail=f"'destination' is mandatory, got {data.get('destination')}"
+            )
         if data.get("desired_links"):
             if not isinstance(data["desired_links"], list):
                 raise HTTPException(
@@ -181,6 +191,8 @@ class Main(KytosNApp):
     def shortest_path(self, request: Request) -> JSONResponse:
         """Calculate the best path between the source and destination."""
         data = get_json_or_400(request)
+        if not isinstance(data, dict):
+            raise HTTPException(400, detail=f"Invalid body value: {data}")
         data = self._validate_payload(data)
 
         desired = data.get("desired_links")
