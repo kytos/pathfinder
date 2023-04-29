@@ -190,7 +190,7 @@ class Main(KytosNApp):
     @rest("v2/", methods=["POST"])
     def shortest_path(self, request: Request) -> JSONResponse:
         """Calculate the best path between the source and destination."""
-        data = get_json_or_400(request)
+        data = get_json_or_400(request, self.controller.loop)
         if not isinstance(data, dict):
             raise HTTPException(400, detail=f"Invalid body value: {data}")
         data = self._validate_payload(data)
