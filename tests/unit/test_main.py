@@ -68,8 +68,9 @@ class TestMain:
         mock_shortest_paths.return_value = [path]
         return path
 
-    async def test_shortest_path_response(self, monkeypatch):
+    async def test_shortest_path_response(self, monkeypatch, event_loop):
         """Test shortest path."""
+        self.napp.controller.loop = event_loop
         cost_mocked_value = 1
         mock_path_cost = MagicMock(return_value=cost_mocked_value)
         monkeypatch.setattr("napps.kytos.pathfinder.graph."
@@ -90,8 +91,11 @@ class TestMain:
         }
         assert response.json() == expected_response
 
-    async def test_shortest_path_response_status_code(self, monkeypatch):
+    async def test_shortest_path_response_status_code(
+        self, monkeypatch, event_loop
+    ):
         """Test shortest path."""
+        self.napp.controller.loop = event_loop
         cost_mocked_value = 1
         mock_path_cost = MagicMock(return_value=cost_mocked_value)
         monkeypatch.setattr("napps.kytos.pathfinder.graph."
@@ -133,8 +137,11 @@ class TestMain:
 
         return response, metrics, path
 
-    async def test_shortest_constrained_path_response(self, monkeypatch):
+    async def test_shortest_constrained_path_response(
+        self, monkeypatch, event_loop
+    ):
         """Test constrained flexible paths."""
+        self.napp.controller.loop = event_loop
         mock_path_cost = MagicMock(return_value=1)
         monkeypatch.setattr("napps.kytos.pathfinder.graph."
                             "KytosGraph._path_cost", mock_path_cost)
@@ -151,8 +158,11 @@ class TestMain:
         ]
         assert response.json()["paths"][0] == expected_response[0]
 
-    async def test_shortest_constrained_path_response_status_code(self, monkeypatch):
+    async def test_shortest_constrained_path_response_status_code(
+        self, monkeypatch, event_loop
+    ):
         """Test constrained flexible paths."""
+        self.napp.controller.loop = event_loop
         mock_path_cost = MagicMock(return_value=1)
         monkeypatch.setattr("napps.kytos.pathfinder.graph."
                             "KytosGraph._path_cost", mock_path_cost)
@@ -316,8 +326,9 @@ class TestMain:
         assert self.napp.graph.update_link_metadata.call_count == 1
         assert self.napp.controller.buffers.app.put.call_count == 1
 
-    async def test_shortest_path(self):
+    async def test_shortest_path(self, event_loop):
         """Test shortest path."""
+        self.napp.controller.loop = event_loop
         self.setting_path()
         source, destination = "User1", "User4"
         data = {"source": source, "destination": destination}
@@ -346,7 +357,8 @@ class TestMain:
             response = await self.api_client.post(self.endpoint, json=data)
         return response
 
-    async def test_shortest_constrained_path_400_exception(self):
+    async def test_shortest_constrained_path_400_exception(self, event_loop):
         """Test shortest path."""
+        self.napp.controller.loop = event_loop
         res = await self.setting_shortest_constrained_path_exception(TypeError)
         assert res.status_code == 400
