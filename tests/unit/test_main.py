@@ -20,7 +20,7 @@ class TestMain:
         self.controller = get_controller_mock()
         self.napp = Main(self.controller)
         self.api_client = get_test_client(self.controller, self.napp)
-        self.endpoint = "kytos/pathfinder/v2/"
+        self.endpoint = "kytos/pathfinder/v3/"
 
     def test_update_topology_success_case(self):
         """Test update topology method to success case."""
@@ -82,7 +82,6 @@ class TestMain:
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
-            "desired_links": ["1"]
         }
         response = await self.api_client.post(self.endpoint, json=data)
         assert response.status_code == 200
@@ -107,7 +106,6 @@ class TestMain:
         data = {
             "source": "00:00:00:00:00:00:00:01:1",
             "destination": "00:00:00:00:00:00:00:02:1",
-            "desired_links": ["1"]
         }
         response = await self.api_client.post(self.endpoint, json=data)
         assert response.status_code == 200
@@ -174,41 +172,6 @@ class TestMain:
         )
         assert response.status_code == 200
 
-    def test_filter_paths_response_on_desired(self):
-        """Test filter paths."""
-        self.napp._topology = get_topology_mock()
-        paths = [
-            {
-                "hops": [
-                    "00:00:00:00:00:00:00:01:1",
-                    "00:00:00:00:00:00:00:02:1",
-                    "00:00:00:00:00:00:00:02:2",
-                    "00:00:00:00:00:00:00:03:2",
-                ]
-            },
-            {
-                "hops": [
-                    "00:00:00:00:00:00:00:01:1",
-                    "00:00:00:00:00:00:00:01",
-                    "00:00:00:00:00:00:00:04",
-                    "00:00:00:00:00:00:00:04:1",
-                ],
-                "cost": 3,
-            },
-        ]
-        desired = ["1", "3"]
-
-        for link in desired:
-            assert self.napp._topology.links[link]
-        filtered_paths = self.napp._filter_paths_desired_links(paths, desired)
-        assert filtered_paths == [paths[0]]
-
-        filtered_paths = self.napp._filter_paths_desired_links(paths, ["1", "2"])
-        assert not filtered_paths
-
-        filtered_paths = self.napp._filter_paths_desired_links(paths, ["inexistent_id"])
-        assert not filtered_paths
-
     def test_filter_paths_le_cost_response(self):
         """Test filter paths."""
         self.napp._topology = get_topology_mock()
@@ -242,31 +205,48 @@ class TestMain:
     def test_filter_paths_response_on_undesired(self):
         """Test filter paths."""
         self.napp._topology = get_topology_mock()
-        paths = [
-            {
-                "hops": [
-                    "00:00:00:00:00:00:00:01:1",
-                    "00:00:00:00:00:00:00:02:1",
-                    "00:00:00:00:00:00:00:02:2",
-                    "00:00:00:00:00:00:00:03:2",
-                ]
-            }
+        edges = [
+            (link.endpoint_a.id, link.endpoint_b.id)
+            for link in self.napp._topology.links.values()
         ]
+        self.napp.graph.graph.edges = edges
 
         undesired = ["1"]
-        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
-        assert not filtered_paths
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert non_excluded_edges == [
+            ("00:00:00:00:00:00:00:01:2", "00:00:00:00:00:00:00:03:1"),
+            ("00:00:00:00:00:00:00:02:2", "00:00:00:00:00:00:00:03:2"),
+        ]
 
         undesired = ["3"]
-        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
-        assert not filtered_paths
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert non_excluded_edges == [
+            ('00:00:00:00:00:00:00:01:1', '00:00:00:00:00:00:00:02:1'),
+            ("00:00:00:00:00:00:00:01:2", "00:00:00:00:00:00:00:03:1"),
+        ]
 
         undesired = ["1", "3"]
-        filtered_paths = self.napp._filter_paths_undesired_links(paths, undesired)
-        assert not filtered_paths
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert non_excluded_edges == [
+            ('00:00:00:00:00:00:00:01:2', '00:00:00:00:00:00:00:03:1'),
+        ]
 
-        filtered_paths = self.napp._filter_paths_undesired_links(paths, ["none"])
-        assert filtered_paths == paths
+        undesired = ["1", "2", "3"]
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert not non_excluded_edges
+
+        undesired = []
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert non_excluded_edges == [
+            ('00:00:00:00:00:00:00:01:1', '00:00:00:00:00:00:00:02:1'),
+            ("00:00:00:00:00:00:00:01:2", "00:00:00:00:00:00:00:03:1"),
+            ("00:00:00:00:00:00:00:02:2", "00:00:00:00:00:00:00:03:2"),
+        ]
+
+        undesired = ["1", "2", "3"]
+        self.napp._topology = None
+        non_excluded_edges = self.napp._non_excluded_edges(undesired)
+        assert not non_excluded_edges
 
     def setting_path(self):
         """Set the primary elements needed to test the topology
