@@ -163,15 +163,17 @@ class KytosGraph:
         destination,
         weight=None,
         k=1,
+        graph=None,
         minimum_hits=None,
         **metrics,
     ):
         """Calculate the constrained shortest paths with flexibility."""
+        graph = graph or self.graph
         mandatory_metrics = metrics.get("mandatory_metrics", {})
         flexible_metrics = metrics.get("flexible_metrics", {})
         first_pass_links = list(
             self._filter_links(
-                self.graph.edges(data=True), **mandatory_metrics
+                graph.edges(data=True), **mandatory_metrics
             )
         )
         length = len(flexible_metrics)
@@ -192,7 +194,7 @@ class KytosGraph:
                     destination,
                     weight=weight,
                     k=k,
-                    graph=self.graph.edge_subgraph(filtered_links),
+                    graph=graph.edge_subgraph(filtered_links),
                 ):
                     paths.append(
                         {
