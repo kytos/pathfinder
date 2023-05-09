@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: kytos/pathfinder
-  version: v2
+  version: v3
   description: "**Warning**: *This documentation is experimental and will
   change soon.*\n
   ## Introduction\n
@@ -18,7 +18,7 @@ tags:
     - name: Paths
 
 paths:
-  /api/kytos/pathfinder/v2/:
+  /api/kytos/pathfinder/v3/:
     post:
       summary: Returns best paths between the source and destination.
       description: "Returns a list of k best paths between source and destination, in order.\n
@@ -56,15 +56,6 @@ paths:
                   type: string
                   description: The destination identifier. It may be a datapath or an interface.
                   example: '00:00:00:00:00:00:00:02:2'
-                desired_links:
-                  type: array
-                  description: Constraint in the form of a list of desired links inside all paths found. All paths will have the desired links.
-                  items:
-                    $ref: "#/components/schemas/Link"
-                  example:
-                    - '2bd01b0d-c875-4263-ad38-fec0b2999582'
-                    - 'c41f6249-3ea6-4aba-a083-08049face1e2'
-                    - '7e8b6bd2-701e-4465-894a-40623e727047'
                 undesired_links:
                   type: array
                   description: Constraint in the form of a list of undesired links in all paths found. When an undesired link is found the endpoint will ignore remove that.
@@ -217,6 +208,4 @@ components:
           code:
               type: integer
           description:
-              type: string
-          name:
               type: string
