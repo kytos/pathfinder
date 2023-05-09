@@ -7,8 +7,6 @@
           :value.sync="source"></k-dropdown>
          <k-dropdown icon="circle-o" title="Destination:" :options="get_interfaces"
           :value.sync ="destination"></k-dropdown>
-         <k-select icon="link" title="Desired links:" :options="get_links"
-          :value.sync ="desired_links"></k-select>
          <k-select icon="link" title="Undesired links:" :options="get_links"
           :value.sync ="undesired_links"></k-select>
           <div class="metric">
@@ -133,7 +131,6 @@ module.exports = {
         contentType: "application/json",
         data: JSON.stringify({"source": self.source,
                "destination": self.destination,
-               "desired_links": self.desired_links,
                "undesired_links": self.undesired_links,
                "mandatory_metrics": mandatory_metrics,
                "flexible_metrics": flexible_metrics,
@@ -143,7 +140,7 @@ module.exports = {
                "minimum_flexible_hits": self.minimum_flexible_hits,
                }),
 
-        url: this.$kytos_server_api + "kytos/pathfinder/v2",
+        url: this.$kytos_server_api + "kytos/pathfinder/v3/",
         success: function(data) {
             if (data['paths'][0] !== undefined){
                 self.paths = data['paths'];
@@ -280,7 +277,6 @@ module.exports = {
       links: [],
       source: "",
       destination: "",
-      desired_links: [],
       undesired_links: [],
       checked_list: [],
       metrics:{
