@@ -124,31 +124,59 @@ module.exports = {
         }
       }
 
-      $.ajax({
+      var payload = {
+        spf_attribute: self.spf_attribute,
+        mandatory_metrics: self.mandatory_metrics,
+        flexible_metrics: self.flexible_metrics
+      }
+      if (self.source) {
+        payload["source"] = self.source
+      }
+      if (self.destination) {
+        payload["destination"] = self.destination
+      }
+      if (self.undesired_links.length) {
+        payload["undesired_links"] = self.undesired_links
+      }
+      if (Object.keys(mandatory_metrics).length) {
+        payload["mandatory_metrics"] = mandatory_metrics
+      }
+      if (Object.keys(flexible_metrics).length) {
+        payload["flexible_metrics"] = flexible_metrics
+      }
+      if (self.spf_max_paths) {
+        payload["spf_max_paths"] = self.spf_max_paths
+      }
+      if (self.spf_max_path_cost) {
+        payload["spf_max_path_cost"] = self.spf_max_path_cost
+      }
+      if (self.minimum_flexible_hits) {
+        payload["minimum_flexible_hits"] = self.minimum_flexible_hits
+      }
+
+      let request = $.ajax({
         async: true,
         dataType: "json",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({"source": self.source,
-               "destination": self.destination,
-               "undesired_links": self.undesired_links,
-               "mandatory_metrics": mandatory_metrics,
-               "flexible_metrics": flexible_metrics,
-               "spf_attribute": self.spf_attribute,
-               "spf_max_paths": self.spf_max_paths,
-               "spf_max_path_cost": self.spf_max_path_cost,
-               "minimum_flexible_hits": self.minimum_flexible_hits,
-               }),
-
+        data: JSON.stringify(payload),
         url: this.$kytos_server_api + "kytos/pathfinder/v3/",
-        success: function(data) {
-            if (data['paths'][0] !== undefined){
-                self.paths = data['paths'];
-            } else {
-                self.paths = []
-            }
-          self.show();
-        }
+      });
+      request.done(function(data) {
+          if (data['paths'][0] !== undefined){
+              self.paths = data['paths'];
+          } else {
+              self.paths = []
+          }
+        self.show();
+      });
+      request.fail(function(data) {
+        let notification = {
+          icon: 'gear',
+          title: 'Bad request',
+          description: data.status + ': ' + data.responseJSON.description
+        };
+        self.$kytos.$emit("setNotification", notification);
       });
     },
     get_topology(){
