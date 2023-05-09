@@ -6,6 +6,21 @@ All notable changes to the pathfinder NApp will be documented in this file.
 [UNRELEASED] - Under development
 ********************************
 
+Added
+=====
+- ``POST /v3/`` has replaced ``POST /v2/``
+- ``POST /v3/`` now validates its OpenAPI spec
+
+Fixed
+=====
+
+- ``undesired_links`` links now filter upfront as a subgraph to still efficiently allow a lazy computation of k shortest (constrained) paths.
+
+Removed
+=======
+- ``desired_links`` is no longer supported. If used to use ``desired_links`` you can try to parametrize it with a different constraint for instance ``undesired_links`` or with ``mandatory_metrics``.
+- ``POST /v2/`` has been removed
+
 [2022.3.0] - 2022-12-15
 ***********************
 
