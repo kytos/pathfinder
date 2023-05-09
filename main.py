@@ -1,10 +1,11 @@
 """Main module of kytos/pathfinder Kytos Network Application."""
 
+import pathlib
 from threading import Lock
 from typing import Generator
 
 from kytos.core import KytosEvent, KytosNApp, log, rest
-from kytos.core.helpers import listen_to
+from kytos.core.helpers import listen_to, load_spec, validate_openapi
 from kytos.core.rest_api import (HTTPException, JSONResponse, Request,
                                  get_json_or_400)
 from napps.kytos.pathfinder.graph import KytosGraph
@@ -16,6 +17,8 @@ class Main(KytosNApp):
 
     This class is the entry point for this napp.
     """
+
+    spec = load_spec(pathlib.Path(__file__).parent / "openapi.yml")
 
     def setup(self):
         """Create a graph to handle the nodes and edges."""
@@ -36,6 +39,18 @@ class Main(KytosNApp):
         if not max_cost:
             return paths
         return [path for path in paths if path["cost"] <= max_cost]
+
+    def _non_excluded_edges(self, links: list[str]) -> list[tuple[str, str]]:
+        """Exlude undesired links. It'll return the remaning edges."""
+
+        endpoints: list[tuple[str, str]] = []
+        if not self._topology:
+            return endpoints
+        endpoint_ids = self._map_endpoints_from_link_ids(links)
+        for edge in self.graph.graph.edges:
+            if edge not in endpoint_ids:
+                endpoints.append(edge)
+        return endpoints
 
     def _map_endpoints_from_link_ids(self, link_ids: list[str]) -> dict:
         """Map endpoints from link ids."""
@@ -68,152 +83,37 @@ class Main(KytosNApp):
                 yield idx
         return None
 
-    def _find_any_link_ids(
-        self, paths: list[dict], link_ids: list[str]
-    ) -> Generator[int, None, None]:
-        """Find indexes of the paths that contain any of the link ids."""
-        endpoints_links = self._map_endpoints_from_link_ids(link_ids)
-        if not endpoints_links:
-            return None
-        for idx, path in enumerate(paths):
-            head, tail, found = path["hops"][:-1], path["hops"][1:], False
-            for endpoint_a, endpoint_b in zip(head, tail):
-                if any(
-                    (
-                        (endpoint_a, endpoint_b) in endpoints_links,
-                        (endpoint_b, endpoint_a) in endpoints_links,
-                    )
-                ):
-                    found = True
-                    break
-            if found:
-                yield idx
-        return None
-
-    def _filter_paths_undesired_links(
-        self, paths: list[dict], undesired: list[str]
-    ) -> list[dict]:
-        """Filter by undesired_links, it performs a logical OR."""
-        if not undesired:
-            return paths
-        excluded_indexes = set(self._find_any_link_ids(paths, undesired))
-        return [path for idx, path in enumerate(paths) if idx not in excluded_indexes]
-
-    def _filter_paths_desired_links(
-        self, paths: list[dict], desired: list[str]
-    ) -> list[dict]:
-        """Filter by desired_links, it performs a logical AND."""
-        if not desired:
-            return paths
-        included_indexes = set(self._find_all_link_ids(paths, desired))
-        return [path for idx, path in enumerate(paths) if idx in included_indexes]
-
-    def _validate_payload(self, data):
-        """Validate shortest_path v2/ POST endpoint."""
-        if "source" not in data or not isinstance(data["source"], str):
-            raise HTTPException(
-                400,
-                detail=f"'source' is mandatory, got {data.get('source')}"
-            )
-        if "destination" not in data or not isinstance(data["destination"], str):
-            raise HTTPException(
-                400,
-                detail=f"'destination' is mandatory, got {data.get('destination')}"
-            )
-        if data.get("desired_links"):
-            if not isinstance(data["desired_links"], list):
-                raise HTTPException(
-                    400,
-                    f"TypeError: desired_links is supposed to be a list."
-                    f" type: {type(data['desired_links'])}"
-                )
-
-        if data.get("undesired_links"):
-            if not isinstance(data["undesired_links"], list):
-                raise HTTPException(
-                    400,
-                    f"TypeError: undesired_links is supposed to be a list."
-                    f" type: {type(data['undesired_links'])}"
-                )
-
-        parameter = data.get("parameter")
-        spf_attr = data.get("spf_attribute")
-        if not spf_attr:
-            spf_attr = parameter or "hop"
-        data["spf_attribute"] = spf_attr
-
-        if spf_attr not in self.graph.spf_edge_data_cbs:
-            raise HTTPException(
-                400,
-                "Invalid 'spf_attribute'. Valid values: "
-                f"{', '.join(self.graph.spf_edge_data_cbs.keys())}"
-            )
-
-        try:
-            data["spf_max_paths"] = max(int(data.get("spf_max_paths", 2)), 1)
-        except (TypeError, ValueError):
-            raise HTTPException(
-                400,
-                f"spf_max_paths {data.get('spf_max_pahts')} must be an int"
-            )
-
-        spf_max_path_cost = data.get("spf_max_path_cost")
-        if spf_max_path_cost:
-            try:
-                spf_max_path_cost = max(int(spf_max_path_cost), 1)
-                data["spf_max_path_cost"] = spf_max_path_cost
-            except (TypeError, ValueError):
-                raise HTTPException(
-                    400,
-                    f"spf_max_path_cost {data.get('spf_max_path_cost')} must"
-                    " be an int"
-                )
-
-        data["mandatory_metrics"] = data.get("mandatory_metrics", {})
-        data["flexible_metrics"] = data.get("flexible_metrics", {})
-
-        try:
-            minimum_hits = data.get("minimum_flexible_hits")
-            if minimum_hits:
-                minimum_hits = min(
-                    len(data["flexible_metrics"]), max(0, int(minimum_hits))
-                )
-            data["minimum_flexible_hits"] = minimum_hits
-        except (TypeError, ValueError):
-            raise HTTPException(
-                400,
-                f"minimum_hits {data.get('minimum_flexible_hits')} must be an int"
-            )
-
-        return data
-
-    @rest("v2/", methods=["POST"])
+    @rest("v3/", methods=["POST"])
+    @validate_openapi(spec)
     def shortest_path(self, request: Request) -> JSONResponse:
         """Calculate the best path between the source and destination."""
         data = get_json_or_400(request, self.controller.loop)
         if not isinstance(data, dict):
             raise HTTPException(400, detail=f"Invalid body value: {data}")
-        data = self._validate_payload(data)
 
-        desired = data.get("desired_links")
-        undesired = data.get("undesired_links")
-
-        spf_attr = data.get("spf_attribute")
-        spf_max_paths = data.get("spf_max_paths")
+        undesired = data.get("undesired_links", [])
+        spf_attr = data.get("spf_attribute", "hop")
+        spf_max_paths = data.get("spf_max_paths", 2)
         spf_max_path_cost = data.get("spf_max_path_cost")
-        mandatory_metrics = data.get("mandatory_metrics")
-        flexible_metrics = data.get("flexible_metrics")
+        mandatory_metrics = data.get("mandatory_metrics", {})
+        flexible_metrics = data.get("flexible_metrics", {})
         minimum_hits = data.get("minimum_flexible_hits")
         log.debug(f"POST v2/ payload data: {data}")
 
         try:
             with self._lock:
+                graph = self.graph.graph
+                if undesired:
+                    non_excluded_edges = self._non_excluded_edges(undesired)
+                    graph = graph.edge_subgraph(non_excluded_edges)
+
                 if any([mandatory_metrics, flexible_metrics]):
                     paths = self.graph.constrained_k_shortest_paths(
                         data["source"],
                         data["destination"],
                         weight=self.graph.spf_edge_data_cbs[spf_attr],
                         k=spf_max_paths,
+                        graph=graph,
                         minimum_hits=minimum_hits,
                         mandatory_metrics=mandatory_metrics,
                         flexible_metrics=flexible_metrics,
@@ -224,6 +124,7 @@ class Main(KytosNApp):
                         data["destination"],
                         weight=self.graph.spf_edge_data_cbs[spf_attr],
                         k=spf_max_paths,
+                        graph=graph,
                     )
 
                 paths = self.graph.path_cost_builder(
@@ -235,8 +136,6 @@ class Main(KytosNApp):
             raise HTTPException(400, str(err))
 
         paths = self._filter_paths_le_cost(paths, max_cost=spf_max_path_cost)
-        paths = self._filter_paths_undesired_links(paths, undesired)
-        paths = self._filter_paths_desired_links(paths, desired)
         log.debug(f"Filtered paths: {paths}")
         return JSONResponse({"paths": paths})
 
