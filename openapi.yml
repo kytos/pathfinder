@@ -78,7 +78,7 @@ paths:
                   description: Maximum number of 'k' best paths that should be computed by SPF. The lower the value the faster it is going to compute. If you only need a single best path, you should set this value as 1.
                   default: 2
                   minimum: 1
-                  maximum: 8
+                  maximum: 10
                 spf_max_path_cost:
                   type: number
                   description: Maximum accumulated path cost to be consireded a best path. You should only set this value if you want to set an upper bound accumulated cost.
