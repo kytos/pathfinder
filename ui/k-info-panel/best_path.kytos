@@ -4,8 +4,8 @@
           <div>
             <k-property-panel v-for="(path, index) in content">
               <k-accordion-item :title=format_title(index,path['cost'])>
-                <k-property-panel-item v-for="(cur_path, path_index) in path['hops']"
-                                       v-if="content" :name="String(path_index)" :value="cur_path"
+                <k-property-panel-item v-for="(current_path, path_index) in path['hops']"
+                                       v-if="content" :name="String(path_index)" :value="format_hop(current_path)"
                                        :key="path_index">
                 </k-property-panel-item>
               </k-accordion-item>
@@ -21,7 +21,26 @@
    methods: {
      format_title(index, cost){
         return "Path " + index + ", cost: " + cost + ", hops: ";
-     }
+     },
+     is_switch(path) {
+      return path.split(":").length - 1 === 7;
+     },
+     format_hop(current_path) {
+      let base_path = current_path.split(':').slice(0, 8).join(':')
+      let switch_data = this.get_switch_data(base_path)
+      if (this.is_switch(current_path)) {
+        if ('metadata' in switch_data && 'node_name' in switch_data.metadata) return switch_data.metadata.node_name;
+        return switch_data.id;
+      }
+      else {
+        let interface_data = switch_data['interfaces'][current_path];
+        if ('metadata' in interface_data && 'port_name' in interface_data.metadata) return interface_data.metadata.port_name;
+        return interface_data.name;
+      }
+     },
+     get_switch_data(base_path) {
+      return self.switches.filter(object => object.id === base_path)[0]
+     },
    },
    data () {
      return {
